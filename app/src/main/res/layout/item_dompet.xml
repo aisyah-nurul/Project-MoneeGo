@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Row atas: ikon + nama + tipe + tanggal -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <View
+                android:id="@+id/viewIkon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/logo_moneego"
+                android:layout_marginEnd="12dp"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvNamaDompet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="BCA Tabungan"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="#1A2B34"/>
+
+                <TextView
+                    android:id="@+id/tvTipeDompet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rekening Bank"
+                    android:textSize="12sp"
+                    android:textColor="#78909C"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvTanggalDompet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Baru ditambahkan"
+                android:textSize="11sp"
+                android:textColor="#90A4AE"/>
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#ECEFF1"
+            android:layout_marginVertical="10dp"/>
+
+        <!-- Row bawah: saldo + progress + persentase -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TERCATAT"
+                    android:textSize="10sp"
+                    android:textColor="#90A4AE"/>
+
+                <TextView
+                    android:id="@+id/tvSaldoDompet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rp0"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#1A2B34"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvPersentase"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0%"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#1A2B34"/>
+        </LinearLayout>
+
+        <!-- Progress Bar -->
+        <ProgressBar
+            android:id="@+id/progressDompet"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:layout_marginTop="8dp"
+            android:max="100"
+            android:progress="46"
+            android:progressTint="#37474F"/>
+
+        <TextView
+            android:id="@+id/tvPersenLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="46% dari Total"
+            android:textSize="10sp"
+            android:textColor="#90A4AE"
+            android:layout_marginTop="4dp"/>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

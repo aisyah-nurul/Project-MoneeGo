@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 1. Home -->
+    <item
+        android:id="@+id/dashboardFragment"
+        android:icon="@drawable/ic_home"
+        android:title="Home"/>
+
+    <!-- 2. Riwayat -->
+    <item
+        android:id="@+id/riwayatTransaksiFragment"
+        android:icon="@drawable/ic_riwayat"
+        android:title="Riwayat"/>
+
+    <!-- 3. Tengah kosong untuk FAB -->
+    <item
+        android:id="@+id/placeholder"
+        android:icon="@drawable/ic_home"
+        android:title=""
+        android:enabled="false"/>
+
+    <!-- 4. Analisis -->
+    <item
+        android:id="@+id/analisisFragment"
+        android:icon="@drawable/ic_analisis"
+        android:title="Analisis"/>
+
+    <!-- 5. Pengaturan -->
+    <item
+        android:id="@+id/pengaturanFragment"
+        android:icon="@drawable/ic_pengaturan"
+        android:title="Pengaturan"/>
+
+</menu>

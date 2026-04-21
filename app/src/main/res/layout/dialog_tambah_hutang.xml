@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="@android:color/white">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tambah Catatan Hutang"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#1A1A2E"
+        android:gravity="center"
+        android:layout_marginBottom="20dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nama / Pihak"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="#1A1A2E"
+        android:layout_marginBottom="8dp"/>
+
+    <EditText
+        android:id="@+id/et_nama_hutang"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Contoh: Mang Ujang"
+        android:textSize="14sp"
+        android:paddingHorizontal="16dp"
+        android:background="@drawable/bg_input_rounded"
+        android:inputType="text"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nominal"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="#1A1A2E"
+        android:layout_marginBottom="8dp"/>
+
+    <EditText
+        android:id="@+id/et_nominal_hutang"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Rp 0"
+        android:textSize="14sp"
+        android:paddingHorizontal="16dp"
+        android:background="@drawable/bg_input_rounded"
+        android:inputType="numberDecimal"
+        android:layout_marginBottom="16dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Catatan"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="#1A1A2E"
+        android:layout_marginBottom="8dp"/>
+
+    <EditText
+        android:id="@+id/et_catatan_hutang"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:hint="Keterangan hutang..."
+        android:textSize="14sp"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="12dp"
+        android:background="@drawable/bg_input_rounded"
+        android:inputType="textMultiLine"
+        android:gravity="top"
+        android:layout_marginBottom="20dp"/>
+
+    <Button
+        android:id="@+id/btn_simpan_hutang"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="Simpan"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:backgroundTint="#4A6FA5"
+        android:textColor="@android:color/white"/>
+
+</LinearLayout>
