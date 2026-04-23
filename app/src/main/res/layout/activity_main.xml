@@ -38,6 +38,8 @@
         android:src="@drawable/ic_add"
         app:backgroundTint="#4A6FA5"
         app:fabSize="normal"
+        app:layout_anchor="@+id/bottomNavigationView"
+        app:layout_anchorGravity="center"
         app:tint="@android:color/white" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
