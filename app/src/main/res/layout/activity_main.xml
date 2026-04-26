@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="#EDE8DC">
 
-    <!-- Fragment Container -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -15,29 +14,17 @@
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_graph"/>
 
-    <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
+        android:layout_height="90dp"
         android:layout_gravity="bottom"
         android:background="@android:color/white"
         app:menu="@menu/bottom_nav_menu"
         app:itemIconTint="#4A6FA5"
         app:itemTextColor="#4A6FA5"
-        app:elevation="8dp"/>
-
-    <!-- FAB lingkaran + di tengah -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabTambah"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="20dp"
-        android:elevation="12dp"
-        android:src="@drawable/ic_add"
-        app:backgroundTint="#4A6FA5"
-        app:fabSize="normal"
-        app:tint="@android:color/white" />
+        app:itemIconSize="32dp"
+        app:elevation="8dp"
+        app:labelVisibilityMode="unlabeled"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
