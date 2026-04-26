@@ -1,5 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Base -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- MoneeGo Primary Palette -->
+    <color name="primary_dark_navy">#1E2D4E</color>
+    <color name="primary_navy">#2C3E6B</color>
+    <color name="primary_slate">#6B8FA3</color>
+    <color name="primary_light_slate">#9CB4C5</color>
+
+    <!-- Background -->
+    <color name="bg_main">#E8E4DC</color>
+    <color name="bg_card">#FFFFFF</color>
+    <color name="bg_header">#6B8FA3</color>
+    <color name="bg_header_dark">#4A6E85</color>
+
+    <!-- Text -->
+    <color name="text_primary">#1A2B34</color>
+    <color name="text_secondary">#546E7A</color>
+    <color name="text_hint">#90A4AE</color>
+    <color name="text_white">#FFFFFF</color>
+    <color name="text_label">#78909C</color>
+
+    <!-- Semantic -->
+    <color name="income_green">#2E7D32</color>
+    <color name="income_green_light">#E8F5E9</color>
+    <color name="expense_red">#C62828</color>
+    <color name="expense_red_light">#FFEBEE</color>
+    <color name="debt_orange">#E65100</color>
+    <color name="debt_orange_light">#FFF3E0</color>
+    <color name="saving_teal">#00695C</color>
+    <color name="saving_teal_light">#E0F2F1</color>
+
+    <!-- Dompet Jenis Warna (icon tint) -->
+    <color name="wallet_bank">#1565C0</color>
+    <color name="wallet_bank_bg">#E3F2FD</color>
+    <color name="wallet_digital">#6A1B9A</color>
+    <color name="wallet_digital_bg">#F3E5F5</color>
+    <color name="wallet_cash">#2E7D32</color>
+    <color name="wallet_cash_bg">#E8F5E9</color>
+    <color name="wallet_investasi">#E65100</color>
+    <color name="wallet_investasi_bg">#FFF3E0</color>
+    <color name="wallet_tabungan">#00695C</color>
+    <color name="wallet_tabungan_bg">#E0F2F1</color>
+    <color name="wallet_lainnya">#37474F</color>
+    <color name="wallet_lainnya_bg">#ECEFF1</color>
+
+    <!-- Hutang (debt tab) -->
+    <color name="hutang_badge">#FF5722</color>
+    <color name="hutang_badge_bg">#FBE9E7</color>
+    <color name="hutang_overdue">#B71C1C</color>
+    <color name="hutang_upcoming">#E65100</color>
+    <color name="hutang_safe">#2E7D32</color>
+
+    <!-- Progress bar -->
+    <color name="progress_track">#E0E0E0</color>
+    <color name="progress_fill">#2C3E6B</color>
+
+    <!-- Divider -->
+    <color name="divider">#ECEFF1</color>
+
+    <!-- Shadow / Elevation hint -->
+    <color name="shadow_light">#1A000000</color>
+
+    <!-- Tab active/inactive -->
+    <color name="tab_active_bg">#2C3E6B</color>
+    <color name="tab_active_text">#FFFFFF</color>
+    <color name="tab_inactive_bg">#D6D0C8</color>
+    <color name="tab_inactive_text">#546E7A</color>
 </resources>
