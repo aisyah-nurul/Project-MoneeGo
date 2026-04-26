@@ -15,6 +15,9 @@ interface TransaksiDao {
     @Delete
     suspend fun delete(transaksi: Transaksi)
 
+    @Query("DELETE FROM transaksi WHERE dompetId = :dompetId")
+    suspend fun deleteByDompetId(dompetId: Int)
+
     @Query("SELECT * FROM transaksi ORDER BY tanggal DESC")
     fun getAllTransaksi(): LiveData<List<Transaksi>>
 
@@ -32,4 +35,10 @@ interface TransaksiDao {
 
     @Query("SELECT * FROM transaksi WHERE kategori = :kategori ORDER BY tanggal DESC")
     fun getByKategori(kategori: String): LiveData<List<Transaksi>>
+
+    @Query("SELECT SUM(nominal) FROM transaksi WHERE jenis = 'PEMASUKAN' AND tanggal BETWEEN :start AND :end")
+    fun getPemasukanBulanIni(start: Long, end: Long): LiveData<Double?>
+
+    @Query("SELECT SUM(nominal) FROM transaksi WHERE jenis = 'PENGELUARAN' AND tanggal BETWEEN :start AND :end")
+    fun getPengeluaranBulanIni(start: Long, end: Long): LiveData<Double?>
 }

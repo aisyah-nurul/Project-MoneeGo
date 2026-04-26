@@ -32,6 +32,16 @@ class TransaksiAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         rebuildDisplayList()
     }
 
+    // Fungsi untuk ambil Transaksi dari position tertentu
+    // Return null kalau position itu adalah Header
+    fun getItemAt(position: Int): Transaksi? {
+        val item = displayList.getOrNull(position) ?: return null
+        return when (item) {
+            is TransaksiItem.Item -> item.transaksi
+            is TransaksiItem.Header -> null
+        }
+    }
+
     private fun rebuildDisplayList() {
         displayList.clear()
 
