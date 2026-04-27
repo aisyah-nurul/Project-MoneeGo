@@ -1,6 +1,7 @@
 package com.example.appmoneego
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -19,19 +20,16 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
 
-        // Hubungkan bottom nav dengan nav controller
         binding.bottomNavigationView.setupWithNavController(navController)
 
-        // FAB → navigasi ke Tambah Transaksi
-        binding.fabTambah.setOnClickListener {
-            navController.navigate(R.id.tambahTransaksiFragment)
-        }
-
-        // Sembunyikan FAB saat di halaman Tambah Transaksi
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.tambahTransaksiFragment -> binding.fabTambah.hide()
-                else -> binding.fabTambah.show()
+                R.id.splashFragment -> {
+                    binding.bottomNavigationView.visibility = View.GONE
+                }
+                else -> {
+                    binding.bottomNavigationView.visibility = View.VISIBLE
+                }
             }
         }
     }

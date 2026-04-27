@@ -41,7 +41,12 @@
     <fragment
         android:id="@+id/dompetFragment"
         android:name="com.example.appmoneego.ui.dompet.DompetFragment"
-        android:label="Dompet"/>
+        android:label="Dompet">
+        <!-- Tambahan: aksi navigasi ke HutangFragment dari banner info hutang -->
+        <action
+            android:id="@+id/action_dompetFragment_to_hutangFragment"
+            app:destination="@id/hutangFragment"/>
+    </fragment>
 
     <fragment
         android:id="@+id/tabunganFragment"
