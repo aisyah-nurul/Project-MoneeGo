@@ -42,7 +42,6 @@
         android:id="@+id/dompetFragment"
         android:name="com.example.appmoneego.ui.dompet.DompetFragment"
         android:label="Dompet">
-        <!-- Tambahan: aksi navigasi ke HutangFragment dari banner info hutang -->
         <action
             android:id="@+id/action_dompetFragment_to_hutangFragment"
             app:destination="@id/hutangFragment"/>
@@ -71,6 +70,14 @@
     <fragment
         android:id="@+id/tambahTransaksiFragment"
         android:name="com.example.appmoneego.ui.tambahtransaksi.TambahTransaksiFragment"
-        android:label="Tambah Transaksi"/>
+        android:label="Tambah Transaksi">
+        <action
+            android:id="@+id/action_tambahTransaksi_to_riwayat"
+            app:destination="@id/riwayatTransaksiFragment"/>
+        <!-- ✅ Action Transfer → Dompet -->
+        <action
+            android:id="@+id/action_tambahTransaksi_to_dompet"
+            app:destination="@id/dompetFragment"/>
+    </fragment>
 
 </navigation>

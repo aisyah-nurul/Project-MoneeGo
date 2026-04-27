@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="#EDE8DC">
 
-    <!-- Title -->
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
@@ -22,7 +21,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- Tab Pengeluaran / Pemasukan / Transfer -->
+    <ImageView
+        android:id="@+id/iv_back"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_back"
+        android:padding="8dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
     <LinearLayout
         android:id="@+id/ll_tab_jenis"
         android:layout_width="0dp"
@@ -59,10 +68,10 @@
             android:layout_marginEnd="8dp"/>
 
         <TextView
-            android:id="@+id/tab_transfer"
+            android:id="@+id/tab_riwayat"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
-            android:text="Transfer"
+            android:text="TRANSFER"
             android:textSize="13sp"
             android:textColor="#888888"
             android:gravity="center"
@@ -82,309 +91,773 @@
         app:cardBackgroundColor="#D6D0C4"
         app:cardElevation="0dp"
         app:layout_constraintTop_toBottomOf="@id/ll_tab_jenis"
-        app:layout_constraintBottom_toTopOf="@id/ll_numpad"
+        app:layout_constraintBottom_toTopOf="@id/ll_bottom_area"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="20dp">
+            android:layout_height="match_parent">
 
-            <!-- Nominal -->
-            <TextView
+            <!-- SCROLL FORM NORMAL -->
+            <ScrollView
+                android:id="@+id/scroll_form"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="NOMINAL (Rp)"
-                android:textSize="12sp"
-                android:textColor="#888888"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="NOMINAL (Rp)"
+                        android:textSize="12sp"
+                        android:textColor="#888888"
+                        android:gravity="center"
+                        android:layout_marginBottom="4dp"/>
+
+                    <TextView
+                        android:id="@+id/tv_nominal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Rp 0"
+                        android:textSize="32sp"
+                        android:textStyle="bold"
+                        android:textColor="#1A1A2E"
+                        android:gravity="center"
+                        android:layout_marginBottom="12dp"/>
+
+                    <!-- FORM PENGELUARAN / PEMASUKAN -->
+                    <LinearLayout
+                        android:id="@+id/ll_form_normal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="visible">
+
+                        <!-- Kategori -->
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/card_kategori"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            app:cardCornerRadius="12dp"
+                            app:cardBackgroundColor="@android:color/white"
+                            app:cardElevation="0dp">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+                                <LinearLayout
+                                    android:id="@+id/ll_kategori_header"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="56dp"
+                                    android:orientation="horizontal"
+                                    android:paddingHorizontal="16dp"
+                                    android:gravity="center_vertical"
+                                    android:background="?attr/selectableItemBackground"
+                                    android:clickable="true"
+                                    android:focusable="true">
+                                    <ImageView
+                                        android:id="@+id/iv_kategori_icon"
+                                        android:layout_width="28dp"
+                                        android:layout_height="28dp"
+                                        android:src="@drawable/ic_makanan"
+                                        android:layout_marginEnd="12dp"
+                                        android:scaleType="fitCenter"/>
+                                    <LinearLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:orientation="vertical">
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="Kategori"
+                                            android:textSize="11sp"
+                                            android:textColor="#4A6FA5"/>
+                                        <TextView
+                                            android:id="@+id/tv_kategori"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="Makanan"
+                                            android:textSize="14sp"
+                                            android:textColor="#1A1A2E"/>
+                                    </LinearLayout>
+                                    <ImageView
+                                        android:id="@+id/iv_chevron_kategori"
+                                        android:layout_width="20dp"
+                                        android:layout_height="20dp"
+                                        android:src="@drawable/ic_chevron_down"/>
+                                </LinearLayout>
+                                <View
+                                    android:id="@+id/divider_kategori"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:background="#F0EDE8"
+                                    android:visibility="gone"/>
+                                <GridLayout
+                                    android:id="@+id/grid_kategori"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:columnCount="4"
+                                    android:paddingHorizontal="8dp"
+                                    android:paddingTop="12dp"
+                                    android:paddingBottom="8dp"
+                                    android:visibility="gone"/>
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <!-- Tanggal -->
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/card_tanggal"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            app:cardCornerRadius="12dp"
+                            app:cardBackgroundColor="@android:color/white"
+                            app:cardElevation="0dp">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+                                <LinearLayout
+                                    android:id="@+id/ll_tanggal_header"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="56dp"
+                                    android:orientation="horizontal"
+                                    android:paddingHorizontal="16dp"
+                                    android:gravity="center_vertical"
+                                    android:background="?attr/selectableItemBackground"
+                                    android:clickable="true"
+                                    android:focusable="true">
+                                    <ImageView
+                                        android:layout_width="24dp"
+                                        android:layout_height="24dp"
+                                        android:src="@drawable/ic_tanggal"
+                                        android:layout_marginEnd="12dp"/>
+                                    <LinearLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:orientation="vertical">
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="Tanggal"
+                                            android:textSize="11sp"
+                                            android:textColor="#4A6FA5"/>
+                                        <TextView
+                                            android:id="@+id/tv_tanggal"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="Hari ini"
+                                            android:textSize="14sp"
+                                            android:textColor="#1A1A2E"/>
+                                    </LinearLayout>
+                                    <ImageView
+                                        android:id="@+id/iv_chevron_tanggal"
+                                        android:layout_width="20dp"
+                                        android:layout_height="20dp"
+                                        android:src="@drawable/ic_chevron_down"/>
+                                </LinearLayout>
+                                <View
+                                    android:id="@+id/divider_tanggal"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:background="#F0EDE8"
+                                    android:visibility="gone"/>
+                                <LinearLayout
+                                    android:id="@+id/ll_custom_calendar"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:paddingHorizontal="12dp"
+                                    android:paddingBottom="12dp"
+                                    android:paddingTop="8dp"
+                                    android:visibility="gone">
+                                    <LinearLayout
+                                        android:layout_width="match_parent"
+                                        android:layout_height="40dp"
+                                        android:orientation="horizontal"
+                                        android:gravity="center_vertical"
+                                        android:layout_marginBottom="4dp">
+                                        <TextView
+                                            android:id="@+id/tv_bulan_tahun"
+                                            android:layout_width="0dp"
+                                            android:layout_height="wrap_content"
+                                            android:layout_weight="1"
+                                            android:text="April 2026"
+                                            android:textSize="14sp"
+                                            android:textStyle="bold"
+                                            android:textColor="#1A1A2E"/>
+                                        <ImageButton
+                                            android:id="@+id/btn_prev_month"
+                                            android:layout_width="36dp"
+                                            android:layout_height="36dp"
+                                            android:src="@drawable/ic_chevron_down"
+                                            android:rotation="90"
+                                            android:background="?attr/selectableItemBackgroundBorderless"
+                                            android:scaleType="fitCenter"
+                                            android:padding="8dp"/>
+                                        <ImageButton
+                                            android:id="@+id/btn_next_month"
+                                            android:layout_width="36dp"
+                                            android:layout_height="36dp"
+                                            android:src="@drawable/ic_chevron_down"
+                                            android:rotation="270"
+                                            android:background="?attr/selectableItemBackgroundBorderless"
+                                            android:scaleType="fitCenter"
+                                            android:padding="8dp"/>
+                                    </LinearLayout>
+                                    <GridLayout
+                                        android:id="@+id/grid_nama_hari"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="32dp"
+                                        android:columnCount="7"
+                                        android:layout_marginBottom="2dp"/>
+                                    <GridLayout
+                                        android:id="@+id/grid_tanggal"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:columnCount="7"/>
+                                </LinearLayout>
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <!-- Catatan -->
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/card_catatan"
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:layout_marginBottom="10dp"
+                            app:cardCornerRadius="12dp"
+                            app:cardBackgroundColor="@android:color/white"
+                            app:cardElevation="0dp">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal"
+                                android:paddingHorizontal="16dp"
+                                android:gravity="center_vertical">
+                                <ImageView
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:src="@drawable/ic_catatan"
+                                    android:layout_marginEnd="12dp"/>
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Catatan"
+                                        android:textSize="11sp"
+                                        android:textColor="#4A6FA5"/>
+                                    <TextView
+                                        android:id="@+id/tv_catatan"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Tambah catatan..."
+                                        android:textSize="14sp"
+                                        android:textColor="#AAAAAA"/>
+                                </LinearLayout>
+                                <ImageView
+                                    android:layout_width="20dp"
+                                    android:layout_height="20dp"
+                                    android:src="@drawable/ic_chevron_down"/>
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                        <!-- Sumber Dana -->
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/card_sumber_dana"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:cardCornerRadius="12dp"
+                            app:cardBackgroundColor="@android:color/white"
+                            app:cardElevation="0dp">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+                                <LinearLayout
+                                    android:id="@+id/ll_sumber_dana_header"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="56dp"
+                                    android:orientation="horizontal"
+                                    android:paddingHorizontal="16dp"
+                                    android:gravity="center_vertical"
+                                    android:background="?attr/selectableItemBackground"
+                                    android:clickable="true"
+                                    android:focusable="true">
+                                    <ImageView
+                                        android:layout_width="24dp"
+                                        android:layout_height="24dp"
+                                        android:src="@drawable/ic_wallet"
+                                        android:layout_marginEnd="12dp"/>
+                                    <LinearLayout
+                                        android:layout_width="0dp"
+                                        android:layout_height="wrap_content"
+                                        android:layout_weight="1"
+                                        android:orientation="vertical">
+                                        <TextView
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="Sumber Dana"
+                                            android:textSize="11sp"
+                                            android:textColor="#4A6FA5"/>
+                                        <TextView
+                                            android:id="@+id/tv_sumber_dana"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:text="Tunai"
+                                            android:textSize="14sp"
+                                            android:textColor="#1A1A2E"/>
+                                    </LinearLayout>
+                                    <ImageView
+                                        android:id="@+id/iv_chevron_sumber_dana"
+                                        android:layout_width="20dp"
+                                        android:layout_height="20dp"
+                                        android:src="@drawable/ic_chevron_down"/>
+                                </LinearLayout>
+                                <View
+                                    android:id="@+id/divider_sumber_dana"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="1dp"
+                                    android:background="#F0EDE8"
+                                    android:visibility="gone"/>
+                                <LinearLayout
+                                    android:id="@+id/ll_sumber_dana_options"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:visibility="gone"/>
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                    </LinearLayout>
+
+                    <!-- FORM TRANSFER -->
+                    <LinearLayout
+                        android:id="@+id/ll_form_transfer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone">
+
+                        <!-- Kartu Dompet Asal & Tujuan -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="16dp">
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/card_dompet_asal"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                app:cardCornerRadius="12dp"
+                                app:cardBackgroundColor="@android:color/white"
+                                app:cardElevation="0dp"
+                                android:foreground="?attr/selectableItemBackground"
+                                android:clickable="true"
+                                android:focusable="true">
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:gravity="center"
+                                    android:padding="16dp">
+                                    <ImageView
+                                        android:layout_width="56dp"
+                                        android:layout_height="56dp"
+                                        android:src="@drawable/ic_wallet"
+                                        android:scaleType="fitCenter"
+                                        android:layout_marginBottom="8dp"/>
+                                    <TextView
+                                        android:id="@+id/tv_dompet_asal"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Silakan pilih dompet"
+                                        android:textSize="12sp"
+                                        android:textColor="#888888"
+                                        android:gravity="center"/>
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="→"
+                                android:textSize="24sp"
+                                android:textColor="#4A6FA5"
+                                android:layout_marginHorizontal="8dp"/>
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/card_dompet_tujuan"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                app:cardCornerRadius="12dp"
+                                app:cardBackgroundColor="@android:color/white"
+                                app:cardElevation="0dp"
+                                android:foreground="?attr/selectableItemBackground"
+                                android:clickable="true"
+                                android:focusable="true">
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical"
+                                    android:gravity="center"
+                                    android:padding="16dp">
+                                    <ImageView
+                                        android:layout_width="56dp"
+                                        android:layout_height="56dp"
+                                        android:src="@drawable/ic_wallet"
+                                        android:scaleType="fitCenter"
+                                        android:layout_marginBottom="8dp"/>
+                                    <TextView
+                                        android:id="@+id/tv_dompet_tujuan"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Silakan pilih dompet"
+                                        android:textSize="12sp"
+                                        android:textColor="#888888"
+                                        android:gravity="center"/>
+                                </LinearLayout>
+                            </androidx.cardview.widget.CardView>
+                        </LinearLayout>
+
+                        <!-- Catatan Transfer -->
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/card_catatan_transfer"
+                            android:layout_width="match_parent"
+                            android:layout_height="56dp"
+                            android:layout_marginBottom="16dp"
+                            app:cardCornerRadius="12dp"
+                            app:cardBackgroundColor="@android:color/white"
+                            app:cardElevation="0dp">
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal"
+                                android:paddingHorizontal="16dp"
+                                android:gravity="center_vertical">
+                                <ImageView
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:src="@drawable/ic_catatan"
+                                    android:layout_marginEnd="12dp"/>
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:orientation="vertical">
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Catatan"
+                                        android:textSize="11sp"
+                                        android:textColor="#4A6FA5"/>
+                                    <TextView
+                                        android:id="@+id/tv_catatan_transfer"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Tambah catatan..."
+                                        android:textSize="14sp"
+                                        android:textColor="#AAAAAA"/>
+                                </LinearLayout>
+                            </LinearLayout>
+                        </androidx.cardview.widget.CardView>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </ScrollView>
+
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <!-- STATE TERCATAT — overlay di atas card form              -->
+            <!-- ═══════════════════════════════════════════════════════ -->
+            <LinearLayout
+                android:id="@+id/ll_state_tercatat"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
                 android:gravity="center"
-                android:layout_marginBottom="4dp"/>
+                android:background="#D6D0C4"
+                android:visibility="gone">
 
-            <TextView
-                android:id="@+id/tv_nominal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Rp 0"
-                android:textSize="32sp"
-                android:textStyle="bold"
-                android:textColor="#1A1A2E"
-                android:gravity="center"
-                android:layout_marginBottom="20dp"/>
+                <!-- Tombol X tutup / transaksi baru -->
+                <ImageView
+                    android:id="@+id/iv_close_tercatat"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:src="@drawable/ic_back"
+                    android:rotation="0"
+                    android:padding="4dp"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"/>
 
-            <!-- Kategori -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_kategori"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginBottom="10dp"
-                app:cardCornerRadius="12dp"
-                app:cardBackgroundColor="@android:color/white"
-                app:cardElevation="0dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="16dp"
-                    android:gravity="center_vertical">
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_kategori"
-                        android:layout_marginEnd="12dp"/>
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Kategori"
-                            android:textSize="11sp"
-                            android:textColor="#4A6FA5"/>
-                        <TextView
-                            android:id="@+id/tv_kategori"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Makanan"
-                            android:textSize="14sp"
-                            android:textColor="#1A1A2E"/>
-                    </LinearLayout>
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_chevron_down"/>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                <!-- Icon centang besar -->
+                <ImageView
+                    android:id="@+id/iv_check_tercatat"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_check_green"
+                    android:layout_marginBottom="16dp"/>
 
-            <!-- Tanggal -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_tanggal"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginBottom="10dp"
-                app:cardCornerRadius="12dp"
-                app:cardBackgroundColor="@android:color/white"
-                app:cardElevation="0dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="16dp"
-                    android:gravity="center_vertical">
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_tanggal"
-                        android:layout_marginEnd="12dp"/>
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Tanggal"
-                            android:textSize="11sp"
-                            android:textColor="#4A6FA5"/>
-                        <TextView
-                            android:id="@+id/tv_tanggal"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Hari ini"
-                            android:textSize="14sp"
-                            android:textColor="#1A1A2E"/>
-                    </LinearLayout>
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_chevron_down"/>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                <!-- Teks TERCATAT -->
+                <TextView
+                    android:id="@+id/tv_label_tercatat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PENGELUARAN TERCATAT"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#1A1A2E"
+                    android:layout_marginBottom="8dp"/>
 
-            <!-- Catatan -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_catatan"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginBottom="10dp"
-                app:cardCornerRadius="12dp"
-                app:cardBackgroundColor="@android:color/white"
-                app:cardElevation="0dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="16dp"
-                    android:gravity="center_vertical">
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_catatan"
-                        android:layout_marginEnd="12dp"/>
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Catatan"
-                            android:textSize="11sp"
-                            android:textColor="#4A6FA5"/>
-                        <TextView
-                            android:id="@+id/tv_catatan"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Tambah catatan..."
-                            android:textSize="14sp"
-                            android:textColor="#1A1A2E"/>
-                    </LinearLayout>
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_chevron_down"/>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                <!-- Nominal yang disimpan -->
+                <TextView
+                    android:id="@+id/tv_nominal_tercatat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rp 0"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="#4A6FA5"
+                    android:layout_marginBottom="4dp"/>
 
-            <!-- Sumber Dana -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/card_sumber_dana"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                app:cardCornerRadius="12dp"
-                app:cardBackgroundColor="@android:color/white"
-                app:cardElevation="0dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="16dp"
-                    android:gravity="center_vertical">
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_wallet"
-                        android:layout_marginEnd="12dp"/>
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Sumber Dana"
-                            android:textSize="11sp"
-                            android:textColor="#4A6FA5"/>
-                        <TextView
-                            android:id="@+id/tv_sumber_dana"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Tunai"
-                            android:textSize="14sp"
-                            android:textColor="#1A1A2E"/>
-                    </LinearLayout>
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_chevron_down"/>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                <!-- Catatan yang disimpan -->
+                <TextView
+                    android:id="@+id/tv_catatan_tercatat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textSize="13sp"
+                    android:textColor="#888888"
+                    android:gravity="center"
+                    android:paddingHorizontal="24dp"/>
 
-        </LinearLayout>
+            </LinearLayout>
+
+        </FrameLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Numpad -->
-    <GridLayout
-        android:id="@+id/ll_numpad"
+    <!-- AREA BAWAH -->
+    <LinearLayout
+        android:id="@+id/ll_bottom_area"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:columnCount="4"
-        android:layout_marginHorizontal="8dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/card_form"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Row 1 -->
-        <Button android:id="@+id/btn_1" android:layout_width="0dp"
-            android:layout_columnWeight="1" android:layout_height="56dp"
-            android:text="1" android:textSize="18sp"
-            android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-        <Button android:id="@+id/btn_2" android:layout_width="0dp"
-            android:layout_columnWeight="1" android:layout_height="56dp"
-            android:text="2" android:textSize="18sp"
-            android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-        <Button android:id="@+id/btn_3" android:layout_width="0dp"
-            android:layout_columnWeight="1" android:layout_height="56dp"
-            android:text="3" android:textSize="18sp"
-            android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-        <Button android:id="@+id/btn_minus" android:layout_width="0dp"
-            android:layout_columnWeight="1" android:layout_height="56dp"
-            android:text="-" android:textSize="22sp"
-            android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
+        <!-- NUMPAD ANGKA -->
+        <GridLayout
+            android:id="@+id/ll_numpad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="4"
+            android:layout_marginHorizontal="8dp"
+            android:visibility="visible">
 
-        <!-- Row 2 -->
-        <Button android:id="@+id/btn_4" android:layout_width="0dp"
-            android:layout_columnWeight="1" android:layout_height="56dp"
-            android:text="4" android:textSize="18sp"
-            android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-        <Button android:id="@+id/btn_5" android:layout_width="0dp"
-            android:layout_columnWeight="1" android:layout_height="56dp"
-            android:text="5" android:textSize="18sp"
-            android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-        <Button android:id="@+id/btn_6" android:layout_width="0dp"
-            android:layout_columnWeight="1" android:layout_height="56dp"
-            android:text="6" android:textSize="18sp"
-            android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-        <Button android:id="@+id/btn_enter" android:layout_width="0dp"
-            android:layout_columnWeight="1" android:layout_height="56dp"
-            android:text="⏎" android:textSize="22sp"
-            android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
+            <Button android:id="@+id/btn_1" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="1" android:textSize="18sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
+            <Button android:id="@+id/btn_2" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="2" android:textSize="18sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
+            <Button android:id="@+id/btn_3" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="3" android:textSize="18sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
+            <Button android:id="@+id/btn_minus" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="-" android:textSize="22sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
+            <Button android:id="@+id/btn_4" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="4" android:textSize="18sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
+            <Button android:id="@+id/btn_5" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="5" android:textSize="18sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
+            <Button android:id="@+id/btn_6" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="6" android:textSize="18sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
+            <Button android:id="@+id/btn_enter" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="⏎" android:textSize="22sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
+            <Button android:id="@+id/btn_7" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="7" android:textSize="18sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
+            <Button android:id="@+id/btn_8" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="8" android:textSize="18sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
+            <Button android:id="@+id/btn_9" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="9" android:textSize="18sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
+            <Button android:id="@+id/btn_hapus" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="⌫" android:textSize="22sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
+            <Button android:id="@+id/btn_bintang" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="ABC" android:textSize="13sp" android:textStyle="bold" android:backgroundTint="@android:color/transparent" android:textColor="#4A6FA5"/>
+            <Button android:id="@+id/btn_0" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="0" android:textSize="18sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
+            <Button android:id="@+id/btn_plus" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="+" android:textSize="22sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
+            <Button android:id="@+id/btn_simpan" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="SIMPAN&#10;TRANSAKSI" android:textSize="8sp" android:textStyle="bold" android:backgroundTint="#4A6FA5" android:textColor="@android:color/white"/>
+        </GridLayout>
 
-        <!-- Row 3 -->
-        <Button android:id="@+id/btn_7" android:layout_width="0dp"
-            android:layout_columnWeight="1" android:layout_height="56dp"
-            android:text="7" android:textSize="18sp"
-            android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-        <Button android:id="@+id/btn_8" android:layout_width="0dp"
-            android:layout_columnWeight="1" android:layout_height="56dp"
-            android:text="8" android:textSize="18sp"
-            android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-        <Button android:id="@+id/btn_9" android:layout_width="0dp"
-            android:layout_columnWeight="1" android:layout_height="56dp"
-            android:text="9" android:textSize="18sp"
-            android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-        <Button android:id="@+id/btn_hapus" android:layout_width="0dp"
-            android:layout_columnWeight="1" android:layout_height="56dp"
-            android:text="⌫" android:textSize="22sp"
-            android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
+        <!-- CUSTOM KEYBOARD HURUF -->
+        <LinearLayout
+            android:id="@+id/ll_keyboard_huruf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#EDE8DC"
+            android:paddingTop="4dp"
+            android:visibility="gone">
 
-        <!-- Row 4 -->
-        <Button android:id="@+id/btn_bintang" android:layout_width="0dp"
-            android:layout_columnWeight="1" android:layout_height="56dp"
-            android:text="*#" android:textSize="14sp"
-            android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-        <Button android:id="@+id/btn_0" android:layout_width="0dp"
-            android:layout_columnWeight="1" android:layout_height="56dp"
-            android:text="0" android:textSize="18sp"
-            android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-        <Button android:id="@+id/btn_plus" android:layout_width="0dp"
-            android:layout_columnWeight="1" android:layout_height="56dp"
-            android:text="+" android:textSize="22sp"
-            android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-        <Button android:id="@+id/btn_simpan" android:layout_width="0dp"
-            android:layout_columnWeight="1" android:layout_height="56dp"
-            android:text="SIMPAN"
-            android:textSize="11sp"
+            <TextView
+                android:id="@+id/tv_preview_catatan"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:hint="Tulis catatan..."
+                android:textSize="14sp"
+                android:textColor="#1A1A2E"
+                android:textColorHint="#AAAAAA"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="16dp"
+                android:background="#F0EDE8"/>
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="10"
+                android:layout_marginHorizontal="4dp">
+                <Button android:id="@+id/kb_q" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="Q" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_w" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="W" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_e" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="E" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_r" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="R" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_t" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="T" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_y" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="Y" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_u" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="U" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_i" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="I" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_o" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="O" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_p" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="P" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+            </GridLayout>
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="9"
+                android:layout_marginHorizontal="20dp">
+                <Button android:id="@+id/kb_a" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="A" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_s" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="S" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_d" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="D" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_f" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="F" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_g" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="G" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_h" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="H" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_j" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="J" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_k" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="K" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_l" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="L" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+            </GridLayout>
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="9"
+                android:layout_marginHorizontal="4dp">
+                <Button android:id="@+id/kb_shift" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="⇧" android:textSize="16sp" android:backgroundTint="#C8C4BA" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_z" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="Z" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_x" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="X" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_c" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="C" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_v" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="V" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_b" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="B" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_n" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="N" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_m" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="M" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_hapus" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="⌫" android:textSize="16sp" android:backgroundTint="#C8C4BA" android:textColor="#1A1A2E" android:padding="0dp"/>
+            </GridLayout>
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="8"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginBottom="4dp">
+                <Button android:id="@+id/kb_123" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="123" android:textSize="12sp" android:backgroundTint="#C8C4BA" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_spasi" android:layout_width="0dp" android:layout_columnWeight="5" android:layout_height="48dp" android:text="SPASI" android:textSize="12sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_selesai" android:layout_width="0dp" android:layout_columnWeight="2" android:layout_height="48dp" android:text="SELESAI" android:textSize="11sp" android:textStyle="bold" android:backgroundTint="#4A6FA5" android:textColor="@android:color/white" android:padding="0dp"/>
+            </GridLayout>
+
+        </LinearLayout>
+
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <!-- Tombol SELESAI — muncul di tab Transfer sebelum simpan             -->
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <Button
+            android:id="@+id/btn_selesai_transfer"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="SELESAI"
+            android:textSize="14sp"
             android:textStyle="bold"
+            android:textColor="@android:color/white"
             android:backgroundTint="#4A6FA5"
-            android:textColor="@android:color/white"/>
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
+            android:visibility="gone"/>
 
-    </GridLayout>
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <!-- Tombol Aksi Catatan — muncul setelah PENGELUARAN / PEMASUKAN       -->
+        <!-- tercatat                                                            -->
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <LinearLayout
+            android:id="@+id/ll_aksi_catatan"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+            <Button
+                android:id="@+id/btn_tambah_catatan"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Tambah Catatan"
+                android:textSize="13sp"
+                android:textColor="#1A1A2E"
+                android:backgroundTint="#C8C4BA"/>
+            <Button
+                android:id="@+id/btn_hapus_catatan"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Hapus Catatan"
+                android:textSize="13sp"
+                android:textColor="#F44336"
+                android:backgroundTint="#C8C4BA"/>
+        </LinearLayout>
+
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <!-- Tombol Aksi Transfer — muncul setelah TRANSFER TERCATAT            -->
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <LinearLayout
+            android:id="@+id/ll_aksi_transfer"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+            <Button
+                android:id="@+id/btn_tambah_transfer"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Tambah Transfer"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="#1A1A2E"
+                android:backgroundTint="#9CB4C5"/>
+            <Button
+                android:id="@+id/btn_hapus_transfer"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Hapus Transfer"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="#F44336"
+                android:backgroundTint="#C8C4BA"/>
+        </LinearLayout>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

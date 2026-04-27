@@ -2,6 +2,7 @@ package com.example.appmoneego.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appmoneego.data.entity.Transaksi
 import com.example.appmoneego.databinding.ItemHeaderTransaksiBinding
@@ -10,7 +11,7 @@ import com.example.appmoneego.utils.CurrencyFormatter
 
 class TransaksiAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    // sealed class untuk tipe item di list
+    // ── Tipe item ──────────────────────────────────────────────────────────────
     sealed class TransaksiItem {
         data class Header(val label: String, val jenis: String) : TransaksiItem()
         data class Item(val transaksi: Transaksi) : TransaksiItem()
@@ -18,142 +19,146 @@ class TransaksiAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
         const val TYPE_HEADER = 0
-        const val TYPE_ITEM = 1
+        const val TYPE_ITEM   = 1
     }
 
     private var semuaData: List<Transaksi> = emptyList()
     private var displayList: MutableList<TransaksiItem> = mutableListOf()
 
-    // lacak mana header yang di-collapse
+    // Header yang di-collapse
     private val collapsedHeaders = mutableSetOf<String>()
 
+    // ── Submit data dengan DiffUtil agar efisien ───────────────────────────────
     fun submitList(list: List<Transaksi>) {
         semuaData = list
         rebuildDisplayList()
     }
 
-    // Fungsi untuk ambil Transaksi dari position tertentu
-    // Return null kalau position itu adalah Header
+    // Ambil Transaksi dari posisi tertentu (null jika Header)
     fun getItemAt(position: Int): Transaksi? {
-        val item = displayList.getOrNull(position) ?: return null
-        return when (item) {
-            is TransaksiItem.Item -> item.transaksi
+        return when (val item = displayList.getOrNull(position)) {
+            is TransaksiItem.Item   -> item.transaksi
             is TransaksiItem.Header -> null
+            null                    -> null
         }
     }
 
     private fun rebuildDisplayList() {
-        displayList.clear()
+        val newList = mutableListOf<TransaksiItem>()
 
-        val pemasukan = semuaData.filter { it.jenis == "PEMASUKAN" }
+        val pemasukan   = semuaData.filter { it.jenis == "PEMASUKAN" }
         val pengeluaran = semuaData.filter { it.jenis == "PENGELUARAN" }
 
-        // tambah header Pemasukan
+        // Header Pemasukan
         if (pemasukan.isNotEmpty()) {
-            displayList.add(TransaksiItem.Header("Pemasukan", "PEMASUKAN"))
-            // tambah item hanya kalau header tidak di-collapse
+            newList.add(TransaksiItem.Header("Pemasukan", "PEMASUKAN"))
             if (!collapsedHeaders.contains("PEMASUKAN")) {
-                pemasukan.forEach { displayList.add(TransaksiItem.Item(it)) }
+                pemasukan.forEach { newList.add(TransaksiItem.Item(it)) }
             }
         }
 
-        // tambah header Pengeluaran
+        // Header Pengeluaran
         if (pengeluaran.isNotEmpty()) {
-            displayList.add(TransaksiItem.Header("Pengeluaran", "PENGELUARAN"))
+            newList.add(TransaksiItem.Header("Pengeluaran", "PENGELUARAN"))
             if (!collapsedHeaders.contains("PENGELUARAN")) {
-                pengeluaran.forEach { displayList.add(TransaksiItem.Item(it)) }
+                pengeluaran.forEach { newList.add(TransaksiItem.Item(it)) }
             }
         }
 
-        notifyDataSetChanged()
+        // DiffUtil agar animasi update lebih smooth
+        val diff = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun getOldListSize() = displayList.size
+            override fun getNewListSize() = newList.size
+            override fun areItemsTheSame(oldPos: Int, newPos: Int): Boolean {
+                val old = displayList[oldPos]; val new = newList[newPos]
+                if (old is TransaksiItem.Header && new is TransaksiItem.Header)
+                    return old.jenis == new.jenis
+                if (old is TransaksiItem.Item && new is TransaksiItem.Item)
+                    return old.transaksi.id == new.transaksi.id
+                return false
+            }
+            override fun areContentsTheSame(oldPos: Int, newPos: Int) =
+                displayList[oldPos] == newList[newPos]
+        })
+
+        displayList = newList
+        diff.dispatchUpdatesTo(this)
     }
 
-    // --- ViewHolder Header ---
+    // ── ViewHolder Header ──────────────────────────────────────────────────────
     inner class HeaderViewHolder(private val binding: ItemHeaderTransaksiBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(header: TransaksiItem.Header) {
             binding.tvHeaderLabel.text = header.label
 
-            // ubah icon sesuai collapsed/expanded
             val isCollapsed = collapsedHeaders.contains(header.jenis)
             binding.ivCollapse.rotation = if (isCollapsed) -90f else 0f
 
-            // klik header → toggle collapse
             binding.root.setOnClickListener {
-                if (isCollapsed) {
-                    collapsedHeaders.remove(header.jenis)
-                } else {
-                    collapsedHeaders.add(header.jenis)
-                }
+                if (isCollapsed) collapsedHeaders.remove(header.jenis)
+                else collapsedHeaders.add(header.jenis)
                 rebuildDisplayList()
             }
         }
     }
 
-    // --- ViewHolder Item ---
+    // ── ViewHolder Item ────────────────────────────────────────────────────────
     inner class ItemViewHolder(private val binding: ItemTransaksiBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(transaksi: Transaksi) {
             binding.tvKategori.text = transaksi.kategori
-            binding.tvCatatan.text = transaksi.catatan.ifEmpty { "-" }
+            binding.tvCatatan.text  = transaksi.catatan.ifEmpty { "-" }
 
             val formatted = CurrencyFormatter.format(transaksi.nominal)
 
             if (transaksi.jenis == "PEMASUKAN") {
-                binding.tvNominal.text = "+ Rp. $formatted"
-                binding.tvNominal.setTextColor(
-                    binding.root.context.getColor(android.R.color.holo_green_dark)
-                )
+                binding.tvNominal.text = "+ $formatted"
+                binding.tvNominal.setTextColor(0xFF4CAF50.toInt())      // hijau
                 binding.tvNominalDetail.text = "+ $formatted"
-                binding.tvNominalDetail.setTextColor(
-                    binding.root.context.getColor(android.R.color.holo_green_dark)
-                )
+                binding.tvNominalDetail.setTextColor(0xFF4CAF50.toInt())
             } else {
-                binding.tvNominal.text = "- Rp. $formatted"
-                binding.tvNominal.setTextColor(
-                    binding.root.context.getColor(android.R.color.holo_red_dark)
-                )
+                binding.tvNominal.text = "- $formatted"
+                binding.tvNominal.setTextColor(0xFFF44336.toInt())      // merah
                 binding.tvNominalDetail.text = "- $formatted"
-                binding.tvNominalDetail.setTextColor(
-                    binding.root.context.getColor(android.R.color.holo_red_dark)
-                )
+                binding.tvNominalDetail.setTextColor(0xFFF44336.toInt())
             }
 
-            // sumber dana dari dompetId (sementara tampilkan sebagai "Bank")
-            binding.tvSumberDana.text = "Bank"
+            // Sumber dana berdasarkan dompetId
+            binding.tvSumberDana.text = when (transaksi.dompetId) {
+                2    -> "E-Wallet"
+                3    -> "Bank"
+                else -> "Tunai"
+            }
         }
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return when (displayList[position]) {
-            is TransaksiItem.Header -> TYPE_HEADER
-            is TransaksiItem.Item -> TYPE_ITEM
-        }
+    // ── Override wajib ─────────────────────────────────────────────────────────
+    override fun getItemViewType(position: Int) = when (displayList[position]) {
+        is TransaksiItem.Header -> TYPE_HEADER
+        is TransaksiItem.Item   -> TYPE_ITEM
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            TYPE_HEADER -> {
-                val binding = ItemHeaderTransaksiBinding.inflate(
+            TYPE_HEADER -> HeaderViewHolder(
+                ItemHeaderTransaksiBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
                 )
-                HeaderViewHolder(binding)
-            }
-            else -> {
-                val binding = ItemTransaksiBinding.inflate(
+            )
+            else -> ItemViewHolder(
+                ItemTransaksiBinding.inflate(
                     LayoutInflater.from(parent.context), parent, false
                 )
-                ItemViewHolder(binding)
-            }
+            )
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (val item = displayList[position]) {
             is TransaksiItem.Header -> (holder as HeaderViewHolder).bind(item)
-            is TransaksiItem.Item -> (holder as ItemViewHolder).bind(item.transaksi)
+            is TransaksiItem.Item   -> (holder as ItemViewHolder).bind(item.transaksi)
         }
     }
 
