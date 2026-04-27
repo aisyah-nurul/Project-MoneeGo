@@ -63,9 +63,14 @@
         android:name="com.example.appmoneego.ui.pengaturan.PengaturanFragment"
         android:label="Pengaturan"/>
 
+    <!-- Tambah action ke riwayat -->
     <fragment
         android:id="@+id/tambahTransaksiFragment"
         android:name="com.example.appmoneego.ui.tambahtransaksi.TambahTransaksiFragment"
-        android:label="Tambah Transaksi"/>
+        android:label="Tambah Transaksi">
+        <action
+            android:id="@+id/action_tambahTransaksi_to_riwayat"
+            app:destination="@id/riwayatTransaksiFragment"/>
+    </fragment>
 
 </navigation>

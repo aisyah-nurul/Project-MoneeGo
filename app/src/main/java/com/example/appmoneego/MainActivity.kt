@@ -6,11 +6,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.appmoneego.databinding.ActivityMainBinding
 
-private val databinding: Any
-    get() {
-        TODO()
-    }
-
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -24,6 +19,20 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
 
+        // Hubungkan bottom nav dengan nav controller
         binding.bottomNavigationView.setupWithNavController(navController)
+
+        // FAB → navigasi ke Tambah Transaksi
+        binding.fabTambah.setOnClickListener {
+            navController.navigate(R.id.tambahTransaksiFragment)
+        }
+
+        // Sembunyikan FAB saat di halaman Tambah Transaksi
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.tambahTransaksiFragment -> binding.fabTambah.hide()
+                else -> binding.fabTambah.show()
+            }
+        }
     }
 }
