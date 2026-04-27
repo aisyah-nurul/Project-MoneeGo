@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appmoneego.adapter.TransaksiAdapter
 import com.example.appmoneego.databinding.FragmentRiwayatTransaksiBinding
+import com.example.appmoneego.utils.DateUtils
 import com.example.appmoneego.viewmodel.TransaksiViewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -27,6 +28,9 @@ class RiwayatTransaksiFragment : Fragment() {
     private val viewModel: TransaksiViewModel by viewModels()
     private lateinit var adapter: TransaksiAdapter
     private var kalenderVisible = false
+
+    // State tanggal yang dipilih (default hari ini)
+    private var selectedDateMillis: Long = System.currentTimeMillis()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,12 +44,11 @@ class RiwayatTransaksiFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupAdapter()
-        setupObserver()
         setupSwipeToDelete()
         setupKalender()
 
-        val sdf = SimpleDateFormat("EEEE, dd MMMM yyyy", Locale("id"))
-        binding.tvTanggalHeader.text = sdf.format(Date())
+        // Load transaksi hari ini saat pertama buka
+        loadTransaksiByTanggal(selectedDateMillis)
     }
 
     // ─── Setup Adapter ────────────────────────────────────────────────────────
@@ -56,15 +59,21 @@ class RiwayatTransaksiFragment : Fragment() {
         binding.rvTransaksi.adapter = adapter
     }
 
-    // ─── Observer ─────────────────────────────────────────────────────────────
+    // ─── Load transaksi berdasarkan tanggal ───────────────────────────────────
 
-    private fun setupObserver() {
-        viewModel.allTransaksi.observe(viewLifecycleOwner) { list ->
+    private fun loadTransaksiByTanggal(timeMillis: Long) {
+        val start = DateUtils.getStartOfDay(timeMillis)
+        val end   = DateUtils.getEndOfDay(timeMillis)
+
+        // Update label tanggal di header
+        binding.tvTanggalHeader.text = DateUtils.formatTanggal(timeMillis)
+
+        viewModel.getByDateRange(start, end).observe(viewLifecycleOwner) { list ->
             adapter.submitList(list)
 
             val totalMasuk  = list.filter { it.jenis == "PEMASUKAN" }.sumOf { it.nominal }
             val totalKeluar = list.filter { it.jenis == "PENGELUARAN" }.sumOf { it.nominal }
-            val total = totalMasuk + totalKeluar
+            val total       = totalMasuk + totalKeluar
 
             if (total > 0) {
                 val persenMasuk  = ((totalMasuk / total) * 100).toInt()
@@ -74,6 +83,11 @@ class RiwayatTransaksiFragment : Fragment() {
                 binding.tvPersenKeluar.text    = " Pengeluaran $persenKeluar%"
                 binding.tvJenisFilter.text     = if (totalKeluar >= totalMasuk)
                     "Pengeluaran" else "Pemasukan"
+            } else {
+                binding.progressRatio.progress = 50
+                binding.tvPersenMasuk.text     = " Pemasukan 0%"
+                binding.tvPersenKeluar.text    = " Pengeluaran 0%"
+                binding.tvJenisFilter.text     = "Pengeluaran"
             }
         }
     }
@@ -92,12 +106,10 @@ class RiwayatTransaksiFragment : Fragment() {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
-
-                // Cek apakah item yang di-swipe adalah TransaksiItem.Item (bukan Header)
                 val item = adapter.getItemAt(position)
 
                 if (item == null) {
-                    // Kalau header yang ke-swipe, kembalikan saja
+                    // Header di-swipe → kembalikan
                     adapter.notifyItemChanged(position)
                     return
                 }
@@ -117,7 +129,7 @@ class RiwayatTransaksiFragment : Fragment() {
                     .show()
             }
 
-            // Background merah + tulisan Hapus saat swipe
+            // Background merah + teks "Hapus" saat swipe
             override fun onChildDraw(
                 c: Canvas, recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder,
@@ -143,18 +155,14 @@ class RiwayatTransaksiFragment : Fragment() {
                 val textY = (itemView.top + itemView.bottom) / 2f + 14f
                 c.drawText("Hapus", textX, textY, paint)
 
-                super.onChildDraw(
-                    c, recyclerView, viewHolder,
-                    dX, dY, actionState, isCurrentlyActive
-                )
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
             }
 
-            // Disable swipe untuk Header — hanya Item yang bisa di-swipe
+            // Header tidak bisa di-swipe
             override fun getSwipeDirs(
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder
             ): Int {
-                // Kalau ViewHolder-nya HeaderViewHolder, tidak bisa di-swipe
                 if (viewHolder is TransaksiAdapter.HeaderViewHolder) return 0
                 return super.getSwipeDirs(recyclerView, viewHolder)
             }
@@ -175,18 +183,14 @@ class RiwayatTransaksiFragment : Fragment() {
         binding.calendarView.setOnDateChangeListener { _, year, month, day ->
             val cal = Calendar.getInstance()
             cal.set(year, month, day, 0, 0, 0)
-            val startOfDay = cal.timeInMillis
-            cal.set(Calendar.HOUR_OF_DAY, 23)
-            cal.set(Calendar.MINUTE, 59)
-            val endOfDay = cal.timeInMillis
+            cal.set(Calendar.MILLISECOND, 0)
+            selectedDateMillis = cal.timeInMillis
 
-            viewModel.getByDateRange(startOfDay, endOfDay)
-                .observe(viewLifecycleOwner) { list ->
-                    adapter.submitList(list)
-                }
+            // Sembunyikan kalender setelah pilih
+            kalenderVisible = false
+            binding.cardKalender.visibility = View.GONE
 
-            val sdfHeader = SimpleDateFormat("EEEE, dd MMMM yyyy", Locale("id"))
-            binding.tvTanggalHeader.text = sdfHeader.format(Date(startOfDay))
+            loadTransaksiByTanggal(selectedDateMillis)
         }
     }
 
