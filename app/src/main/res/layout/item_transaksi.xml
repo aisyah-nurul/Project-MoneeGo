@@ -10,41 +10,33 @@
     android:layout_marginBottom="8dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_header_interaktif"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#F2F2F2"
+        android:background="#F0F0F0"
         android:paddingHorizontal="16dp"
-        android:paddingVertical="8dp">
+        android:paddingVertical="8dp"
+        android:clickable="true"
+        android:focusable="true">
 
         <ImageView
-            android:id="@+id/iv_arrow_date"
+            android:id="@+id/iv_arrow_collapse"
             android:layout_width="10dp"
             android:layout_height="10dp"
             android:src="@drawable/ic_chevron_down"
-            app:tint="@color/expense_red"
-            android:rotation="180"
+            app:tint="@color/text_primary"
+            android:rotation="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <TextView
-            android:id="@+id/tv_tanggal_transaksi"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="11sp"
-            android:textColor="@color/text_secondary"
-            android:layout_marginStart="6dp"
-            app:layout_constraintStart_toEndOf="@id/iv_arrow_date"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="Tanggal"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/card_item_transaksi"
+        android:id="@+id/cl_card_utama"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/expense_red_light"
+        android:background="#F5F5F5"
         android:padding="16dp">
 
         <ImageView
@@ -60,9 +52,9 @@
             android:id="@+id/tv_kategori"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="15sp"
+            android:textSize="14sp"
             android:textStyle="bold"
-            android:textColor="@color/expense_red"
+            android:textColor="@color/text_primary"
             android:layout_marginStart="12dp"
             app:layout_constraintStart_toEndOf="@id/iv_kategori_icon"
             app:layout_constraintEnd_toStartOf="@id/tv_nominal"
@@ -74,29 +66,29 @@
             android:id="@+id/tv_nominal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="15sp"
+            android:textSize="14sp"
             android:textStyle="bold"
-            android:textColor="@color/expense_red"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="Rp 0"/>
+            tools:text="Rp 0.000"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/card_detail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#D6D2CA"
+        android:background="#DCDCDC"
         android:paddingHorizontal="16dp"
-        android:paddingVertical="12dp">
+        android:paddingVertical="12dp"
+        android:visibility="visible">
 
         <TextView
             android:id="@+id/tv_catatan"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="13sp"
-            android:textColor="@color/text_primary"
+            android:textSize="12sp"
+            android:textColor="#333333"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toStartOf="@id/tv_sumber_dana"
@@ -106,9 +98,9 @@
             android:id="@+id/tv_sumber_dana"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
+            android:textSize="11sp"
             android:textStyle="bold"
-            android:textColor="@color/text_secondary"
+            android:textColor="#555555"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Sumber"/>
