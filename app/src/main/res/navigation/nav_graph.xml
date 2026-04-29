@@ -36,7 +36,12 @@
     <fragment
         android:id="@+id/riwayatTransaksiFragment"
         android:name="com.example.appmoneego.ui.riwayattransaksi.RiwayatTransaksiFragment"
-        android:label="Riwayat"/>
+        android:label="Riwayat">
+        <!--  Action ke halaman edit transaksi  -->
+        <action
+            android:id="@+id/action_riwayat_to_tambahTransaksi"
+            app:destination="@id/tambahTransaksiFragment"/>
+    </fragment>
 
     <fragment
         android:id="@+id/dompetFragment"
@@ -74,7 +79,6 @@
         <action
             android:id="@+id/action_tambahTransaksi_to_riwayat"
             app:destination="@id/riwayatTransaksiFragment"/>
-        <!-- ✅ Action Transfer → Dompet -->
         <action
             android:id="@+id/action_tambahTransaksi_to_dompet"
             app:destination="@id/dompetFragment"/>

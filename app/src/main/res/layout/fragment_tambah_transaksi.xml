@@ -49,10 +49,9 @@
             android:text="PENGELUARAN"
             android:textSize="13sp"
             android:textStyle="bold"
-            android:textColor="#1A1A2E"
+            android:textColor="#FFFFFF"
             android:gravity="center"
             android:paddingHorizontal="16dp"
-            android:background="@drawable/bg_tab_selected"
             android:layout_marginEnd="8dp"/>
 
         <TextView
@@ -61,22 +60,20 @@
             android:layout_height="36dp"
             android:text="PEMASUKAN"
             android:textSize="13sp"
-            android:textColor="#888888"
+            android:textColor="#6B8FA3"
             android:gravity="center"
             android:paddingHorizontal="16dp"
-            android:background="@android:color/transparent"
             android:layout_marginEnd="8dp"/>
 
         <TextView
             android:id="@+id/tab_riwayat"
-            android:layout_width="wrap_content"
+            android:layout_width="125dp"
             android:layout_height="36dp"
-            android:text="TRANSFER"
-            android:textSize="13sp"
-            android:textColor="#888888"
             android:gravity="center"
             android:paddingHorizontal="16dp"
-            android:background="@android:color/transparent"/>
+            android:text="TRANSFER"
+            android:textColor="#6B8FA3"
+            android:textSize="13sp" />
 
     </LinearLayout>
 
@@ -345,7 +342,8 @@
                                 android:layout_height="match_parent"
                                 android:orientation="horizontal"
                                 android:paddingHorizontal="16dp"
-                                android:gravity="center_vertical">
+                                android:gravity="center_vertical"
+                                android:background="?attr/selectableItemBackground">
                                 <ImageView
                                     android:layout_width="24dp"
                                     android:layout_height="24dp"
@@ -370,10 +368,6 @@
                                         android:textSize="14sp"
                                         android:textColor="#AAAAAA"/>
                                 </LinearLayout>
-                                <ImageView
-                                    android:layout_width="20dp"
-                                    android:layout_height="20dp"
-                                    android:src="@drawable/ic_chevron_down"/>
                             </LinearLayout>
                         </androidx.cardview.widget.CardView>
 
@@ -454,13 +448,13 @@
                         android:orientation="vertical"
                         android:visibility="gone">
 
-                        <!-- Kartu Dompet Asal & Tujuan -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
                             android:gravity="center_vertical"
                             android:layout_marginBottom="16dp">
+
                             <androidx.cardview.widget.CardView
                                 android:id="@+id/card_dompet_asal"
                                 android:layout_width="0dp"
@@ -546,13 +540,16 @@
                             android:layout_marginBottom="16dp"
                             app:cardCornerRadius="12dp"
                             app:cardBackgroundColor="@android:color/white"
-                            app:cardElevation="0dp">
+                            app:cardElevation="0dp"
+                            android:clickable="true"
+                            android:focusable="true">
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:orientation="horizontal"
                                 android:paddingHorizontal="16dp"
-                                android:gravity="center_vertical">
+                                android:gravity="center_vertical"
+                                android:background="?attr/selectableItemBackground">
                                 <ImageView
                                     android:layout_width="24dp"
                                     android:layout_height="24dp"
@@ -585,9 +582,8 @@
                 </LinearLayout>
             </ScrollView>
 
-            <!-- ═══════════════════════════════════════════════════════ -->
-            <!-- STATE TERCATAT — overlay di atas card form              -->
-            <!-- ═══════════════════════════════════════════════════════ -->
+            <!-- STATE TERCATAT -->
+            <!-- iv_close_tercatat (tombol back di tengah) sudah dihapus dari sini -->
             <LinearLayout
                 android:id="@+id/ll_state_tercatat"
                 android:layout_width="match_parent"
@@ -597,22 +593,6 @@
                 android:background="#D6D0C4"
                 android:visibility="gone">
 
-                <!-- Tombol X tutup / transaksi baru -->
-                <ImageView
-                    android:id="@+id/iv_close_tercatat"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/ic_back"
-                    android:rotation="0"
-                    android:padding="4dp"
-                    android:layout_gravity="end"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:clickable="true"
-                    android:focusable="true"/>
-
-                <!-- Icon centang besar -->
                 <ImageView
                     android:id="@+id/iv_check_tercatat"
                     android:layout_width="80dp"
@@ -620,7 +600,6 @@
                     android:src="@drawable/ic_check_green"
                     android:layout_marginBottom="16dp"/>
 
-                <!-- Teks TERCATAT -->
                 <TextView
                     android:id="@+id/tv_label_tercatat"
                     android:layout_width="wrap_content"
@@ -631,7 +610,6 @@
                     android:textColor="#1A1A2E"
                     android:layout_marginBottom="8dp"/>
 
-                <!-- Nominal yang disimpan -->
                 <TextView
                     android:id="@+id/tv_nominal_tercatat"
                     android:layout_width="wrap_content"
@@ -642,7 +620,6 @@
                     android:textColor="#4A6FA5"
                     android:layout_marginBottom="4dp"/>
 
-                <!-- Catatan yang disimpan -->
                 <TextView
                     android:id="@+id/tv_catatan_tercatat"
                     android:layout_width="wrap_content"
@@ -675,25 +652,102 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:columnCount="4"
-            android:layout_marginHorizontal="8dp"
+            android:background="#EDE8DC"
+            android:paddingHorizontal="4dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
             android:visibility="visible">
 
-            <Button android:id="@+id/btn_1" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="1" android:textSize="18sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-            <Button android:id="@+id/btn_2" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="2" android:textSize="18sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-            <Button android:id="@+id/btn_3" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="3" android:textSize="18sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-            <Button android:id="@+id/btn_minus" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="-" android:textSize="22sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-            <Button android:id="@+id/btn_4" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="4" android:textSize="18sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-            <Button android:id="@+id/btn_5" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="5" android:textSize="18sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-            <Button android:id="@+id/btn_6" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="6" android:textSize="18sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-            <Button android:id="@+id/btn_enter" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="⏎" android:textSize="22sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-            <Button android:id="@+id/btn_7" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="7" android:textSize="18sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-            <Button android:id="@+id/btn_8" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="8" android:textSize="18sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-            <Button android:id="@+id/btn_9" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="9" android:textSize="18sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-            <Button android:id="@+id/btn_hapus" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="⌫" android:textSize="22sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-            <Button android:id="@+id/btn_bintang" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="ABC" android:textSize="13sp" android:textStyle="bold" android:backgroundTint="@android:color/transparent" android:textColor="#4A6FA5"/>
-            <Button android:id="@+id/btn_0" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="0" android:textSize="18sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-            <Button android:id="@+id/btn_plus" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="+" android:textSize="22sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E"/>
-            <Button android:id="@+id/btn_simpan" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="56dp" android:text="SIMPAN&#10;TRANSAKSI" android:textSize="8sp" android:textStyle="bold" android:backgroundTint="#4A6FA5" android:textColor="@android:color/white"/>
+            <Button android:id="@+id/btn_1"
+                android:layout_width="0dp" android:layout_columnWeight="1"
+                android:layout_height="56dp" android:text="1" android:textSize="18sp"
+                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
+                android:layout_margin="2dp"/>
+            <Button android:id="@+id/btn_2"
+                android:layout_width="0dp" android:layout_columnWeight="1"
+                android:layout_height="56dp" android:text="2" android:textSize="18sp"
+                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
+                android:layout_margin="2dp"/>
+            <Button android:id="@+id/btn_3"
+                android:layout_width="0dp" android:layout_columnWeight="1"
+                android:layout_height="56dp" android:text="3" android:textSize="18sp"
+                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
+                android:layout_margin="2dp"/>
+            <Button android:id="@+id/btn_minus"
+                android:layout_width="0dp" android:layout_columnWeight="1"
+                android:layout_height="56dp" android:text="-" android:textSize="22sp"
+                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
+                android:layout_margin="2dp"/>
+
+            <Button android:id="@+id/btn_4"
+                android:layout_width="0dp" android:layout_columnWeight="1"
+                android:layout_height="56dp" android:text="4" android:textSize="18sp"
+                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
+                android:layout_margin="2dp"/>
+            <Button android:id="@+id/btn_5"
+                android:layout_width="0dp" android:layout_columnWeight="1"
+                android:layout_height="56dp" android:text="5" android:textSize="18sp"
+                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
+                android:layout_margin="2dp"/>
+            <Button android:id="@+id/btn_6"
+                android:layout_width="0dp" android:layout_columnWeight="1"
+                android:layout_height="56dp" android:text="6" android:textSize="18sp"
+                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
+                android:layout_margin="2dp"/>
+            <Button android:id="@+id/btn_enter"
+                android:layout_width="0dp" android:layout_columnWeight="1"
+                android:layout_height="56dp" android:text="⏎" android:textSize="22sp"
+                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
+                android:layout_margin="2dp"/>
+
+            <Button android:id="@+id/btn_7"
+                android:layout_width="0dp" android:layout_columnWeight="1"
+                android:layout_height="56dp" android:text="7" android:textSize="18sp"
+                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
+                android:layout_margin="2dp"/>
+            <Button android:id="@+id/btn_8"
+                android:layout_width="0dp" android:layout_columnWeight="1"
+                android:layout_height="56dp" android:text="8" android:textSize="18sp"
+                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
+                android:layout_margin="2dp"/>
+            <Button android:id="@+id/btn_9"
+                android:layout_width="0dp" android:layout_columnWeight="1"
+                android:layout_height="56dp" android:text="9" android:textSize="18sp"
+                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
+                android:layout_margin="2dp"/>
+            <Button android:id="@+id/btn_hapus"
+                android:layout_width="0dp" android:layout_columnWeight="1"
+                android:layout_height="56dp" android:text="⌫" android:textSize="22sp"
+                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
+                android:layout_margin="2dp"/>
+
+            <Button android:id="@+id/btn_bintang"
+                android:layout_width="0dp" android:layout_columnWeight="1"
+                android:layout_height="56dp" android:text="ABC" android:textSize="13sp"
+                android:textStyle="bold" android:backgroundTint="#F5F5F5"
+                android:textColor="#4A6FA5" android:layout_margin="2dp"/>
+            <Button android:id="@+id/btn_0"
+                android:layout_width="0dp" android:layout_columnWeight="1"
+                android:layout_height="56dp" android:text="0" android:textSize="18sp"
+                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
+                android:layout_margin="2dp"/>
+            <Button android:id="@+id/btn_plus"
+                android:layout_width="0dp" android:layout_columnWeight="1"
+                android:layout_height="56dp" android:text="+" android:textSize="22sp"
+                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
+                android:layout_margin="2dp"/>
+            <Button
+                android:id="@+id/btn_simpan"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_columnWeight="1"
+                android:layout_margin="2dp"
+                android:backgroundTint="#4A6FA5"
+                android:text="SIMPAN&#10;TRANSAKSI"
+                android:textColor="@android:color/white"
+                android:textSize="8sp"
+                android:textStyle="bold"/>
+
         </GridLayout>
 
         <!-- CUSTOM KEYBOARD HURUF -->
@@ -704,8 +758,10 @@
             android:orientation="vertical"
             android:background="#EDE8DC"
             android:paddingTop="4dp"
+            android:paddingBottom="4dp"
             android:visibility="gone">
 
+            <!-- Preview catatan -->
             <TextView
                 android:id="@+id/tv_preview_catatan"
                 android:layout_width="match_parent"
@@ -716,120 +772,121 @@
                 android:textColorHint="#AAAAAA"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="16dp"
-                android:background="#F0EDE8"/>
+                android:background="#F0EDE8"
+                android:layout_marginBottom="4dp"/>
 
+            <!-- Baris Q-P -->
             <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:columnCount="10"
                 android:layout_marginHorizontal="4dp">
-                <Button android:id="@+id/kb_q" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="Q" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_w" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="W" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_e" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="E" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_r" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="R" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_t" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="T" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_y" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="Y" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_u" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="U" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_i" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="I" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_o" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="O" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_p" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="P" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_q" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="Q" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_w" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="W" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_e" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="E" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_r" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="R" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_t" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="T" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_y" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="Y" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_u" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="U" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_i" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="I" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_o" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="O" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_p" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="P" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
             </GridLayout>
 
+            <!-- Baris A-L -->
             <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:columnCount="9"
                 android:layout_marginHorizontal="20dp">
-                <Button android:id="@+id/kb_a" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="A" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_s" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="S" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_d" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="D" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_f" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="F" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_g" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="G" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_h" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="H" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_j" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="J" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_k" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="K" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_l" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="L" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_a" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="A" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_s" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="S" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_d" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="D" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_f" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="F" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_g" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="G" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_h" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="H" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_j" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="J" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_k" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="K" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_l" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="L" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
             </GridLayout>
 
+            <!-- Baris Shift + Z-M + Hapus -->
             <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:columnCount="9"
                 android:layout_marginHorizontal="4dp">
-                <Button android:id="@+id/kb_shift" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="⇧" android:textSize="16sp" android:backgroundTint="#C8C4BA" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_z" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="Z" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_x" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="X" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_c" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="C" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_v" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="V" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_b" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="B" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_n" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="N" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_m" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="M" android:textSize="14sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_hapus" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="⌫" android:textSize="16sp" android:backgroundTint="#C8C4BA" android:textColor="#1A1A2E" android:padding="0dp"/>
+                <Button android:id="@+id/kb_shift" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="⇧" android:textSize="16sp" android:backgroundTint="#C8C4BA" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_z" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="Z" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_x" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="X" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_c" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="C" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_v" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="V" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_b" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="B" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_n" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="N" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_m" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="M" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_hapus" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="⌫" android:textSize="16sp" android:backgroundTint="#C8C4BA" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
             </GridLayout>
 
+            <!-- Baris 123 + Spasi + Selesai -->
             <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:columnCount="8"
                 android:layout_marginHorizontal="4dp"
                 android:layout_marginBottom="4dp">
-                <Button android:id="@+id/kb_123" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="48dp" android:text="123" android:textSize="12sp" android:backgroundTint="#C8C4BA" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_spasi" android:layout_width="0dp" android:layout_columnWeight="5" android:layout_height="48dp" android:text="SPASI" android:textSize="12sp" android:backgroundTint="@android:color/transparent" android:textColor="#1A1A2E" android:padding="0dp"/>
-                <Button android:id="@+id/kb_selesai" android:layout_width="0dp" android:layout_columnWeight="2" android:layout_height="48dp" android:text="SELESAI" android:textSize="11sp" android:textStyle="bold" android:backgroundTint="#4A6FA5" android:textColor="@android:color/white" android:padding="0dp"/>
+                <Button android:id="@+id/kb_123"
+                    android:layout_width="0dp" android:layout_columnWeight="1"
+                    android:layout_height="46dp" android:text="123" android:textSize="12sp"
+                    android:backgroundTint="#C8C4BA" android:textColor="#1A1A2E"
+                    android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_spasi"
+                    android:layout_width="0dp" android:layout_columnWeight="5"
+                    android:layout_height="46dp" android:text="SPASI" android:textSize="12sp"
+                    android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
+                    android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_selesai"
+                    android:layout_width="0dp" android:layout_columnWeight="2"
+                    android:layout_height="46dp" android:text="SELESAI" android:textSize="11sp"
+                    android:textStyle="bold" android:backgroundTint="#4A6FA5"
+                    android:textColor="@android:color/white" android:padding="0dp"
+                    android:layout_margin="1dp"/>
             </GridLayout>
 
         </LinearLayout>
 
-        <!-- ═══════════════════════════════════════════════════════════════════ -->
-        <!-- Tombol SELESAI — muncul di tab Transfer sebelum simpan             -->
-        <!-- ═══════════════════════════════════════════════════════════════════ -->
-        <Button
-            android:id="@+id/btn_selesai_transfer"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="SELESAI"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:backgroundTint="#4A6FA5"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="4dp"
-            android:visibility="gone"/>
-
-        <!-- ═══════════════════════════════════════════════════════════════════ -->
-        <!-- Tombol Aksi Catatan — muncul setelah PENGELUARAN / PEMASUKAN       -->
-        <!-- tercatat                                                            -->
-        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <!-- Tombol Aksi setelah transaksi tercatat (menggantikan Tambah/Hapus Catatan) -->
         <LinearLayout
             android:id="@+id/ll_aksi_catatan"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:orientation="horizontal"
             android:visibility="gone">
+
             <Button
-                android:id="@+id/btn_tambah_catatan"
+                android:id="@+id/btn_transaksi_baru"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Tambah Catatan"
-                android:textSize="13sp"
-                android:textColor="#1A1A2E"
+                android:text="+ Transaksi Baru"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#4A6FA5"
                 android:backgroundTint="#C8C4BA"/>
+
             <Button
-                android:id="@+id/btn_hapus_catatan"
+                android:id="@+id/btn_ke_dashboard"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Hapus Catatan"
-                android:textSize="13sp"
-                android:textColor="#F44336"
-                android:backgroundTint="#C8C4BA"/>
+                android:text="Ke Dashboard"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#4A6FA5"/>
+
         </LinearLayout>
 
-        <!-- ═══════════════════════════════════════════════════════════════════ -->
-        <!-- Tombol Aksi Transfer — muncul setelah TRANSFER TERCATAT            -->
-        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <!-- Tombol Aksi Transfer -->
         <LinearLayout
             android:id="@+id/ll_aksi_transfer"
             android:layout_width="match_parent"
@@ -857,6 +914,20 @@
                 android:textColor="#F44336"
                 android:backgroundTint="#C8C4BA"/>
         </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_selesai_transfer"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="SELESAI"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#4A6FA5"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="4dp"
+            android:visibility="gone"/>
 
     </LinearLayout>
 
