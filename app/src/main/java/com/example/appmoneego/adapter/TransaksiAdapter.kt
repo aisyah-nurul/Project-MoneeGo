@@ -13,10 +13,19 @@ import com.example.appmoneego.databinding.ItemTransaksiBinding
 import com.example.appmoneego.utils.CurrencyFormatter
 
 class TransaksiAdapter(
+    nominalVisibleInit: Boolean = true,
     private val onEditClick:   (Transaksi) -> Unit = {},
     private val onDeleteClick: (Transaksi) -> Unit = {}
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
+    // State mata — setter otomatis refresh tampilan
+    var nominalVisible: Boolean = nominalVisibleInit
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
+
+    // ── Tipe item ──────────────────────────────────────────────────────────────
     sealed class TransaksiItem {
         data class Header(val label: String, val jenis: String) : TransaksiItem()
         data class Item(val transaksi: Transaksi) : TransaksiItem()
@@ -26,10 +35,7 @@ class TransaksiAdapter(
         const val TYPE_HEADER = 0
         const val TYPE_ITEM   = 1
 
-        // Peta kategori → icon drawable
-        // Sesuaikan nama drawable dengan yang ada di project kamu
         private val KATEGORI_ICON = mapOf(
-            // Pengeluaran
             "Makanan"           to R.drawable.ic_makanan,
             "Fashion"           to R.drawable.ic_fashion,
             "Transportasi"      to R.drawable.ic_transportasi,
@@ -38,14 +44,13 @@ class TransaksiAdapter(
             "Kesehatan"         to R.drawable.ic_kesehatan,
             "Rumah Tangga"      to R.drawable.ic_rumahtangga,
             "Kebutuhan Pribadi" to R.drawable.ic_kebutuhanpribadi,
-            // Pemasukan
             "Gaji"              to R.drawable.ic_gaji,
             "Bonus"             to R.drawable.ic_bonus,
             "Freelance"         to R.drawable.ic_freelance,
             "Investasi"         to R.drawable.ic_investasi,
             "Hadiah"            to R.drawable.ic_hadiah,
             "Penjualan"         to R.drawable.ic_penjualan,
-            // Transfer
+            "Saldo Awal"        to R.drawable.ic_wallet,
             "Transfer"          to R.drawable.ic_wallet
         )
     }
@@ -72,15 +77,29 @@ class TransaksiAdapter(
     }
 
     private fun rebuildDisplayList() {
-        val newList     = mutableListOf<TransaksiItem>()
-        val pemasukan   = semuaData.filter { it.jenis == "PEMASUKAN" }
-        val pengeluaran = semuaData.filter { it.jenis == "PENGELUARAN" }
+        val newList = mutableListOf<TransaksiItem>()
 
+        // Transfer = transaksi dengan kategori "Transfer"
+        // Kelompokkan PEMASUKAN+PENGELUARAN "Transfer" ke header Transfer sendiri
+        val transfer    = semuaData.filter { it.kategori == "Transfer" }
+        val pemasukan   = semuaData.filter { it.jenis == "PEMASUKAN"   && it.kategori != "Transfer" }
+        val pengeluaran = semuaData.filter { it.jenis == "PENGELUARAN" && it.kategori != "Transfer" }
+
+        // Header Transfer
+        if (transfer.isNotEmpty()) {
+            newList.add(TransaksiItem.Header("Transfer", "TRANSFER"))
+            if (!collapsedHeaders.contains("TRANSFER"))
+                transfer.forEach { newList.add(TransaksiItem.Item(it)) }
+        }
+
+        // Header Pemasukan
         if (pemasukan.isNotEmpty()) {
             newList.add(TransaksiItem.Header("Pemasukan", "PEMASUKAN"))
             if (!collapsedHeaders.contains("PEMASUKAN"))
                 pemasukan.forEach { newList.add(TransaksiItem.Item(it)) }
         }
+
+        // Header Pengeluaran
         if (pengeluaran.isNotEmpty()) {
             newList.add(TransaksiItem.Header("Pengeluaran", "PENGELUARAN"))
             if (!collapsedHeaders.contains("PENGELUARAN"))
@@ -111,29 +130,19 @@ class TransaksiAdapter(
 
         fun bind(header: TransaksiItem.Header) {
             binding.tvHeaderLabel.text = header.label
-
-            // Set rotasi awal chevron sesuai state collapsed/expanded
             val isCollapsed = collapsedHeaders.contains(header.jenis)
             binding.ivCollapse.rotation = if (isCollapsed) -90f else 0f
 
-            // Klik header → toggle collapse dengan animasi chevron
             binding.root.setOnClickListener {
                 val collapsed = collapsedHeaders.contains(header.jenis)
-                val fromDeg   = if (collapsed) -90f else 0f
-                val toDeg     = if (collapsed) 0f   else -90f
-
-                // Animasi chevron
                 android.animation.ObjectAnimator
-                    .ofFloat(binding.ivCollapse, "rotation", fromDeg, toDeg)
-                    .apply {
-                        duration     = 200
-                        interpolator = AccelerateDecelerateInterpolator()
-                        start()
-                    }
+                    .ofFloat(binding.ivCollapse, "rotation",
+                        if (collapsed) -90f else 0f,
+                        if (collapsed) 0f   else -90f)
+                    .apply { duration = 200; interpolator = AccelerateDecelerateInterpolator(); start() }
 
                 if (collapsed) collapsedHeaders.remove(header.jenis)
                 else           collapsedHeaders.add(header.jenis)
-
                 rebuildDisplayList()
             }
         }
@@ -144,28 +153,30 @@ class TransaksiAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(transaksi: Transaksi) {
-            // Icon kategori
             val iconRes = KATEGORI_ICON[transaksi.kategori] ?: R.drawable.ic_wallet
             binding.ivKategoriIcon.setImageResource(iconRes)
-
             binding.tvKategori.text = transaksi.kategori
             binding.tvCatatan.text  = transaksi.catatan.ifEmpty { "-" }
 
-            val formatted = CurrencyFormatter.format(transaksi.nominal)
-            val isIncome  = transaksi.jenis == "PEMASUKAN"
-            val warna     = if (isIncome) 0xFF4CAF50.toInt() else 0xFFF44336.toInt()
-            val prefix    = if (isIncome) "+ " else "- "
+            val isIncome = transaksi.jenis == "PEMASUKAN"
+            val warna    = if (isIncome) 0xFF4CAF50.toInt() else 0xFFF44336.toInt()
+            val prefix   = if (isIncome) "+ " else "- "
 
-            binding.tvNominal.text = "$prefix$formatted"
+            if (nominalVisible) {
+                val formatted = CurrencyFormatter.format(transaksi.nominal)
+                binding.tvNominal.text       = "$prefix$formatted"
+                binding.tvNominalDetail.text = "$prefix$formatted"
+            } else {
+                binding.tvNominal.text       = "${prefix}Rp ***"
+                binding.tvNominalDetail.text = "${prefix}Rp ***"
+            }
             binding.tvNominal.setTextColor(warna)
-            binding.tvNominalDetail.text = "$prefix$formatted"
             binding.tvNominalDetail.setTextColor(warna)
 
-            // Nama dompet dari lookup, bukan hardcode
             val namaDompet = daftarDompet.find { it.id == transaksi.dompetId }?.nama ?: "-"
             binding.tvSumberDana.text = namaDompet
 
-            // TAP item → tampilkan dialog pilihan Edit atau Hapus
+            // Tap item → dialog Edit / Hapus
             binding.cardItemTransaksi.setOnClickListener {
                 val context = binding.root.context
                 val pilihan = arrayOf("✏️  Edit Transaksi", "🗑️  Hapus Transaksi")
@@ -191,13 +202,9 @@ class TransaksiAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             TYPE_HEADER -> HeaderViewHolder(
-                ItemHeaderTransaksiBinding.inflate(
-                    LayoutInflater.from(parent.context), parent, false)
-            )
+                ItemHeaderTransaksiBinding.inflate(LayoutInflater.from(parent.context), parent, false))
             else -> ItemViewHolder(
-                ItemTransaksiBinding.inflate(
-                    LayoutInflater.from(parent.context), parent, false)
-            )
+                ItemTransaksiBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         }
     }
 

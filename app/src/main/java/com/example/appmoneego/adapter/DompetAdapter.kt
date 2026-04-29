@@ -19,9 +19,11 @@ import java.util.Date
 import java.util.Locale
 
 class DompetAdapter(
-    private val onItemClick: (Dompet) -> Unit,
+    private val onItemClick:     (Dompet) -> Unit,
     private val onItemLongClick: (Dompet) -> Boolean,
-    private val totalSaldo: () -> Double
+    private val totalSaldo:      () -> Double,
+    // Lambda agar adapter selalu baca nilai terbaru saat bind dipanggil
+    private val nominalVisible:  () -> Boolean = { true }
 ) : ListAdapter<Dompet, DompetAdapter.DompetViewHolder>(DIFF_CALLBACK) {
 
     companion object {
@@ -32,14 +34,14 @@ class DompetAdapter(
     }
 
     inner class DompetViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val card: CardView      = itemView.findViewById(R.id.cardDompet)
-        val ivIkon: ImageView   = itemView.findViewById(R.id.ivIkonDompet)
-        val tvNama: TextView    = itemView.findViewById(R.id.tvNamaDompet)
-        val tvJenis: TextView   = itemView.findViewById(R.id.tvTipeDompet)
-        val tvSaldo: TextView   = itemView.findViewById(R.id.tvSaldoDompet)
-        val tvTanggal: TextView = itemView.findViewById(R.id.tvTanggalDompet)
-        val viewStripe: View    = itemView.findViewById(R.id.viewJenisStripe)
-        val viewIconBg: View    = itemView.findViewById(R.id.viewIconBg)
+        val card:       CardView  = itemView.findViewById(R.id.cardDompet)
+        val ivIkon:     ImageView = itemView.findViewById(R.id.ivIkonDompet)
+        val tvNama:     TextView  = itemView.findViewById(R.id.tvNamaDompet)
+        val tvJenis:    TextView  = itemView.findViewById(R.id.tvTipeDompet)
+        val tvSaldo:    TextView  = itemView.findViewById(R.id.tvSaldoDompet)
+        val tvTanggal:  TextView  = itemView.findViewById(R.id.tvTanggalDompet)
+        val viewStripe: View      = itemView.findViewById(R.id.viewJenisStripe)
+        val viewIconBg: View      = itemView.findViewById(R.id.viewIconBg)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DompetViewHolder {
@@ -51,15 +53,20 @@ class DompetAdapter(
     override fun onBindViewHolder(holder: DompetViewHolder, position: Int) {
         val dompet = getItem(position)
 
-        val anim = AnimationUtils.loadAnimation(holder.itemView.context, android.R.anim.fade_in)
+        val anim = AnimationUtils.loadAnimation(
+            holder.itemView.context, android.R.anim.fade_in)
         anim.duration = 280
         holder.itemView.startAnimation(anim)
 
         holder.tvNama.text  = dompet.nama
         holder.tvJenis.text = dompet.jenis
-        holder.tvSaldo.text = CurrencyFormatter.format(dompet.saldo)
 
-        // Tampilkan tanggal dalam format dd MMMM yyyy (bukan relative)
+        // Sembunyikan atau tampilkan saldo sesuai state mata
+        holder.tvSaldo.text = if (nominalVisible())
+            CurrencyFormatter.format(dompet.saldo)
+        else
+            "Rp ***"
+
         holder.tvTanggal.text = formatTanggal(dompet.tanggalDibuat)
 
         val style = getJenisStyle(dompet.jenis)
@@ -97,10 +104,8 @@ class DompetAdapter(
         else             -> R.drawable.ic_wallet_lainnya
     }
 
-    // Format timestamp → "26 April 2026"
     private fun formatTanggal(timestamp: Long): String {
         if (timestamp == 0L) return "-"
-        val sdf = SimpleDateFormat("dd MMMM yyyy", Locale("id"))
-        return sdf.format(Date(timestamp))
+        return SimpleDateFormat("dd MMMM yyyy", Locale("id")).format(Date(timestamp))
     }
 }
