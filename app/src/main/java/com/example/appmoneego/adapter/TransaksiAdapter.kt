@@ -1,6 +1,7 @@
 package com.example.appmoneego.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.recyclerview.widget.DiffUtil
@@ -18,14 +19,12 @@ class TransaksiAdapter(
     private val onDeleteClick: (Transaksi) -> Unit = {}
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    // State mata — setter otomatis refresh tampilan
     var nominalVisible: Boolean = nominalVisibleInit
         set(value) {
             field = value
             notifyDataSetChanged()
         }
 
-    // ── Tipe item ──────────────────────────────────────────────────────────────
     sealed class TransaksiItem {
         data class Header(val label: String, val jenis: String) : TransaksiItem()
         data class Item(val transaksi: Transaksi) : TransaksiItem()
@@ -58,6 +57,8 @@ class TransaksiAdapter(
     private var semuaData:    List<Transaksi> = emptyList()
     private var daftarDompet: List<Dompet>    = emptyList()
     private var displayList:  MutableList<TransaksiItem> = mutableListOf()
+
+    // Set ini menyimpan jenis header yang sedang di-collapse
     private val collapsedHeaders = mutableSetOf<String>()
 
     fun submitDompet(list: List<Dompet>) {
@@ -70,36 +71,22 @@ class TransaksiAdapter(
         rebuildDisplayList()
     }
 
-    fun getItemAt(position: Int): Transaksi? = when (val item = displayList.getOrNull(position)) {
-        is TransaksiItem.Item   -> item.transaksi
-        is TransaksiItem.Header -> null
-        null                    -> null
-    }
-
     private fun rebuildDisplayList() {
-        val newList = mutableListOf<TransaksiItem>()
-
-        // Transfer = transaksi dengan kategori "Transfer"
-        // Kelompokkan PEMASUKAN+PENGELUARAN "Transfer" ke header Transfer sendiri
+        val newList     = mutableListOf<TransaksiItem>()
         val transfer    = semuaData.filter { it.kategori == "Transfer" }
         val pemasukan   = semuaData.filter { it.jenis == "PEMASUKAN"   && it.kategori != "Transfer" }
         val pengeluaran = semuaData.filter { it.jenis == "PENGELUARAN" && it.kategori != "Transfer" }
 
-        // Header Transfer
         if (transfer.isNotEmpty()) {
             newList.add(TransaksiItem.Header("Transfer", "TRANSFER"))
             if (!collapsedHeaders.contains("TRANSFER"))
                 transfer.forEach { newList.add(TransaksiItem.Item(it)) }
         }
-
-        // Header Pemasukan
         if (pemasukan.isNotEmpty()) {
             newList.add(TransaksiItem.Header("Pemasukan", "PEMASUKAN"))
             if (!collapsedHeaders.contains("PEMASUKAN"))
                 pemasukan.forEach { newList.add(TransaksiItem.Item(it)) }
         }
-
-        // Header Pengeluaran
         if (pengeluaran.isNotEmpty()) {
             newList.add(TransaksiItem.Header("Pengeluaran", "PENGELUARAN"))
             if (!collapsedHeaders.contains("PENGELUARAN"))
@@ -110,7 +97,8 @@ class TransaksiAdapter(
             override fun getOldListSize() = displayList.size
             override fun getNewListSize() = newList.size
             override fun areItemsTheSame(oldPos: Int, newPos: Int): Boolean {
-                val old = displayList[oldPos]; val new = newList[newPos]
+                val old = displayList[oldPos]
+                val new = newList[newPos]
                 if (old is TransaksiItem.Header && new is TransaksiItem.Header)
                     return old.jenis == new.jenis
                 if (old is TransaksiItem.Item && new is TransaksiItem.Item)
@@ -120,37 +108,56 @@ class TransaksiAdapter(
             override fun areContentsTheSame(oldPos: Int, newPos: Int) =
                 displayList[oldPos] == newList[newPos]
         })
+
         displayList = newList
         diff.dispatchUpdatesTo(this)
     }
 
-    // ── ViewHolder Header ──────────────────────────────────────────────────────
+    // ── HeaderViewHolder ──────────────────────────────────────────────────────
+
     inner class HeaderViewHolder(private val binding: ItemHeaderTransaksiBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(header: TransaksiItem.Header) {
             binding.tvHeaderLabel.text = header.label
-            val isCollapsed = collapsedHeaders.contains(header.jenis)
-            binding.ivCollapse.rotation = if (isCollapsed) -90f else 0f
 
+            // ✅ FIX: Set rotasi awal berdasarkan state SAAT INI
+            val isCollapsedNow = collapsedHeaders.contains(header.jenis)
+            binding.ivCollapse.rotation = if (isCollapsedNow) -90f else 0f
+
+            // ✅ FIX UTAMA: Baca state dari collapsedHeaders LANGSUNG di dalam listener,
+            // bukan dari variabel yang di-capture saat bind() dipanggil.
+            // Ini mencegah stale closure yang menyebabkan toggle tidak konsisten.
             binding.root.setOnClickListener {
-                val collapsed = collapsedHeaders.contains(header.jenis)
-                android.animation.ObjectAnimator
-                    .ofFloat(binding.ivCollapse, "rotation",
-                        if (collapsed) -90f else 0f,
-                        if (collapsed) 0f   else -90f)
-                    .apply { duration = 200; interpolator = AccelerateDecelerateInterpolator(); start() }
+                val isCurrentlyCollapsed = collapsedHeaders.contains(header.jenis)
 
-                if (collapsed) collapsedHeaders.remove(header.jenis)
-                else           collapsedHeaders.add(header.jenis)
+                // Animasi chevron
+                val fromDeg = if (isCurrentlyCollapsed) -90f else 0f
+                val toDeg   = if (isCurrentlyCollapsed) 0f   else -90f
+                android.animation.ObjectAnimator
+                    .ofFloat(binding.ivCollapse, "rotation", fromDeg, toDeg)
+                    .apply {
+                        duration     = 200
+                        interpolator = AccelerateDecelerateInterpolator()
+                        start()
+                    }
+
+                // Toggle state
+                if (isCurrentlyCollapsed) collapsedHeaders.remove(header.jenis)
+                else                      collapsedHeaders.add(header.jenis)
+
                 rebuildDisplayList()
             }
         }
     }
 
-    // ── ViewHolder Item ────────────────────────────────────────────────────────
+    // ── ItemViewHolder ────────────────────────────────────────────────────────
+
     inner class ItemViewHolder(private val binding: ItemTransaksiBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
+        // State expand/collapse detail per item (reset setiap bind karena RecyclerView recycles view)
+        private var isDetailExpanded = true
 
         fun bind(transaksi: Transaksi) {
             val iconRes = KATEGORI_ICON[transaksi.kategori] ?: R.drawable.ic_wallet
@@ -162,50 +169,62 @@ class TransaksiAdapter(
             val warna    = if (isIncome) 0xFF4CAF50.toInt() else 0xFFF44336.toInt()
             val prefix   = if (isIncome) "+ " else "- "
 
+            // Tampilkan atau sembunyikan nominal sesuai state mata
             if (nominalVisible) {
-                val formatted = CurrencyFormatter.format(transaksi.nominal)
-                binding.tvNominal.text       = "$prefix$formatted"
-                binding.tvNominalDetail.text = "$prefix$formatted"
+                binding.tvNominal.text = "$prefix${CurrencyFormatter.format(transaksi.nominal)}"
             } else {
-                binding.tvNominal.text       = "${prefix}Rp ***"
-                binding.tvNominalDetail.text = "${prefix}Rp ***"
+                binding.tvNominal.text = "${prefix}Rp ***"
             }
             binding.tvNominal.setTextColor(warna)
-            binding.tvNominalDetail.setTextColor(warna)
 
-            val namaDompet = daftarDompet.find { it.id == transaksi.dompetId }?.nama ?: "-"
-            binding.tvSumberDana.text = namaDompet
+            // Nama dompet dari lookup
+            binding.tvSumberDana.text =
+                daftarDompet.find { it.id == transaksi.dompetId }?.nama ?: "-"
 
-            // Tap item → dialog Edit / Hapus
-            binding.cardItemTransaksi.setOnClickListener {
+            // Reset state detail ke expanded setiap kali item di-bind ulang
+            // (karena RecyclerView recycle ViewHolder)
+            isDetailExpanded = true
+            binding.cardDetail.visibility = View.VISIBLE
+            binding.ivArrowCollapse.rotation = 0f
+
+            // Klik header item → toggle detail card
+            binding.clHeaderInteraktif.setOnClickListener {
+                isDetailExpanded = !isDetailExpanded
+                val rotation = if (isDetailExpanded) 0f else -180f
+                binding.ivArrowCollapse.animate()
+                    .rotation(rotation)
+                    .setDuration(200)
+                    .start()
+                binding.cardDetail.visibility =
+                    if (isDetailExpanded) View.VISIBLE else View.GONE
+            }
+
+            // Klik card utama → dialog Edit / Hapus
+            binding.clCardUtama.setOnClickListener {
                 val context = binding.root.context
-                val pilihan = arrayOf("✏️  Edit Transaksi", "🗑️  Hapus Transaksi")
+                val pilihan = arrayOf("✏️  Edit", "🗑️  Hapus")
                 android.app.AlertDialog.Builder(context)
                     .setTitle(transaksi.kategori)
                     .setItems(pilihan) { _, which ->
-                        when (which) {
-                            0 -> onEditClick(transaksi)
-                            1 -> onDeleteClick(transaksi)
-                        }
+                        if (which == 0) onEditClick(transaksi)
+                        else            onDeleteClick(transaksi)
                     }
-                    .setNegativeButton("Batal", null)
                     .show()
             }
         }
     }
 
-    override fun getItemViewType(position: Int) = when (displayList[position]) {
-        is TransaksiItem.Header -> TYPE_HEADER
-        is TransaksiItem.Item   -> TYPE_ITEM
-    }
+    // ── Boilerplate ───────────────────────────────────────────────────────────
+
+    override fun getItemViewType(position: Int) =
+        if (displayList[position] is TransaksiItem.Header) TYPE_HEADER else TYPE_ITEM
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when (viewType) {
-            TYPE_HEADER -> HeaderViewHolder(
-                ItemHeaderTransaksiBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-            else -> ItemViewHolder(
-                ItemTransaksiBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-        }
+        val inflater = LayoutInflater.from(parent.context)
+        return if (viewType == TYPE_HEADER)
+            HeaderViewHolder(ItemHeaderTransaksiBinding.inflate(inflater, parent, false))
+        else
+            ItemViewHolder(ItemTransaksiBinding.inflate(inflater, parent, false))
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {

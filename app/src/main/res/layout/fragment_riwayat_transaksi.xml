@@ -5,11 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#EDE8DC">
+    android:background="#EDE8DC"
+    android:weightSum="1">
 
-    <!-- ══════════════════════════════════════════════════════
-         HEADER BIRU
-    ══════════════════════════════════════════════════════ -->
+    <!-- HEADER BIRU — tidak berubah -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header_riwayat"
         android:layout_width="match_parent"
@@ -55,7 +54,6 @@
                 android:textColor="@android:color/white"/>
         </LinearLayout>
 
-        <!-- Tombol kalender -->
         <ImageView
             android:id="@+id/btn_toggle_kalender"
             android:layout_width="24dp"
@@ -65,7 +63,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- Tombol mata -->
         <ImageView
             android:id="@+id/btn_toggle_mata"
             android:layout_width="24dp"
@@ -76,7 +73,6 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toStartOf="@id/btn_toggle_kalender"/>
 
-        <!-- Progress bar -->
         <ProgressBar
             android:id="@+id/progress_ratio"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
@@ -90,7 +86,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- Baris 2: Navigasi tanggal < tanggal > -->
         <LinearLayout
             android:id="@+id/ll_nav_tanggal"
             android:layout_width="0dp"
@@ -102,7 +97,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
-            <!-- Tombol sebelumnya -->
             <ImageView
                 android:id="@+id/btn_prev_tanggal"
                 android:layout_width="28dp"
@@ -115,7 +109,6 @@
                 android:clickable="true"
                 android:focusable="true"/>
 
-            <!-- Label tanggal tengah -->
             <TextView
                 android:id="@+id/tv_tanggal_header"
                 android:layout_width="0dp"
@@ -127,7 +120,6 @@
                 android:gravity="center"
                 android:textStyle="bold"/>
 
-            <!-- Tombol berikutnya -->
             <ImageView
                 android:id="@+id/btn_next_tanggal"
                 android:layout_width="28dp"
@@ -141,7 +133,6 @@
                 android:focusable="true"/>
         </LinearLayout>
 
-        <!-- Baris 3: Total pemasukan & pengeluaran per hari -->
         <LinearLayout
             android:id="@+id/ll_total_harian"
             android:layout_width="0dp"
@@ -152,7 +143,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
-            <!-- Total Pemasukan -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -175,13 +165,11 @@
                     android:textColor="#4CAF50"/>
             </LinearLayout>
 
-            <!-- Divider vertikal -->
             <View
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:background="#55FFFFFF"/>
 
-            <!-- Total Pengeluaran -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -203,14 +191,11 @@
                     android:textStyle="bold"
                     android:textColor="#FF7043"/>
             </LinearLayout>
-
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- ══════════════════════════════════════════════════════
-         KALENDER (hidden by default)
-    ══════════════════════════════════════════════════════ -->
+    <!-- KALENDER (hidden by default) -->
     <androidx.cardview.widget.CardView
         android:id="@+id/card_kalender"
         android:layout_width="match_parent"
@@ -231,11 +216,7 @@
 
     </androidx.cardview.widget.CardView>
 
-    <!-- ══════════════════════════════════════════════════════
-         DAFTAR TRANSAKSI — RecyclerView di dalam NestedScrollView
-         layout_height="0dp" + layout_weight="1" = isi sisa ruang
-         → FIX SCROLL
-    ══════════════════════════════════════════════════════ -->
+    <!-- ✅ FIX SCROLL: layout_weight="1" + nestedScrollingEnabled="true" -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_transaksi"
         android:layout_width="match_parent"
@@ -244,6 +225,8 @@
         android:paddingTop="8dp"
         android:paddingBottom="80dp"
         android:clipToPadding="false"
+        android:nestedScrollingEnabled="true"
+        android:scrollbars="vertical"
         android:overScrollMode="always"/>
 
 </LinearLayout>
