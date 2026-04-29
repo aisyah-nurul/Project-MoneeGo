@@ -32,10 +32,8 @@ class RiwayatTransaksiFragment : Fragment() {
     private var selectedDateMillis: Long = System.currentTimeMillis()
     private var kalenderVisible = false
 
-    // Baca state dari SharedPreferences agar konsisten antar fragment
     private var nominalVisible: Boolean = true
 
-    // Simpan total terakhir untuk refresh saat toggle mata
     private var lastTotalMasuk  = 0.0
     private var lastTotalKeluar = 0.0
 
@@ -50,7 +48,6 @@ class RiwayatTransaksiFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Baca state mata dari SharedPreferences
         nominalVisible = VisibilityPrefs.isNominalVisible(requireContext())
 
         setupAdapter()
@@ -60,7 +57,6 @@ class RiwayatTransaksiFragment : Fragment() {
         observeDompet()
         loadTransaksiByTanggal(selectedDateMillis)
 
-        // Sinkronkan icon mata sesuai state tersimpan
         syncIkonMata()
     }
 
@@ -70,8 +66,6 @@ class RiwayatTransaksiFragment : Fragment() {
         adapter = TransaksiAdapter(
             nominalVisibleInit = nominalVisible,
             onEditClick = { transaksi ->
-                // Deteksi apakah transaksi ini bagian dari Transfer
-                // Transfer ditandai dengan kategori == "Transfer"
                 val isTransfer = transaksi.kategori == "Transfer"
                 val jenisEdit  = if (isTransfer) "TRANSFER" else transaksi.jenis
 
@@ -83,7 +77,6 @@ class RiwayatTransaksiFragment : Fragment() {
                     putString("edit_catatan",  transaksi.catatan)
                     putLong("edit_tanggal",    transaksi.tanggal)
                     putInt("edit_dompet_id",   transaksi.dompetId)
-                    // Flag khusus agar TambahTransaksiFragment tahu ini transfer
                     putBoolean("edit_is_transfer", isTransfer)
                 }
                 findNavController().navigate(R.id.action_riwayat_to_tambahTransaksi, bundle)
@@ -97,11 +90,13 @@ class RiwayatTransaksiFragment : Fragment() {
                     .show()
             }
         )
+
         binding.rvTransaksi.layoutManager = LinearLayoutManager(requireContext())
         binding.rvTransaksi.adapter       = adapter
 
-        binding.rvTransaksi.isNestedScrollingEnabled = true
-        binding.rvTransaksi.setHasFixedSize(true)
+        // ✅ FIX SCROLL: setHasFixedSize(false) agar RecyclerView
+        // bisa recalculate ukuran saat kalender muncul/hilang
+        binding.rvTransaksi.setHasFixedSize(false)
     }
 
     private fun observeDompet() {
@@ -120,8 +115,6 @@ class RiwayatTransaksiFragment : Fragment() {
 
         viewModel.getByDateRange(start, end).observe(viewLifecycleOwner) { list ->
             adapter.submitList(list)
-
-            android.util.Log.e("CEK_SCROLL", "Jumlah data: ${list.size}")
 
             lastTotalMasuk  = list.filter { it.jenis == "PEMASUKAN"   }.sumOf { it.nominal }
             lastTotalKeluar = list.filter { it.jenis == "PENGELUARAN" }.sumOf { it.nominal }
@@ -155,13 +148,12 @@ class RiwayatTransaksiFragment : Fragment() {
         }
     }
 
-    // ── Tombol Mata ──────────────────────────────────────────────────────────
+    // ── Tombol Mata ───────────────────────────────────────────────────────────
 
     private fun setupTombolMata() {
         binding.btnToggleMata.setOnClickListener {
             nominalVisible = !nominalVisible
 
-            // Simpan ke SharedPreferences agar persisten
             VisibilityPrefs.setNominalVisible(requireContext(), nominalVisible)
 
             syncIkonMata()
