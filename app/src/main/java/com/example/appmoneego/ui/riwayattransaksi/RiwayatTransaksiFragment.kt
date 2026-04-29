@@ -12,7 +12,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.appmoneego.R
 import com.example.appmoneego.adapter.TransaksiAdapter
 import com.example.appmoneego.databinding.FragmentRiwayatTransaksiBinding
+import com.example.appmoneego.utils.CurrencyFormatter
 import com.example.appmoneego.utils.DateUtils
+import com.example.appmoneego.utils.VisibilityPrefs
 import com.example.appmoneego.viewmodel.DompetViewModel
 import com.example.appmoneego.viewmodel.TransaksiViewModel
 import java.util.*
@@ -26,8 +28,16 @@ class RiwayatTransaksiFragment : Fragment() {
     private val dompetViewModel: DompetViewModel    by viewModels()
 
     private lateinit var adapter: TransaksiAdapter
-    private var kalenderVisible     = false
+
     private var selectedDateMillis: Long = System.currentTimeMillis()
+    private var kalenderVisible = false
+
+    // Baca state dari SharedPreferences agar konsisten antar fragment
+    private var nominalVisible: Boolean = true
+
+    // Simpan total terakhir untuk refresh saat toggle mata
+    private var lastTotalMasuk  = 0.0
+    private var lastTotalKeluar = 0.0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,30 +50,45 @@ class RiwayatTransaksiFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Baca state mata dari SharedPreferences
+        nominalVisible = VisibilityPrefs.isNominalVisible(requireContext())
+
         setupAdapter()
         setupKalender()
+        setupNavigasiTanggal()
+        setupTombolMata()
         observeDompet()
         loadTransaksiByTanggal(selectedDateMillis)
+
+        // Sinkronkan icon mata sesuai state tersimpan
+        syncIkonMata()
     }
 
     // ── Adapter ───────────────────────────────────────────────────────────────
 
     private fun setupAdapter() {
         adapter = TransaksiAdapter(
+            nominalVisibleInit = nominalVisible,
             onEditClick = { transaksi ->
+                // Deteksi apakah transaksi ini bagian dari Transfer
+                // Transfer ditandai dengan kategori == "Transfer"
+                val isTransfer = transaksi.kategori == "Transfer"
+                val jenisEdit  = if (isTransfer) "TRANSFER" else transaksi.jenis
+
                 val bundle = Bundle().apply {
                     putInt("edit_id",          transaksi.id)
                     putDouble("edit_nominal",  transaksi.nominal)
-                    putString("edit_jenis",    transaksi.jenis)
+                    putString("edit_jenis",    jenisEdit)
                     putString("edit_kategori", transaksi.kategori)
                     putString("edit_catatan",  transaksi.catatan)
                     putLong("edit_tanggal",    transaksi.tanggal)
                     putInt("edit_dompet_id",   transaksi.dompetId)
+                    // Flag khusus agar TambahTransaksiFragment tahu ini transfer
+                    putBoolean("edit_is_transfer", isTransfer)
                 }
                 findNavController().navigate(R.id.action_riwayat_to_tambahTransaksi, bundle)
             },
             onDeleteClick = { transaksi ->
-                // Dialog konfirmasi hapus
                 AlertDialog.Builder(requireContext())
                     .setTitle("Hapus Transaksi")
                     .setMessage("Yakin ingin menghapus \"${transaksi.catatan.ifEmpty { transaksi.kategori }}\"?")
@@ -74,6 +99,9 @@ class RiwayatTransaksiFragment : Fragment() {
         )
         binding.rvTransaksi.layoutManager = LinearLayoutManager(requireContext())
         binding.rvTransaksi.adapter       = adapter
+
+        binding.rvTransaksi.isNestedScrollingEnabled = true
+        binding.rvTransaksi.setHasFixedSize(true)
     }
 
     private fun observeDompet() {
@@ -93,24 +121,72 @@ class RiwayatTransaksiFragment : Fragment() {
         viewModel.getByDateRange(start, end).observe(viewLifecycleOwner) { list ->
             adapter.submitList(list)
 
-            val totalMasuk  = list.filter { it.jenis == "PEMASUKAN"   }.sumOf { it.nominal }
-            val totalKeluar = list.filter { it.jenis == "PENGELUARAN" }.sumOf { it.nominal }
-            val total       = totalMasuk + totalKeluar
+            android.util.Log.e("CEK_SCROLL", "Jumlah data: ${list.size}")
+
+            lastTotalMasuk  = list.filter { it.jenis == "PEMASUKAN"   }.sumOf { it.nominal }
+            lastTotalKeluar = list.filter { it.jenis == "PENGELUARAN" }.sumOf { it.nominal }
+            val total = lastTotalMasuk + lastTotalKeluar
 
             if (total > 0) {
-                val persenMasuk  = ((totalMasuk / total) * 100).toInt()
+                val persenMasuk  = ((lastTotalMasuk / total) * 100).toInt()
                 val persenKeluar = 100 - persenMasuk
                 binding.progressRatio.progress = persenMasuk
                 binding.tvPersenMasuk.text      = " Pemasukan $persenMasuk%"
                 binding.tvPersenKeluar.text     = " Pengeluaran $persenKeluar%"
-                binding.tvJenisFilter.text      =
-                    if (totalKeluar >= totalMasuk) "Pengeluaran" else "Pemasukan"
             } else {
                 binding.progressRatio.progress = 50
                 binding.tvPersenMasuk.text      = " Pemasukan 0%"
                 binding.tvPersenKeluar.text     = " Pengeluaran 0%"
-                binding.tvJenisFilter.text      = "Pengeluaran"
             }
+
+            updateTotalHarian()
+        }
+    }
+
+    // ── Total harian ──────────────────────────────────────────────────────────
+
+    private fun updateTotalHarian() {
+        if (nominalVisible) {
+            binding.tvTotalMasuk.text  = CurrencyFormatter.format(lastTotalMasuk)
+            binding.tvTotalKeluar.text = CurrencyFormatter.format(lastTotalKeluar)
+        } else {
+            binding.tvTotalMasuk.text  = "Rp ***"
+            binding.tvTotalKeluar.text = "Rp ***"
+        }
+    }
+
+    // ── Tombol Mata ──────────────────────────────────────────────────────────
+
+    private fun setupTombolMata() {
+        binding.btnToggleMata.setOnClickListener {
+            nominalVisible = !nominalVisible
+
+            // Simpan ke SharedPreferences agar persisten
+            VisibilityPrefs.setNominalVisible(requireContext(), nominalVisible)
+
+            syncIkonMata()
+            adapter.nominalVisible = nominalVisible
+            updateTotalHarian()
+        }
+    }
+
+    private fun syncIkonMata() {
+        val iconRes = if (nominalVisible) R.drawable.ic_eye else R.drawable.ic_eye_off
+        binding.btnToggleMata.setImageResource(iconRes)
+    }
+
+    // ── Navigasi tanggal ──────────────────────────────────────────────────────
+
+    private fun setupNavigasiTanggal() {
+        binding.btnPrevTanggal.setOnClickListener {
+            selectedDateMillis -= 86_400_000L
+            tutupKalender()
+            loadTransaksiByTanggal(selectedDateMillis)
+        }
+        binding.btnNextTanggal.setOnClickListener {
+            selectedDateMillis += 86_400_000L
+            tutupKalender()
+            loadTransaksiByTanggal(selectedDateMillis)
         }
     }
 
@@ -118,20 +194,26 @@ class RiwayatTransaksiFragment : Fragment() {
 
     private fun setupKalender() {
         binding.btnToggleKalender.setOnClickListener {
-            kalenderVisible = !kalenderVisible
-            binding.cardKalender.visibility =
-                if (kalenderVisible) View.VISIBLE else View.GONE
+            if (kalenderVisible) tutupKalender() else bukaKalender()
         }
-
         binding.calendarView.setOnDateChangeListener { _, year, month, day ->
             val cal = Calendar.getInstance()
             cal.set(year, month, day, 0, 0, 0)
             cal.set(Calendar.MILLISECOND, 0)
             selectedDateMillis = cal.timeInMillis
-            kalenderVisible    = false
-            binding.cardKalender.visibility = View.GONE
+            tutupKalender()
             loadTransaksiByTanggal(selectedDateMillis)
         }
+    }
+
+    private fun bukaKalender() {
+        kalenderVisible = true
+        binding.cardKalender.visibility = View.VISIBLE
+    }
+
+    private fun tutupKalender() {
+        kalenderVisible = false
+        binding.cardKalender.visibility = View.GONE
     }
 
     override fun onDestroyView() {

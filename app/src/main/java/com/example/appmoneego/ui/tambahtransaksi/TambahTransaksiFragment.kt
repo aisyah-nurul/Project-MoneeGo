@@ -207,7 +207,7 @@ class TambahTransaksiFragment : Fragment() {
             if (isEditMode) prefillEditForm()
         }
 
-        // Cek mode edit
+        // ── Cek mode edit ───────────────────────────────────────────────────
         arguments?.let { args ->
             if (args.containsKey("edit_id")) {
                 isEditMode      = true
@@ -228,6 +228,10 @@ class TambahTransaksiFragment : Fragment() {
                 // Sembunyikan tab — tidak boleh ganti jenis saat edit
                 view.findViewById<LinearLayout>(R.id.ll_tab_jenis)?.visibility = View.GONE
 
+                // FIX #2: aktifkan form yang sesuai jenis transaksi
+                // (tanpa mengizinkan user ganti tab)
+                switchTabForEdit(jenisTransaksi)
+
                 // Override tombol simpan → update
                 btnSimpan.setOnClickListener { simpanEditTransaksi(view) }
                 btnEnter.setOnClickListener  { simpanEditTransaksi(view) }
@@ -239,6 +243,29 @@ class TambahTransaksiFragment : Fragment() {
         super.onDestroyView()
         requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
             ?.visibility = View.VISIBLE
+    }
+
+    // ── FIX #2: switch form tanpa mengizinkan ganti jenis ─────────────────────
+    // Dipanggil HANYA untuk mode edit, sehingga form (normal/transfer) dan
+    // grid kategori menyesuaikan jenis transaksi yang diedit.
+
+    private fun switchTabForEdit(jenis: String) {
+        jenisTransaksi = jenis
+        updateTabUI(jenis)
+
+        if (jenis == "TRANSFER") {
+            // Transaksi transfer diedit sebagai form transfer
+            llFormNormal.visibility   = View.GONE
+            llFormTransfer.visibility = View.VISIBLE
+            setupCardDompetTransfer()
+        } else {
+            // PEMASUKAN atau PENGELUARAN → tampilkan form normal
+            llFormNormal.visibility   = View.VISIBLE
+            llFormTransfer.visibility = View.GONE
+
+            val daftar = if (jenis == "PEMASUKAN") kategoriPemasukan else kategoriPengeluaran
+            setupGridKategori(daftar)
+        }
     }
 
     // ── Pre-fill mode edit ────────────────────────────────────────────────────
@@ -294,7 +321,6 @@ class TambahTransaksiFragment : Fragment() {
         )
         viewModel.update(updated, editNominalLama, editJenisLama)
         Snackbar.make(view, "Transaksi berhasil diperbarui", Snackbar.LENGTH_SHORT).show()
-        // Kembali ke riwayat (back stack)
         requireActivity().onBackPressedDispatcher.onBackPressed()
     }
 
@@ -378,7 +404,7 @@ class TambahTransaksiFragment : Fragment() {
     }
 
     private fun switchTab(jenis: String) {
-        if (isEditMode) return
+        if (isEditMode) return   // mode edit tidak boleh ganti tab
         jenisTransaksi = jenis
         updateTabUI(jenis)
         if (jenis == "TRANSFER") {
@@ -840,9 +866,6 @@ class TambahTransaksiFragment : Fragment() {
 
     private fun setupAksiCatatan() {
         btnTransaksiBaru.setOnClickListener { showStateInput() }
-
-        // FIX: popBackStack ke dashboardFragment secara eksplisit
-        // Ini memastikan selalu kembali ke dashboard, tidak peduli dari mana datangnya
         btnKeDashboard.setOnClickListener {
             findNavController().popBackStack(R.id.dashboardFragment, false)
         }

@@ -7,55 +7,28 @@
     android:orientation="vertical"
     android:background="#EDE8DC">
 
-    <!-- Header biru -->
+    <!-- ══════════════════════════════════════════════════════
+         HEADER BIRU
+    ══════════════════════════════════════════════════════ -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header_riwayat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#4A6FA5"
-        android:padding="16dp">
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp">
 
-        <TextView
-            android:id="@+id/tv_jenis_filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Pengeluaran"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
-
-        <TextView
-            android:id="@+id/tv_tanggal_header"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="-"
-            android:textSize="13sp"
-            android:textColor="#CCFFFFFF"
-            android:layout_marginTop="2dp"
-            app:layout_constraintTop_toBottomOf="@id/tv_jenis_filter"
-            app:layout_constraintStart_toStartOf="parent"/>
-
-        <ImageView
-            android:id="@+id/btn_toggle_kalender"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_tanggal"
-            android:tint="@android:color/white"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="@id/tv_tanggal_header"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
+        <!-- Baris 1: legend kiri + tombol kalender kanan -->
         <LinearLayout
             android:id="@+id/ll_legend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginEnd="32dp"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/btn_toggle_kalender">
+            app:layout_constraintStart_toStartOf="parent">
 
             <View
                 android:layout_width="10dp"
@@ -82,6 +55,28 @@
                 android:textColor="@android:color/white"/>
         </LinearLayout>
 
+        <!-- Tombol kalender -->
+        <ImageView
+            android:id="@+id/btn_toggle_kalender"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_tanggal"
+            app:tint="@android:color/white"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <!-- Tombol mata -->
+        <ImageView
+            android:id="@+id/btn_toggle_mata"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_eye"
+            app:tint="@android:color/white"
+            android:layout_marginEnd="12dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_toggle_kalender"/>
+
+        <!-- Progress bar -->
         <ProgressBar
             android:id="@+id/progress_ratio"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
@@ -91,13 +86,131 @@
             android:progressTint="#4CAF50"
             android:progressBackgroundTint="#F44336"
             android:layout_marginTop="10dp"
-            app:layout_constraintTop_toBottomOf="@id/tv_tanggal_header"
+            app:layout_constraintTop_toBottomOf="@id/ll_legend"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
+        <!-- Baris 2: Navigasi tanggal < tanggal > -->
+        <LinearLayout
+            android:id="@+id/ll_nav_tanggal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/progress_ratio"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- Tombol sebelumnya -->
+            <ImageView
+                android:id="@+id/btn_prev_tanggal"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_chevron_down"
+                android:rotation="90"
+                app:tint="@android:color/white"
+                android:padding="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"/>
+
+            <!-- Label tanggal tengah -->
+            <TextView
+                android:id="@+id/tv_tanggal_header"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="-"
+                android:textSize="13sp"
+                android:textColor="@android:color/white"
+                android:gravity="center"
+                android:textStyle="bold"/>
+
+            <!-- Tombol berikutnya -->
+            <ImageView
+                android:id="@+id/btn_next_tanggal"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_chevron_down"
+                android:rotation="270"
+                app:tint="@android:color/white"
+                android:padding="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"/>
+        </LinearLayout>
+
+        <!-- Baris 3: Total pemasukan & pengeluaran per hari -->
+        <LinearLayout
+            android:id="@+id/ll_total_harian"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/ll_nav_tanggal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- Total Pemasukan -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pemasukan"
+                    android:textSize="10sp"
+                    android:textColor="#CCFFFFFF"/>
+                <TextView
+                    android:id="@+id/tv_total_masuk"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rp 0"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#4CAF50"/>
+            </LinearLayout>
+
+            <!-- Divider vertikal -->
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#55FFFFFF"/>
+
+            <!-- Total Pengeluaran -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pengeluaran"
+                    android:textSize="10sp"
+                    android:textColor="#CCFFFFFF"/>
+                <TextView
+                    android:id="@+id/tv_total_keluar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rp 0"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#FF7043"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Kalender (hidden by default, muncul saat toggle diklik) -->
+    <!-- ══════════════════════════════════════════════════════
+         KALENDER (hidden by default)
+    ══════════════════════════════════════════════════════ -->
     <androidx.cardview.widget.CardView
         android:id="@+id/card_kalender"
         android:layout_width="match_parent"
@@ -118,11 +231,11 @@
 
     </androidx.cardview.widget.CardView>
 
-    <!--
-        KUNCI FIX SCROLL:
-        layout_height="0dp" + layout_weight="1" = isi sisa ruang
-        Ini yang memastikan RecyclerView bisa scroll
-    -->
+    <!-- ══════════════════════════════════════════════════════
+         DAFTAR TRANSAKSI — RecyclerView di dalam NestedScrollView
+         layout_height="0dp" + layout_weight="1" = isi sisa ruang
+         → FIX SCROLL
+    ══════════════════════════════════════════════════════ -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_transaksi"
         android:layout_width="match_parent"
@@ -130,6 +243,7 @@
         android:layout_weight="1"
         android:paddingTop="8dp"
         android:paddingBottom="80dp"
-        android:clipToPadding="false"/>
+        android:clipToPadding="false"
+        android:overScrollMode="always"/>
 
 </LinearLayout>
