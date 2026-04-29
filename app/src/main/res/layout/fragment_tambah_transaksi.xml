@@ -4,89 +4,125 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#EDE8DC">
+    android:background="#EEF2F6">
 
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TAMBAH TRANSAKSI"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="#1A1A2E"
-        android:gravity="center"
-        android:paddingTop="20dp"
-        android:paddingBottom="12dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <ImageView
-        android:id="@+id/iv_back"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/ic_back"
-        android:padding="8dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
-
+    <!-- ═══════════════════════════════════════════════════════════════
+         HEADER — soft slate blue, flat modern
+    ═══════════════════════════════════════════════════════════════ -->
     <LinearLayout
-        android:id="@+id/ll_tab_jenis"
+        android:id="@+id/header_container"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="64dp"
         android:orientation="horizontal"
-        android:layout_marginHorizontal="20dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_title"
+        android:gravity="center_vertical"
+        android:background="#6B8FA3"
+        android:elevation="4dp"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:src="@drawable/ic_back"
+            android:padding="10dp"
+            android:layout_marginStart="8dp"
+            app:tint="#FFFFFF"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"/>
+
         <TextView
-            android:id="@+id/tab_pengeluaran"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:text="PENGELUARAN"
-            android:textSize="13sp"
+            android:id="@+id/tv_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="TAMBAH TRANSAKSI"
+            android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
             android:gravity="center"
-            android:paddingHorizontal="16dp"
-            android:layout_marginEnd="8dp"/>
+            android:letterSpacing="0.06"/>
 
-        <TextView
-            android:id="@+id/tab_pemasukan"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:text="PEMASUKAN"
-            android:textSize="13sp"
-            android:textColor="#6B8FA3"
-            android:gravity="center"
-            android:paddingHorizontal="16dp"
+        <!-- Spacer kanan biar title tetap center -->
+        <View
+            android:layout_width="44dp"
+            android:layout_height="44dp"
             android:layout_marginEnd="8dp"/>
-
-        <TextView
-            android:id="@+id/tab_riwayat"
-            android:layout_width="125dp"
-            android:layout_height="36dp"
-            android:gravity="center"
-            android:paddingHorizontal="16dp"
-            android:text="TRANSFER"
-            android:textColor="#6B8FA3"
-            android:textSize="13sp" />
 
     </LinearLayout>
 
-    <!-- Card Form -->
+    <!-- ═══════════════════════════════════════════════════════════════
+         TAB — pill / capsule style
+    ═══════════════════════════════════════════════════════════════ -->
+    <LinearLayout
+        android:id="@+id/ll_tab_jenis"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:orientation="horizontal"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="14dp"
+        android:background="#EEF2F6"
+        android:padding="4dp"
+        app:layout_constraintTop_toBottomOf="@id/header_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <!-- Tab wrapper pakai background drawable rounded dari Kotlin -->
+        <TextView
+            android:id="@+id/tab_pengeluaran"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="4dp"
+            android:text="PENGELUARAN"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:gravity="center"
+            android:letterSpacing="0.03"/>
+
+        <TextView
+            android:id="@+id/tab_pemasukan"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_marginHorizontal="4dp"
+            android:gravity="center"
+            android:letterSpacing="0.03"
+            android:text="PEMASUKAN"
+            android:textColor="#6B8FA3"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tab_riwayat"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="4dp"
+            android:text="TRANSFER"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="#6B8FA3"
+            android:gravity="center"
+            android:letterSpacing="0.03"/>
+
+    </LinearLayout>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         CARD FORM — scroll area
+    ═══════════════════════════════════════════════════════════════ -->
     <androidx.cardview.widget.CardView
         android:id="@+id/card_form"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="12dp"
-        app:cardCornerRadius="20dp"
-        app:cardBackgroundColor="#D6D0C4"
-        app:cardElevation="0dp"
+        app:cardCornerRadius="24dp"
+        app:cardBackgroundColor="#90A4AE"
+        app:cardElevation="2dp"
         app:layout_constraintTop_toBottomOf="@id/ll_tab_jenis"
         app:layout_constraintBottom_toTopOf="@id/ll_bottom_area"
         app:layout_constraintStart_toStartOf="parent"
@@ -108,29 +144,34 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:paddingHorizontal="20dp"
+                    android:paddingTop="24dp"
+                    android:paddingBottom="16dp">
 
+                    <!-- NOMINAL LABEL -->
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="NOMINAL (Rp)"
-                        android:textSize="12sp"
-                        android:textColor="#888888"
+                        android:textSize="10sp"
+                        android:textColor="#90A4AE"
+                        android:letterSpacing="0.1"
                         android:gravity="center"
-                        android:layout_marginBottom="4dp"/>
+                        android:layout_marginBottom="6dp"/>
 
+                    <!-- NOMINAL VALUE -->
                     <TextView
                         android:id="@+id/tv_nominal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Rp 0"
-                        android:textSize="32sp"
+                        android:textSize="36sp"
                         android:textStyle="bold"
-                        android:textColor="#1A1A2E"
+                        android:textColor="#F7F9FB"
                         android:gravity="center"
-                        android:layout_marginBottom="12dp"/>
+                        android:layout_marginBottom="20dp"/>
 
-                    <!-- FORM PENGELUARAN / PEMASUKAN -->
+                    <!-- ── FORM PENGELUARAN / PEMASUKAN ── -->
                     <LinearLayout
                         android:id="@+id/ll_form_normal"
                         android:layout_width="match_parent"
@@ -138,14 +179,14 @@
                         android:orientation="vertical"
                         android:visibility="visible">
 
-                        <!-- Kategori -->
+                        <!-- ── KATEGORI CARD ── -->
                         <androidx.cardview.widget.CardView
                             android:id="@+id/card_kategori"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="10dp"
-                            app:cardCornerRadius="12dp"
-                            app:cardBackgroundColor="@android:color/white"
+                            app:cardCornerRadius="16dp"
+                            app:cardBackgroundColor="#F7F9FB"
                             app:cardElevation="0dp">
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -154,20 +195,21 @@
                                 <LinearLayout
                                     android:id="@+id/ll_kategori_header"
                                     android:layout_width="match_parent"
-                                    android:layout_height="56dp"
+                                    android:layout_height="58dp"
                                     android:orientation="horizontal"
                                     android:paddingHorizontal="16dp"
                                     android:gravity="center_vertical"
                                     android:background="?attr/selectableItemBackground"
                                     android:clickable="true"
                                     android:focusable="true">
+
                                     <ImageView
                                         android:id="@+id/iv_kategori_icon"
-                                        android:layout_width="28dp"
+                                        android:layout_width="26dp"
                                         android:layout_height="28dp"
-                                        android:src="@drawable/ic_makanan"
-                                        android:layout_marginEnd="12dp"
-                                        android:scaleType="fitCenter"/>
+                                        android:layout_marginEnd="14dp"
+                                        android:scaleType="fitCenter"
+                                        android:src="@drawable/ic_makanan" />
                                     <LinearLayout
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
@@ -177,27 +219,30 @@
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
                                             android:text="Kategori"
-                                            android:textSize="11sp"
-                                            android:textColor="#4A6FA5"/>
+                                            android:textSize="10sp"
+                                            android:textColor="#78909C"
+                                            android:letterSpacing="0.04"/>
                                         <TextView
                                             android:id="@+id/tv_kategori"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
                                             android:text="Makanan"
                                             android:textSize="14sp"
-                                            android:textColor="#1A1A2E"/>
+                                            android:textColor="#1A2B34"
+                                            android:textStyle="bold"/>
                                     </LinearLayout>
                                     <ImageView
                                         android:id="@+id/iv_chevron_kategori"
-                                        android:layout_width="20dp"
-                                        android:layout_height="20dp"
-                                        android:src="@drawable/ic_chevron_down"/>
+                                        android:layout_width="18dp"
+                                        android:layout_height="18dp"
+                                        android:src="@drawable/ic_chevron_down"
+                                        app:tint="#9CB4C5"/>
                                 </LinearLayout>
                                 <View
                                     android:id="@+id/divider_kategori"
                                     android:layout_width="match_parent"
                                     android:layout_height="1dp"
-                                    android:background="#F0EDE8"
+                                    android:background="#EEF2F6"
                                     android:visibility="gone"/>
                                 <GridLayout
                                     android:id="@+id/grid_kategori"
@@ -211,14 +256,14 @@
                             </LinearLayout>
                         </androidx.cardview.widget.CardView>
 
-                        <!-- Tanggal -->
+                        <!-- ── TANGGAL CARD ── -->
                         <androidx.cardview.widget.CardView
                             android:id="@+id/card_tanggal"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="10dp"
-                            app:cardCornerRadius="12dp"
-                            app:cardBackgroundColor="@android:color/white"
+                            app:cardCornerRadius="16dp"
+                            app:cardBackgroundColor="#F7F9FB"
                             app:cardElevation="0dp">
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -227,7 +272,7 @@
                                 <LinearLayout
                                     android:id="@+id/ll_tanggal_header"
                                     android:layout_width="match_parent"
-                                    android:layout_height="56dp"
+                                    android:layout_height="58dp"
                                     android:orientation="horizontal"
                                     android:paddingHorizontal="16dp"
                                     android:gravity="center_vertical"
@@ -238,7 +283,8 @@
                                         android:layout_width="24dp"
                                         android:layout_height="24dp"
                                         android:src="@drawable/ic_tanggal"
-                                        android:layout_marginEnd="12dp"/>
+                                        android:layout_marginEnd="14dp">
+                                    </ImageView>
                                     <LinearLayout
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
@@ -248,27 +294,30 @@
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
                                             android:text="Tanggal"
-                                            android:textSize="11sp"
-                                            android:textColor="#4A6FA5"/>
+                                            android:textSize="10sp"
+                                            android:textColor="#78909C"
+                                            android:letterSpacing="0.04"/>
                                         <TextView
                                             android:id="@+id/tv_tanggal"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
                                             android:text="Hari ini"
                                             android:textSize="14sp"
-                                            android:textColor="#1A1A2E"/>
+                                            android:textColor="#1A2B34"
+                                            android:textStyle="bold"/>
                                     </LinearLayout>
                                     <ImageView
                                         android:id="@+id/iv_chevron_tanggal"
-                                        android:layout_width="20dp"
-                                        android:layout_height="20dp"
-                                        android:src="@drawable/ic_chevron_down"/>
+                                        android:layout_width="18dp"
+                                        android:layout_height="18dp"
+                                        android:src="@drawable/ic_chevron_down"
+                                        app:tint="#9CB4C5" />
                                 </LinearLayout>
                                 <View
                                     android:id="@+id/divider_tanggal"
                                     android:layout_width="match_parent"
                                     android:layout_height="1dp"
-                                    android:background="#F0EDE8"
+                                    android:background="#EEF2F6"
                                     android:visibility="gone"/>
                                 <LinearLayout
                                     android:id="@+id/ll_custom_calendar"
@@ -293,7 +342,7 @@
                                             android:text="April 2026"
                                             android:textSize="14sp"
                                             android:textStyle="bold"
-                                            android:textColor="#1A1A2E"/>
+                                            android:textColor="#1A2B34"/>
                                         <ImageButton
                                             android:id="@+id/btn_prev_month"
                                             android:layout_width="36dp"
@@ -302,7 +351,9 @@
                                             android:rotation="90"
                                             android:background="?attr/selectableItemBackgroundBorderless"
                                             android:scaleType="fitCenter"
-                                            android:padding="8dp"/>
+                                            android:padding="8dp"
+                                            app:tint="#6B8FA3" />
+
                                         <ImageButton
                                             android:id="@+id/btn_next_month"
                                             android:layout_width="36dp"
@@ -311,7 +362,8 @@
                                             android:rotation="270"
                                             android:background="?attr/selectableItemBackgroundBorderless"
                                             android:scaleType="fitCenter"
-                                            android:padding="8dp"/>
+                                            android:padding="8dp"
+                                            app:tint="#6B8FA3" />
                                     </LinearLayout>
                                     <GridLayout
                                         android:id="@+id/grid_nama_hari"
@@ -328,14 +380,14 @@
                             </LinearLayout>
                         </androidx.cardview.widget.CardView>
 
-                        <!-- Catatan -->
+                        <!-- ── CATATAN CARD ── -->
                         <androidx.cardview.widget.CardView
                             android:id="@+id/card_catatan"
                             android:layout_width="match_parent"
-                            android:layout_height="56dp"
+                            android:layout_height="58dp"
                             android:layout_marginBottom="10dp"
-                            app:cardCornerRadius="12dp"
-                            app:cardBackgroundColor="@android:color/white"
+                            app:cardCornerRadius="16dp"
+                            app:cardBackgroundColor="#F7F9FB"
                             app:cardElevation="0dp">
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -348,7 +400,9 @@
                                     android:layout_width="24dp"
                                     android:layout_height="24dp"
                                     android:src="@drawable/ic_catatan"
-                                    android:layout_marginEnd="12dp"/>
+                                    android:layout_marginEnd="14dp">
+                                </ImageView>
+
                                 <LinearLayout
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
@@ -358,26 +412,27 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:text="Catatan"
-                                        android:textSize="11sp"
-                                        android:textColor="#4A6FA5"/>
+                                        android:textSize="10sp"
+                                        android:textColor="#78909C"
+                                        android:letterSpacing="0.04"/>
                                     <TextView
                                         android:id="@+id/tv_catatan"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:text="Tambah catatan..."
                                         android:textSize="14sp"
-                                        android:textColor="#AAAAAA"/>
+                                        android:textColor="#B0BEC5"/>
                                 </LinearLayout>
                             </LinearLayout>
                         </androidx.cardview.widget.CardView>
 
-                        <!-- Sumber Dana -->
+                        <!-- ── SUMBER DANA CARD ── -->
                         <androidx.cardview.widget.CardView
                             android:id="@+id/card_sumber_dana"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            app:cardCornerRadius="12dp"
-                            app:cardBackgroundColor="@android:color/white"
+                            app:cardCornerRadius="16dp"
+                            app:cardBackgroundColor="#F7F9FB"
                             app:cardElevation="0dp">
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -386,7 +441,7 @@
                                 <LinearLayout
                                     android:id="@+id/ll_sumber_dana_header"
                                     android:layout_width="match_parent"
-                                    android:layout_height="56dp"
+                                    android:layout_height="58dp"
                                     android:orientation="horizontal"
                                     android:paddingHorizontal="16dp"
                                     android:gravity="center_vertical"
@@ -397,7 +452,8 @@
                                         android:layout_width="24dp"
                                         android:layout_height="24dp"
                                         android:src="@drawable/ic_wallet"
-                                        android:layout_marginEnd="12dp"/>
+                                        android:layout_marginEnd="14dp">
+                                    </ImageView>
                                     <LinearLayout
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
@@ -407,27 +463,30 @@
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
                                             android:text="Sumber Dana"
-                                            android:textSize="11sp"
-                                            android:textColor="#4A6FA5"/>
+                                            android:textSize="10sp"
+                                            android:textColor="#78909C"
+                                            android:letterSpacing="0.04"/>
                                         <TextView
                                             android:id="@+id/tv_sumber_dana"
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
                                             android:text="Tunai"
                                             android:textSize="14sp"
-                                            android:textColor="#1A1A2E"/>
+                                            android:textColor="#1A2B34"
+                                            android:textStyle="bold"/>
                                     </LinearLayout>
                                     <ImageView
                                         android:id="@+id/iv_chevron_sumber_dana"
-                                        android:layout_width="20dp"
-                                        android:layout_height="20dp"
-                                        android:src="@drawable/ic_chevron_down"/>
+                                        android:layout_width="18dp"
+                                        android:layout_height="18dp"
+                                        android:src="@drawable/ic_chevron_down"
+                                        app:tint="#9CB4C5" />
                                 </LinearLayout>
                                 <View
                                     android:id="@+id/divider_sumber_dana"
                                     android:layout_width="match_parent"
                                     android:layout_height="1dp"
-                                    android:background="#F0EDE8"
+                                    android:background="#EEF2F6"
                                     android:visibility="gone"/>
                                 <LinearLayout
                                     android:id="@+id/ll_sumber_dana_options"
@@ -440,7 +499,7 @@
 
                     </LinearLayout>
 
-                    <!-- FORM TRANSFER -->
+                    <!-- ── FORM TRANSFER ── -->
                     <LinearLayout
                         android:id="@+id/ll_form_transfer"
                         android:layout_width="match_parent"
@@ -453,15 +512,15 @@
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
                             android:gravity="center_vertical"
-                            android:layout_marginBottom="16dp">
+                            android:layout_marginBottom="12dp">
 
                             <androidx.cardview.widget.CardView
                                 android:id="@+id/card_dompet_asal"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                app:cardCornerRadius="12dp"
-                                app:cardBackgroundColor="@android:color/white"
+                                app:cardCornerRadius="16dp"
+                                app:cardBackgroundColor="#F7F9FB"
                                 app:cardElevation="0dp"
                                 android:foreground="?attr/selectableItemBackground"
                                 android:clickable="true"
@@ -473,18 +532,19 @@
                                     android:gravity="center"
                                     android:padding="16dp">
                                     <ImageView
-                                        android:layout_width="56dp"
-                                        android:layout_height="56dp"
+                                        android:layout_width="48dp"
+                                        android:layout_height="48dp"
                                         android:src="@drawable/ic_wallet"
                                         android:scaleType="fitCenter"
-                                        android:layout_marginBottom="8dp"/>
+                                        android:layout_marginBottom="8dp" />
+
                                     <TextView
                                         android:id="@+id/tv_dompet_asal"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:text="Silakan pilih dompet"
-                                        android:textSize="12sp"
-                                        android:textColor="#888888"
+                                        android:textSize="11sp"
+                                        android:textColor="#90A4AE"
                                         android:gravity="center"/>
                                 </LinearLayout>
                             </androidx.cardview.widget.CardView>
@@ -493,8 +553,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="→"
-                                android:textSize="24sp"
-                                android:textColor="#4A6FA5"
+                                android:textSize="22sp"
+                                android:textColor="#6B8FA3"
                                 android:layout_marginHorizontal="8dp"/>
 
                             <androidx.cardview.widget.CardView
@@ -502,8 +562,8 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                app:cardCornerRadius="12dp"
-                                app:cardBackgroundColor="@android:color/white"
+                                app:cardCornerRadius="16dp"
+                                app:cardBackgroundColor="#F7F9FB"
                                 app:cardElevation="0dp"
                                 android:foreground="?attr/selectableItemBackground"
                                 android:clickable="true"
@@ -515,18 +575,18 @@
                                     android:gravity="center"
                                     android:padding="16dp">
                                     <ImageView
-                                        android:layout_width="56dp"
-                                        android:layout_height="56dp"
+                                        android:layout_width="48dp"
+                                        android:layout_height="48dp"
                                         android:src="@drawable/ic_wallet"
                                         android:scaleType="fitCenter"
-                                        android:layout_marginBottom="8dp"/>
+                                        android:layout_marginBottom="8dp" />
                                     <TextView
                                         android:id="@+id/tv_dompet_tujuan"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:text="Silakan pilih dompet"
-                                        android:textSize="12sp"
-                                        android:textColor="#888888"
+                                        android:textSize="11sp"
+                                        android:textColor="#90A4AE"
                                         android:gravity="center"/>
                                 </LinearLayout>
                             </androidx.cardview.widget.CardView>
@@ -536,10 +596,10 @@
                         <androidx.cardview.widget.CardView
                             android:id="@+id/card_catatan_transfer"
                             android:layout_width="match_parent"
-                            android:layout_height="56dp"
-                            android:layout_marginBottom="16dp"
-                            app:cardCornerRadius="12dp"
-                            app:cardBackgroundColor="@android:color/white"
+                            android:layout_height="58dp"
+                            android:layout_marginBottom="12dp"
+                            app:cardCornerRadius="16dp"
+                            app:cardBackgroundColor="#F7F9FB"
                             app:cardElevation="0dp"
                             android:clickable="true"
                             android:focusable="true">
@@ -554,7 +614,8 @@
                                     android:layout_width="24dp"
                                     android:layout_height="24dp"
                                     android:src="@drawable/ic_catatan"
-                                    android:layout_marginEnd="12dp"/>
+                                    android:layout_marginEnd="14dp" />
+
                                 <LinearLayout
                                     android:layout_width="0dp"
                                     android:layout_height="wrap_content"
@@ -564,15 +625,16 @@
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:text="Catatan"
-                                        android:textSize="11sp"
-                                        android:textColor="#4A6FA5"/>
+                                        android:textSize="10sp"
+                                        android:textColor="#78909C"
+                                        android:letterSpacing="0.04"/>
                                     <TextView
                                         android:id="@+id/tv_catatan_transfer"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
                                         android:text="Tambah catatan..."
                                         android:textSize="14sp"
-                                        android:textColor="#AAAAAA"/>
+                                        android:textColor="#B0BEC5"/>
                                 </LinearLayout>
                             </LinearLayout>
                         </androidx.cardview.widget.CardView>
@@ -582,21 +644,20 @@
                 </LinearLayout>
             </ScrollView>
 
-            <!-- STATE TERCATAT -->
-            <!-- iv_close_tercatat (tombol back di tengah) sudah dihapus dari sini -->
+            <!-- ── STATE TERCATAT ── -->
             <LinearLayout
                 android:id="@+id/ll_state_tercatat"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:background="#D6D0C4"
+                android:background="#FFFFFF"
                 android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/iv_check_tercatat"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
                     android:src="@drawable/ic_check_green"
                     android:layout_marginBottom="16dp"/>
 
@@ -605,9 +666,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="PENGELUARAN TERCATAT"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:textStyle="bold"
-                    android:textColor="#1A1A2E"
+                    android:textColor="#1A2B34"
+                    android:letterSpacing="0.05"
                     android:layout_marginBottom="8dp"/>
 
                 <TextView
@@ -615,10 +677,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Rp 0"
-                    android:textSize="24sp"
+                    android:textSize="28sp"
                     android:textStyle="bold"
-                    android:textColor="#4A6FA5"
-                    android:layout_marginBottom="4dp"/>
+                    android:textColor="#6B8FA3"
+                    android:layout_marginBottom="6dp"/>
 
                 <TextView
                     android:id="@+id/tv_catatan_tercatat"
@@ -626,7 +688,7 @@
                     android:layout_height="wrap_content"
                     android:text=""
                     android:textSize="13sp"
-                    android:textColor="#888888"
+                    android:textColor="#90A4AE"
                     android:gravity="center"
                     android:paddingHorizontal="24dp"/>
 
@@ -635,128 +697,147 @@
         </FrameLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- AREA BAWAH -->
+    <!-- ═══════════════════════════════════════════════════════════════
+         AREA BAWAH — numpad + keyboard huruf + tombol aksi
+    ═══════════════════════════════════════════════════════════════ -->
     <LinearLayout
         android:id="@+id/ll_bottom_area"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:background="#EEF2F6"
         app:layout_constraintTop_toBottomOf="@id/card_form"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- NUMPAD ANGKA -->
+        <!-- ── NUMPAD ANGKA ── -->
         <GridLayout
             android:id="@+id/ll_numpad"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:columnCount="4"
-            android:background="#EDE8DC"
-            android:paddingHorizontal="4dp"
-            android:paddingTop="4dp"
+            android:background="#EEF2F6"
+            android:paddingHorizontal="8dp"
+            android:paddingTop="6dp"
             android:paddingBottom="4dp"
             android:visibility="visible">
 
+            <!-- Baris 1 -->
             <Button android:id="@+id/btn_1"
                 android:layout_width="0dp" android:layout_columnWeight="1"
-                android:layout_height="56dp" android:text="1" android:textSize="18sp"
-                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
-                android:layout_margin="2dp"/>
+                android:layout_height="54dp" android:text="1" android:textSize="18sp"
+                android:backgroundTint="#FFFFFF" android:textColor="#1A2B34"
+                android:textStyle="bold"
+                android:layout_margin="3dp" style="@style/Widget.Material3.Button.TonalButton"/>
             <Button android:id="@+id/btn_2"
                 android:layout_width="0dp" android:layout_columnWeight="1"
-                android:layout_height="56dp" android:text="2" android:textSize="18sp"
-                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
-                android:layout_margin="2dp"/>
+                android:layout_height="54dp" android:text="2" android:textSize="18sp"
+                android:backgroundTint="#FFFFFF" android:textColor="#1A2B34"
+                android:textStyle="bold"
+                android:layout_margin="3dp" style="@style/Widget.Material3.Button.TonalButton"/>
             <Button android:id="@+id/btn_3"
                 android:layout_width="0dp" android:layout_columnWeight="1"
-                android:layout_height="56dp" android:text="3" android:textSize="18sp"
-                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
-                android:layout_margin="2dp"/>
+                android:layout_height="54dp" android:text="3" android:textSize="18sp"
+                android:backgroundTint="#FFFFFF" android:textColor="#1A2B34"
+                android:textStyle="bold"
+                android:layout_margin="3dp" style="@style/Widget.Material3.Button.TonalButton"/>
             <Button android:id="@+id/btn_minus"
                 android:layout_width="0dp" android:layout_columnWeight="1"
-                android:layout_height="56dp" android:text="-" android:textSize="22sp"
-                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
-                android:layout_margin="2dp"/>
+                android:layout_height="54dp" android:text="-" android:textSize="22sp"
+                android:backgroundTint="#E8EEF3" android:textColor="#546E7A"
+                android:layout_margin="3dp" style="@style/Widget.Material3.Button.TonalButton"/>
 
+            <!-- Baris 2 -->
             <Button android:id="@+id/btn_4"
                 android:layout_width="0dp" android:layout_columnWeight="1"
-                android:layout_height="56dp" android:text="4" android:textSize="18sp"
-                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
-                android:layout_margin="2dp"/>
+                android:layout_height="54dp" android:text="4" android:textSize="18sp"
+                android:backgroundTint="#FFFFFF" android:textColor="#1A2B34"
+                android:textStyle="bold"
+                android:layout_margin="3dp" style="@style/Widget.Material3.Button.TonalButton"/>
             <Button android:id="@+id/btn_5"
                 android:layout_width="0dp" android:layout_columnWeight="1"
-                android:layout_height="56dp" android:text="5" android:textSize="18sp"
-                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
-                android:layout_margin="2dp"/>
+                android:layout_height="54dp" android:text="5" android:textSize="18sp"
+                android:backgroundTint="#FFFFFF" android:textColor="#1A2B34"
+                android:textStyle="bold"
+                android:layout_margin="3dp" style="@style/Widget.Material3.Button.TonalButton"/>
             <Button android:id="@+id/btn_6"
                 android:layout_width="0dp" android:layout_columnWeight="1"
-                android:layout_height="56dp" android:text="6" android:textSize="18sp"
-                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
-                android:layout_margin="2dp"/>
+                android:layout_height="54dp" android:text="6" android:textSize="18sp"
+                android:backgroundTint="#FFFFFF" android:textColor="#1A2B34"
+                android:textStyle="bold"
+                android:layout_margin="3dp" style="@style/Widget.Material3.Button.TonalButton"/>
             <Button android:id="@+id/btn_enter"
                 android:layout_width="0dp" android:layout_columnWeight="1"
-                android:layout_height="56dp" android:text="⏎" android:textSize="22sp"
-                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
-                android:layout_margin="2dp"/>
+                android:layout_height="54dp" android:text="⏎" android:textSize="20sp"
+                android:backgroundTint="#E8EEF3" android:textColor="#546E7A"
+                android:layout_margin="3dp" style="@style/Widget.Material3.Button.TonalButton"/>
 
+            <!-- Baris 3 -->
             <Button android:id="@+id/btn_7"
                 android:layout_width="0dp" android:layout_columnWeight="1"
-                android:layout_height="56dp" android:text="7" android:textSize="18sp"
-                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
-                android:layout_margin="2dp"/>
+                android:layout_height="54dp" android:text="7" android:textSize="18sp"
+                android:backgroundTint="#FFFFFF" android:textColor="#1A2B34"
+                android:textStyle="bold"
+                android:layout_margin="3dp" style="@style/Widget.Material3.Button.TonalButton"/>
             <Button android:id="@+id/btn_8"
                 android:layout_width="0dp" android:layout_columnWeight="1"
-                android:layout_height="56dp" android:text="8" android:textSize="18sp"
-                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
-                android:layout_margin="2dp"/>
+                android:layout_height="54dp" android:text="8" android:textSize="18sp"
+                android:backgroundTint="#FFFFFF" android:textColor="#1A2B34"
+                android:textStyle="bold"
+                android:layout_margin="3dp" style="@style/Widget.Material3.Button.TonalButton"/>
             <Button android:id="@+id/btn_9"
                 android:layout_width="0dp" android:layout_columnWeight="1"
-                android:layout_height="56dp" android:text="9" android:textSize="18sp"
-                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
-                android:layout_margin="2dp"/>
+                android:layout_height="54dp" android:text="9" android:textSize="18sp"
+                android:backgroundTint="#FFFFFF" android:textColor="#1A2B34"
+                android:textStyle="bold"
+                android:layout_margin="3dp" style="@style/Widget.Material3.Button.TonalButton"/>
             <Button android:id="@+id/btn_hapus"
                 android:layout_width="0dp" android:layout_columnWeight="1"
-                android:layout_height="56dp" android:text="⌫" android:textSize="22sp"
-                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
-                android:layout_margin="2dp"/>
+                android:layout_height="54dp" android:text="⌫" android:textSize="20sp"
+                android:backgroundTint="#E8EEF3" android:textColor="#546E7A"
+                android:layout_margin="3dp" style="@style/Widget.Material3.Button.TonalButton"/>
 
+            <!-- Baris 4 -->
             <Button android:id="@+id/btn_bintang"
                 android:layout_width="0dp" android:layout_columnWeight="1"
-                android:layout_height="56dp" android:text="ABC" android:textSize="13sp"
-                android:textStyle="bold" android:backgroundTint="#F5F5F5"
-                android:textColor="#4A6FA5" android:layout_margin="2dp"/>
+                android:layout_height="54dp" android:text="ABC" android:textSize="12sp"
+                android:textStyle="bold" android:backgroundTint="#DDE6EE"
+                android:textColor="#4A6E85"
+                android:layout_margin="3dp" style="@style/Widget.Material3.Button.TonalButton"/>
             <Button android:id="@+id/btn_0"
                 android:layout_width="0dp" android:layout_columnWeight="1"
-                android:layout_height="56dp" android:text="0" android:textSize="18sp"
-                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
-                android:layout_margin="2dp"/>
+                android:layout_height="54dp" android:text="0" android:textSize="18sp"
+                android:backgroundTint="#FFFFFF" android:textColor="#1A2B34"
+                android:textStyle="bold"
+                android:layout_margin="3dp" style="@style/Widget.Material3.Button.TonalButton"/>
             <Button android:id="@+id/btn_plus"
                 android:layout_width="0dp" android:layout_columnWeight="1"
-                android:layout_height="56dp" android:text="+" android:textSize="22sp"
-                android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
-                android:layout_margin="2dp"/>
+                android:layout_height="54dp" android:text="+" android:textSize="22sp"
+                android:backgroundTint="#E8EEF3" android:textColor="#546E7A"
+                android:layout_margin="3dp" style="@style/Widget.Material3.Button.TonalButton"/>
             <Button
                 android:id="@+id/btn_simpan"
                 android:layout_width="0dp"
-                android:layout_height="56dp"
+                android:layout_height="54dp"
                 android:layout_columnWeight="1"
-                android:layout_margin="2dp"
-                android:backgroundTint="#4A6FA5"
+                android:layout_margin="3dp"
+                android:backgroundTint="#2C3E6B"
                 android:text="SIMPAN&#10;TRANSAKSI"
                 android:textColor="@android:color/white"
                 android:textSize="8sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                style="@style/Widget.Material3.Button.TonalButton"/>
 
         </GridLayout>
 
-        <!-- CUSTOM KEYBOARD HURUF -->
+        <!-- ── KEYBOARD HURUF ── -->
         <LinearLayout
             android:id="@+id/ll_keyboard_huruf"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="#EDE8DC"
+            android:background="#EEF2F6"
             android:paddingTop="4dp"
             android:paddingBottom="4dp"
             android:visibility="gone">
@@ -768,11 +849,12 @@
                 android:layout_height="40dp"
                 android:hint="Tulis catatan..."
                 android:textSize="14sp"
-                android:textColor="#1A1A2E"
-                android:textColorHint="#AAAAAA"
+                android:textColor="#1A2B34"
+                android:textColorHint="#90A4AE"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="16dp"
-                android:background="#F0EDE8"
+                android:background="#FFFFFF"
+                android:layout_marginHorizontal="8dp"
                 android:layout_marginBottom="4dp"/>
 
             <!-- Baris Q-P -->
@@ -781,16 +863,16 @@
                 android:layout_height="wrap_content"
                 android:columnCount="10"
                 android:layout_marginHorizontal="4dp">
-                <Button android:id="@+id/kb_q" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="Q" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
-                <Button android:id="@+id/kb_w" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="W" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
-                <Button android:id="@+id/kb_e" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="E" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
-                <Button android:id="@+id/kb_r" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="R" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
-                <Button android:id="@+id/kb_t" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="T" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
-                <Button android:id="@+id/kb_y" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="Y" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
-                <Button android:id="@+id/kb_u" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="U" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
-                <Button android:id="@+id/kb_i" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="I" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
-                <Button android:id="@+id/kb_o" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="O" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
-                <Button android:id="@+id/kb_p" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="P" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_q" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="Q" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
+                <Button android:id="@+id/kb_w" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="W" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
+                <Button android:id="@+id/kb_e" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="E" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
+                <Button android:id="@+id/kb_r" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="R" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
+                <Button android:id="@+id/kb_t" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="T" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
+                <Button android:id="@+id/kb_y" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="Y" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
+                <Button android:id="@+id/kb_u" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="U" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
+                <Button android:id="@+id/kb_i" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="I" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
+                <Button android:id="@+id/kb_o" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="O" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
+                <Button android:id="@+id/kb_p" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="P" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
             </GridLayout>
 
             <!-- Baris A-L -->
@@ -798,16 +880,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:columnCount="9"
-                android:layout_marginHorizontal="20dp">
-                <Button android:id="@+id/kb_a" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="A" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
-                <Button android:id="@+id/kb_s" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="S" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
-                <Button android:id="@+id/kb_d" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="D" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
-                <Button android:id="@+id/kb_f" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="F" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
-                <Button android:id="@+id/kb_g" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="G" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
-                <Button android:id="@+id/kb_h" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="H" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
-                <Button android:id="@+id/kb_j" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="J" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
-                <Button android:id="@+id/kb_k" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="K" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
-                <Button android:id="@+id/kb_l" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="L" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                android:layout_marginHorizontal="18dp">
+                <Button android:id="@+id/kb_a" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="A" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
+                <Button android:id="@+id/kb_s" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="S" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
+                <Button android:id="@+id/kb_d" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="D" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
+                <Button android:id="@+id/kb_f" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="F" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
+                <Button android:id="@+id/kb_g" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="G" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
+                <Button android:id="@+id/kb_h" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="H" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
+                <Button android:id="@+id/kb_j" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="J" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
+                <Button android:id="@+id/kb_k" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="K" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
+                <Button android:id="@+id/kb_l" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="L" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
             </GridLayout>
 
             <!-- Baris Shift + Z-M + Hapus -->
@@ -816,15 +898,15 @@
                 android:layout_height="wrap_content"
                 android:columnCount="9"
                 android:layout_marginHorizontal="4dp">
-                <Button android:id="@+id/kb_shift" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="⇧" android:textSize="16sp" android:backgroundTint="#C8C4BA" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
-                <Button android:id="@+id/kb_z" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="Z" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
-                <Button android:id="@+id/kb_x" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="X" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
-                <Button android:id="@+id/kb_c" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="C" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
-                <Button android:id="@+id/kb_v" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="V" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
-                <Button android:id="@+id/kb_b" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="B" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
-                <Button android:id="@+id/kb_n" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="N" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
-                <Button android:id="@+id/kb_m" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="M" android:textSize="14sp" android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
-                <Button android:id="@+id/kb_hapus" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="46dp" android:text="⌫" android:textSize="16sp" android:backgroundTint="#C8C4BA" android:textColor="#1A1A2E" android:padding="0dp" android:layout_margin="1dp"/>
+                <Button android:id="@+id/kb_shift" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="⇧" android:textSize="15sp" android:backgroundTint="#DDE6EE" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
+                <Button android:id="@+id/kb_z" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="Z" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
+                <Button android:id="@+id/kb_x" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="X" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
+                <Button android:id="@+id/kb_c" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="C" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
+                <Button android:id="@+id/kb_v" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="V" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
+                <Button android:id="@+id/kb_b" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="B" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
+                <Button android:id="@+id/kb_n" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="N" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
+                <Button android:id="@+id/kb_m" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="M" android:textSize="13sp" android:backgroundTint="#FFFFFF" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
+                <Button android:id="@+id/kb_hapus" android:layout_width="0dp" android:layout_columnWeight="1" android:layout_height="44dp" android:text="⌫" android:textSize="15sp" android:backgroundTint="#DDE6EE" android:textColor="#1A2B34" android:padding="0dp" android:layout_margin="2dp" style="@style/Widget.Material3.Button.TonalButton"/>
             </GridLayout>
 
             <!-- Baris 123 + Spasi + Selesai -->
@@ -836,25 +918,28 @@
                 android:layout_marginBottom="4dp">
                 <Button android:id="@+id/kb_123"
                     android:layout_width="0dp" android:layout_columnWeight="1"
-                    android:layout_height="46dp" android:text="123" android:textSize="12sp"
-                    android:backgroundTint="#C8C4BA" android:textColor="#1A1A2E"
-                    android:padding="0dp" android:layout_margin="1dp"/>
+                    android:layout_height="44dp" android:text="123" android:textSize="12sp"
+                    android:backgroundTint="#DDE6EE" android:textColor="#4A6E85"
+                    android:padding="0dp" android:layout_margin="2dp"
+                    style="@style/Widget.Material3.Button.TonalButton"/>
                 <Button android:id="@+id/kb_spasi"
                     android:layout_width="0dp" android:layout_columnWeight="5"
-                    android:layout_height="46dp" android:text="SPASI" android:textSize="12sp"
-                    android:backgroundTint="#F5F5F5" android:textColor="#1A1A2E"
-                    android:padding="0dp" android:layout_margin="1dp"/>
+                    android:layout_height="44dp" android:text="SPASI" android:textSize="12sp"
+                    android:backgroundTint="#FFFFFF" android:textColor="#546E7A"
+                    android:padding="0dp" android:layout_margin="2dp"
+                    style="@style/Widget.Material3.Button.TonalButton"/>
                 <Button android:id="@+id/kb_selesai"
                     android:layout_width="0dp" android:layout_columnWeight="2"
-                    android:layout_height="46dp" android:text="SELESAI" android:textSize="11sp"
-                    android:textStyle="bold" android:backgroundTint="#4A6FA5"
+                    android:layout_height="44dp" android:text="SELESAI" android:textSize="10sp"
+                    android:textStyle="bold" android:backgroundTint="#2C3E6B"
                     android:textColor="@android:color/white" android:padding="0dp"
-                    android:layout_margin="1dp"/>
+                    android:layout_margin="2dp"
+                    style="@style/Widget.Material3.Button.TonalButton"/>
             </GridLayout>
 
         </LinearLayout>
 
-        <!-- Tombol Aksi setelah transaksi tercatat (menggantikan Tambah/Hapus Catatan) -->
+        <!-- ── TOMBOL AKSI SETELAH TERCATAT ── -->
         <LinearLayout
             android:id="@+id/ll_aksi_catatan"
             android:layout_width="match_parent"
@@ -870,8 +955,8 @@
                 android:text="+ Transaksi Baru"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:textColor="#4A6FA5"
-                android:backgroundTint="#C8C4BA"/>
+                android:textColor="#4A6E85"
+                android:backgroundTint="#DDE6EE"/>
 
             <Button
                 android:id="@+id/btn_ke_dashboard"
@@ -882,11 +967,11 @@
                 android:textSize="12sp"
                 android:textStyle="bold"
                 android:textColor="#FFFFFF"
-                android:backgroundTint="#4A6FA5"/>
+                android:backgroundTint="#2C3E6B"/>
 
         </LinearLayout>
 
-        <!-- Tombol Aksi Transfer -->
+        <!-- ── TOMBOL AKSI TRANSFER ── -->
         <LinearLayout
             android:id="@+id/ll_aksi_transfer"
             android:layout_width="match_parent"
@@ -901,7 +986,7 @@
                 android:text="Tambah Transfer"
                 android:textSize="13sp"
                 android:textStyle="bold"
-                android:textColor="#1A1A2E"
+                android:textColor="#1A2B34"
                 android:backgroundTint="#9CB4C5"/>
             <Button
                 android:id="@+id/btn_hapus_transfer"
@@ -912,7 +997,7 @@
                 android:textSize="13sp"
                 android:textStyle="bold"
                 android:textColor="#F44336"
-                android:backgroundTint="#C8C4BA"/>
+                android:backgroundTint="#DDE6EE"/>
         </LinearLayout>
 
         <Button
@@ -923,7 +1008,7 @@
             android:textSize="14sp"
             android:textStyle="bold"
             android:textColor="@android:color/white"
-            android:backgroundTint="#4A6FA5"
+            android:backgroundTint="#2C3E6B"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="4dp"
