@@ -959,11 +959,11 @@
                 android:backgroundTint="#DDE6EE"/>
 
             <Button
-                android:id="@+id/btn_ke_dashboard"
+                android:id="@+id/btn_hapus_transaksi"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Ke Dashboard"
+                android:text="Hapus Transaksi"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 android:textColor="#FFFFFF"

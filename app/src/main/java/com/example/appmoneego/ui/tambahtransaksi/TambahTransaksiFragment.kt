@@ -119,6 +119,7 @@ class TambahTransaksiFragment : Fragment() {
     private lateinit var llAksiCatatan:       View
     private lateinit var btnTransaksiBaru:    Button
     private lateinit var btnKeDashboard:      Button
+    private lateinit var btnHapusTransaksi: Button
     private lateinit var llFormNormal:        LinearLayout
     private lateinit var llFormTransfer:      LinearLayout
     private lateinit var tvDompetAsal:        TextView
@@ -358,7 +359,7 @@ class TambahTransaksiFragment : Fragment() {
         kbShift             = view.findViewById(R.id.kb_shift)
         llAksiCatatan       = view.findViewById(R.id.ll_aksi_catatan)
         btnTransaksiBaru    = view.findViewById(R.id.btn_transaksi_baru)
-        btnKeDashboard      = view.findViewById(R.id.btn_ke_dashboard)
+        btnHapusTransaksi   = view.findViewById(R.id.btn_hapus_transaksi)
         llStateTercatat     = view.findViewById(R.id.ll_state_tercatat)
         tvLabelTercatat     = view.findViewById(R.id.tv_label_tercatat)
         tvNominalTercatat   = view.findViewById(R.id.tv_nominal_tercatat)
@@ -866,8 +867,18 @@ class TambahTransaksiFragment : Fragment() {
 
     private fun setupAksiCatatan() {
         btnTransaksiBaru.setOnClickListener { showStateInput() }
-        btnKeDashboard.setOnClickListener {
-            findNavController().popBackStack(R.id.dashboardFragment, false)
+        btnHapusTransaksi.setOnClickListener {
+            lastSavedTransaksi?.let { transaksi ->
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Hapus Transaksi")
+                    .setMessage("Yakin ingin menghapus transaksi ini?")
+                    .setPositiveButton("Hapus") { _, _ ->
+                        viewModel.delete(transaksi)
+                        showStateInput()
+                    }
+                    .setNegativeButton("Batal", null)
+                    .show()
+            }
         }
     }
 
