@@ -20,13 +20,13 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
     init {
         val db = MoneeGoDatabase.getDatabase(application)
         transaksiRepo = TransaksiRepository(db.transaksiDao())
-        dompetRepo = DompetRepository(db.dompetDao())
-        allTransaksi = transaksiRepo.allTransaksi
+        dompetRepo    = DompetRepository(db.dompetDao())
+        allTransaksi  = transaksiRepo.allTransaksi
     }
 
+    // Insert transaksi biasa — otomatis update saldo dompet
     fun insert(transaksi: Transaksi) = viewModelScope.launch {
         transaksiRepo.insert(transaksi)
-        // otomatis update saldo dompet setelah transaksi masuk
         val dompet = dompetRepo.getById(transaksi.dompetId)
         dompet?.let {
             val saldoBaru = if (transaksi.jenis == "PEMASUKAN") {
@@ -38,9 +38,14 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
+    // Insert transaksi TANPA update saldo dompet
+    // Dipakai saat tambah dompet baru — saldo sudah di-set langsung di entity Dompet
+    fun insertTanpaUpdateSaldo(transaksi: Transaksi) = viewModelScope.launch {
+        transaksiRepo.insert(transaksi)
+    }
+
     fun update(transaksi: Transaksi, nominalLama: Double, jenisLama: String) =
         viewModelScope.launch {
-            // kembalikan saldo lama dulu sebelum update
             val dompet = dompetRepo.getById(transaksi.dompetId)
             dompet?.let {
                 val saldoKembalikan = if (jenisLama == "PEMASUKAN") {
@@ -59,7 +64,6 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
         }
 
     fun delete(transaksi: Transaksi) = viewModelScope.launch {
-        // kembalikan saldo saat transaksi dihapus
         val dompet = dompetRepo.getById(transaksi.dompetId)
         dompet?.let {
             val saldoBaru = if (transaksi.jenis == "PEMASUKAN") {
@@ -73,5 +77,5 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun getByDateRange(start: Long, end: Long) = transaksiRepo.getByDateRange(start, end)
-    fun getByKategori(kategori: String) = transaksiRepo.getByKategori(kategori)
+    fun getByKategori(kategori: String)         = transaksiRepo.getByKategori(kategori)
 }

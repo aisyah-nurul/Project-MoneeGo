@@ -7,49 +7,58 @@
     android:layout_marginHorizontal="16dp"
     android:layout_marginBottom="4dp">
 
-    <!-- Item transaksi utama (nama + nominal) -->
+    <!-- Card utama: icon + kategori + nominal -->
     <androidx.cardview.widget.CardView
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_item_transaksi"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
         app:cardCornerRadius="12dp"
         app:cardBackgroundColor="#E8E4DC"
         app:cardElevation="0dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            xmlns:app="http://schemas.android.com/apk/res-auto"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
             android:paddingHorizontal="16dp"
-            android:paddingVertical="14dp">
+            android:paddingVertical="12dp">
 
+            <!-- Icon kategori -->
+            <ImageView
+                android:id="@+id/iv_kategori_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="12dp"
+                android:scaleType="fitCenter"/>
+
+            <!-- Nama kategori -->
             <TextView
                 android:id="@+id/tv_kategori"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="Kategori"
                 android:textSize="14sp"
-                android:textColor="#1A1A2E"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/tv_nominal"/>
+                android:textColor="#1A1A2E"/>
 
+            <!-- Nominal -->
             <TextView
                 android:id="@+id/tv_nominal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Rp0"
                 android:textSize="14sp"
-                android:textStyle="bold"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                android:textStyle="bold"/>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Detail transaksi (catatan + sumber dana) -->
+    <!-- Card detail: catatan + sumber dana + nominal detail -->
     <androidx.cardview.widget.CardView
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/card_detail"
@@ -82,7 +91,7 @@
                 android:id="@+id/tv_sumber_dana"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Bank"
+                android:text="Tunai"
                 android:textSize="12sp"
                 android:textColor="#888888"
                 app:layout_constraintTop_toTopOf="parent"
