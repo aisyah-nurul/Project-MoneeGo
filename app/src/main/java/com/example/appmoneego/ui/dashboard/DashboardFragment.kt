@@ -12,23 +12,23 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.appmoneego.R
 import com.example.appmoneego.utils.CurrencyFormatter
+import com.example.appmoneego.utils.VisibilityPrefs
 import com.example.appmoneego.viewmodel.DashboardViewModel
 
 class DashboardFragment : Fragment() {
 
     private lateinit var dashboardViewModel: DashboardViewModel
 
-    private lateinit var tvSaldo: TextView
-    private lateinit var tvPemasukan: TextView
+    private lateinit var tvSaldo:       TextView
+    private lateinit var tvPemasukan:   TextView
     private lateinit var tvPengeluaran: TextView
     private lateinit var ivToggleSaldo: ImageView
 
-    // true = angka terlihat, false = disembunyikan (***)
+    // State mata — dibaca dari SharedPreferences
     private var isSaldoVisible = true
 
-    // Simpan nilai terakhir supaya bisa ditampilkan kembali saat toggle
-    private var nilaiSaldo      = "Rp0"
-    private var nilaiPemasukan  = "Rp0"
+    private var nilaiSaldo       = "Rp0"
+    private var nilaiPemasukan   = "Rp0"
     private var nilaiPengeluaran = "Rp0"
 
     override fun onCreateView(
@@ -41,37 +41,40 @@ class DashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Baca state dari SharedPreferences agar konsisten lintas fragment
+        isSaldoVisible = VisibilityPrefs.isNominalVisible(requireContext())
+
         initViews(view)
         setupViewModels()
         setupToggleSaldo()
         setupClickListeners(view)
+
+        // Sinkronkan icon mata sesuai state tersimpan
+        syncIkonMata()
     }
 
     private fun initViews(view: View) {
-        tvSaldo        = view.findViewById(R.id.tv_saldo)
-        tvPemasukan    = view.findViewById(R.id.tv_pemasukan)
-        tvPengeluaran  = view.findViewById(R.id.tv_pengeluaran)
-        ivToggleSaldo  = view.findViewById(R.id.iv_toggle_saldo)
+        tvSaldo       = view.findViewById(R.id.tv_saldo)
+        tvPemasukan   = view.findViewById(R.id.tv_pemasukan)
+        tvPengeluaran = view.findViewById(R.id.tv_pengeluaran)
+        ivToggleSaldo = view.findViewById(R.id.iv_toggle_saldo)
     }
 
     private fun setupViewModels() {
         dashboardViewModel = ViewModelProvider(this)[DashboardViewModel::class.java]
 
-        // Observe saldo total semua dompet
         dashboardViewModel.totalSaldo.observe(viewLifecycleOwner) { total ->
-            nilaiSaldo = CurrencyFormatter.format(total ?: 0.0)
+            nilaiSaldo   = CurrencyFormatter.format(total ?: 0.0)
             tvSaldo.text = if (isSaldoVisible) nilaiSaldo else "Rp ***"
         }
 
-        // Observe pemasukan bulan ini
         dashboardViewModel.totalPemasukan.observe(viewLifecycleOwner) { pemasukan ->
-            nilaiPemasukan = CurrencyFormatter.format(pemasukan ?: 0.0)
+            nilaiPemasukan   = CurrencyFormatter.format(pemasukan ?: 0.0)
             tvPemasukan.text = if (isSaldoVisible) nilaiPemasukan else "***"
         }
 
-        // Observe pengeluaran bulan ini
         dashboardViewModel.totalPengeluaran.observe(viewLifecycleOwner) { pengeluaran ->
-            nilaiPengeluaran = CurrencyFormatter.format(pengeluaran ?: 0.0)
+            nilaiPengeluaran   = CurrencyFormatter.format(pengeluaran ?: 0.0)
             tvPengeluaran.text = if (isSaldoVisible) nilaiPengeluaran else "***"
         }
     }
@@ -80,21 +83,29 @@ class DashboardFragment : Fragment() {
         ivToggleSaldo.setOnClickListener {
             isSaldoVisible = !isSaldoVisible
 
-            if (isSaldoVisible) {
-                // Tampilkan nilai asli
-                tvSaldo.text        = nilaiSaldo
-                tvPemasukan.text    = nilaiPemasukan
-                tvPengeluaran.text  = nilaiPengeluaran
-                // Icon mata terbuka
-                ivToggleSaldo.setImageResource(R.drawable.ic_eye)
-            } else {
-                // Sembunyikan dengan bintang
-                tvSaldo.text        = "Rp ***"
-                tvPemasukan.text    = "***"
-                tvPengeluaran.text  = "***"
-                // Icon mata tertutup
-                ivToggleSaldo.setImageResource(R.drawable.ic_eye_off)
-            }
+            // Simpan ke SharedPreferences agar persisten lintas fragment
+            VisibilityPrefs.setNominalVisible(requireContext(), isSaldoVisible)
+
+            syncIkonMata()
+            refreshTampilan()
+        }
+    }
+
+    private fun syncIkonMata() {
+        ivToggleSaldo.setImageResource(
+            if (isSaldoVisible) R.drawable.ic_eye else R.drawable.ic_eye_off
+        )
+    }
+
+    private fun refreshTampilan() {
+        if (isSaldoVisible) {
+            tvSaldo.text       = nilaiSaldo
+            tvPemasukan.text   = nilaiPemasukan
+            tvPengeluaran.text = nilaiPengeluaran
+        } else {
+            tvSaldo.text       = "Rp ***"
+            tvPemasukan.text   = "***"
+            tvPengeluaran.text = "***"
         }
     }
 

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -21,6 +22,7 @@ import com.example.appmoneego.adapter.DompetAdapter
 import com.example.appmoneego.data.entity.Dompet
 import com.example.appmoneego.data.entity.Transaksi
 import com.example.appmoneego.utils.CurrencyFormatter
+import com.example.appmoneego.utils.VisibilityPrefs
 import com.example.appmoneego.viewmodel.DompetViewModel
 import com.example.appmoneego.viewmodel.HutangViewModel
 import com.example.appmoneego.viewmodel.TransaksiViewModel
@@ -34,22 +36,27 @@ import java.util.Locale
 
 class DompetFragment : Fragment() {
 
-    private lateinit var dompetViewModel: DompetViewModel
-    private lateinit var hutangViewModel: HutangViewModel
+    private lateinit var dompetViewModel:   DompetViewModel
+    private lateinit var hutangViewModel:   HutangViewModel
     private lateinit var transaksiViewModel: TransaksiViewModel
-    private lateinit var adapter: DompetAdapter
+    private lateinit var adapter:           DompetAdapter
 
-    private lateinit var tvTotalSaldo: TextView
+    private lateinit var tvTotalSaldo:     TextView
     private lateinit var tvDompetTerbesar: TextView
-    private lateinit var tvDompetAktif: TextView
-    private lateinit var btnTambah: Button
-    private lateinit var rvDompet: RecyclerView
+    private lateinit var tvDompetAktif:    TextView
+    private lateinit var btnTambah:        Button
+    private lateinit var rvDompet:         RecyclerView
     private lateinit var layoutEmptyDompet: LinearLayout
-    private lateinit var cardInfoHutang: CardView
-    private lateinit var tvInfoHutang: TextView
-    private lateinit var tvLihatHutang: TextView
+    private lateinit var cardInfoHutang:   CardView
+    private lateinit var tvInfoHutang:     TextView
+    private lateinit var tvLihatHutang:    TextView
 
-    private var totalSaldo = 0.0
+    // Tombol mata di halaman dompet
+    private lateinit var ivToggleSaldo: ImageView
+
+    private var totalSaldo     = 0.0
+    // Baca state dari SharedPreferences agar konsisten
+    private var nominalVisible = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,15 +67,21 @@ class DompetFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Baca state mata
+        nominalVisible = VisibilityPrefs.isNominalVisible(requireContext())
+
         initViews(view)
         setupDompetViewModel()
         setupHutangViewModel()
         setupTransaksiViewModel()
         setupRecyclerView()
         setupClickListeners()
+        setupTombolMata()
+        syncIkonMata()
     }
 
-    // ─── Init ─────────────────────────────────────────────────────────────────
+    // ── Init ─────────────────────────────────────────────────────────────────
 
     private fun initViews(view: View) {
         tvTotalSaldo      = view.findViewById(R.id.tv_total_saldo)
@@ -80,16 +93,20 @@ class DompetFragment : Fragment() {
         cardInfoHutang    = view.findViewById(R.id.card_info_hutang)
         tvInfoHutang      = view.findViewById(R.id.tv_info_hutang)
         tvLihatHutang     = view.findViewById(R.id.tv_lihat_hutang)
+        // Tombol mata — pastikan id ini ada di fragment_dompet.xml
+        ivToggleSaldo     = view.findViewById(R.id.iv_toggle_saldo_dompet)
     }
 
-    // ─── ViewModels ───────────────────────────────────────────────────────────
+    // ── ViewModels ───────────────────────────────────────────────────────────
 
     private fun setupDompetViewModel() {
         dompetViewModel = ViewModelProvider(this)[DompetViewModel::class.java]
 
         dompetViewModel.totalSaldo.observe(viewLifecycleOwner) { total ->
             totalSaldo = total ?: 0.0
-            tvTotalSaldo.text = CurrencyFormatter.format(totalSaldo)
+            // Tampilkan atau sembunyikan sesuai state
+            tvTotalSaldo.text = if (nominalVisible)
+                CurrencyFormatter.format(totalSaldo) else "Rp ***"
             adapter.notifyDataSetChanged()
         }
 
@@ -113,58 +130,74 @@ class DompetFragment : Fragment() {
 
     private fun setupHutangViewModel() {
         hutangViewModel = ViewModelProvider(this)[HutangViewModel::class.java]
-
         hutangViewModel.allHutang.observe(viewLifecycleOwner) { list ->
             val aktif = list.filter { !it.sudahLunas }
             if (aktif.isEmpty()) {
                 cardInfoHutang.visibility = View.GONE
             } else {
                 val totalHutang = aktif.sumOf { it.nominal }
-                val jumlah = aktif.size
-                tvInfoHutang.text =
-                    "$jumlah hutang · Total ${CurrencyFormatter.format(totalHutang)}"
+                tvInfoHutang.text = "${aktif.size} hutang · Total ${CurrencyFormatter.format(totalHutang)}"
                 cardInfoHutang.visibility = View.VISIBLE
             }
         }
     }
 
-    // ─── RecyclerView ─────────────────────────────────────────────────────────
+    // ── RecyclerView ─────────────────────────────────────────────────────────
 
     private fun setupRecyclerView() {
         adapter = DompetAdapter(
             onItemClick     = { dompet -> showEditDeleteDialog(dompet) },
             onItemLongClick = { dompet -> showEditDeleteDialog(dompet); true },
-            totalSaldo      = { totalSaldo }
+            totalSaldo      = { totalSaldo },
+            // Teruskan state mata ke DompetAdapter agar saldo per item ikut tersembunyi
+            nominalVisible  = { nominalVisible }
         )
         rvDompet.layoutManager = LinearLayoutManager(requireContext())
         rvDompet.adapter = adapter
     }
 
-    // ─── Click Listeners ──────────────────────────────────────────────────────
+    // ── Tombol Mata ──────────────────────────────────────────────────────────
+
+    private fun setupTombolMata() {
+        ivToggleSaldo.setOnClickListener {
+            nominalVisible = !nominalVisible
+            VisibilityPrefs.setNominalVisible(requireContext(), nominalVisible)
+            syncIkonMata()
+
+            // Refresh total saldo header
+            tvTotalSaldo.text = if (nominalVisible)
+                CurrencyFormatter.format(totalSaldo) else "Rp ***"
+
+            // Refresh list item dompet
+            adapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun syncIkonMata() {
+        ivToggleSaldo.setImageResource(
+            if (nominalVisible) R.drawable.ic_eye else R.drawable.ic_eye_off
+        )
+    }
+
+    // ── Click Listeners ──────────────────────────────────────────────────────
 
     private fun setupClickListeners() {
         btnTambah.setOnClickListener { showTambahDompetDialog() }
-
         view?.findViewById<View>(R.id.btn_back)?.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
-
         tvLihatHutang.setOnClickListener {
             findNavController().navigate(R.id.action_dompetFragment_to_hutangFragment)
         }
     }
 
-    // ─── BottomSheet Tambah / Edit Dompet ────────────────────────────────────
+    // ── BottomSheet Tambah / Edit Dompet ────────────────────────────────────
 
     private fun showTambahDompetDialog(dompetEdit: Dompet? = null) {
         val dialog = BottomSheetDialog(requireContext())
         val v = layoutInflater.inflate(R.layout.dialog_tambah_dompet, null)
         dialog.setContentView(v)
-
-        dialog.behavior.apply {
-            state = BottomSheetBehavior.STATE_EXPANDED
-            skipCollapsed = true
-        }
+        dialog.behavior.apply { state = BottomSheetBehavior.STATE_EXPANDED; skipCollapsed = true }
 
         val etNama          = v.findViewById<TextInputEditText>(R.id.etNamaDompet)
         val etSaldo         = v.findViewById<TextInputEditText>(R.id.etSaldoAwal)
@@ -173,49 +206,33 @@ class DompetFragment : Fragment() {
         val btnPilihTanggal = v.findViewById<LinearLayout>(R.id.btnPilihTanggal)
         val tvTanggal       = v.findViewById<TextView>(R.id.tvTanggalDipilih)
 
-        // Format tanggal untuk ditampilkan
         val sdf = SimpleDateFormat("dd MMMM yyyy", Locale("id"))
-
-        // Simpan timestamp tanggal yang dipilih user
         var tanggalDipilih: Long = System.currentTimeMillis()
-
-        // Set tampilan tanggal default = hari ini
-        tvTanggal.text      = sdf.format(tanggalDipilih)
+        tvTanggal.text = sdf.format(tanggalDipilih)
         tvTanggal.setTextColor(resources.getColor(android.R.color.black, null))
 
-        // Kalau edit, isi dari data lama
         dompetEdit?.let {
             etNama.setText(it.nama)
             etSaldo.setText(it.saldo.toLong().toString())
-            btnSimpan.text  = "Simpan Perubahan"
-            tanggalDipilih  = it.tanggalDibuat
-            tvTanggal.text  = sdf.format(tanggalDipilih)
+            btnSimpan.text = "Simpan Perubahan"
+            tanggalDipilih = it.tanggalDibuat
+            tvTanggal.text = sdf.format(tanggalDipilih)
             tvTanggal.setTextColor(resources.getColor(android.R.color.black, null))
         }
 
-        // Klik tombol tanggal → buka DatePickerDialog
         btnPilihTanggal.setOnClickListener {
             val cal = Calendar.getInstance()
             cal.timeInMillis = tanggalDipilih
-
-            DatePickerDialog(
-                requireContext(),
-                { _, year, month, day ->
-                    cal.set(year, month, day, 0, 0, 0)
-                    cal.set(Calendar.MILLISECOND, 0)
-                    tanggalDipilih = cal.timeInMillis
-                    tvTanggal.text = sdf.format(tanggalDipilih)
-                    tvTanggal.setTextColor(resources.getColor(android.R.color.black, null))
-                },
-                cal.get(Calendar.YEAR),
-                cal.get(Calendar.MONTH),
-                cal.get(Calendar.DAY_OF_MONTH)
-            ).show()
+            DatePickerDialog(requireContext(), { _, year, month, day ->
+                cal.set(year, month, day, 0, 0, 0)
+                cal.set(Calendar.MILLISECOND, 0)
+                tanggalDipilih = cal.timeInMillis
+                tvTanggal.text = sdf.format(tanggalDipilih)
+                tvTanggal.setTextColor(resources.getColor(android.R.color.black, null))
+            }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
         }
 
-        // Jenis dompet
         var jenisTerpilih = dompetEdit?.jenis ?: "Lainnya"
-
         val jenisMap = mapOf(
             v.findViewById<LinearLayout>(R.id.btnJenisBank)      to "Rekening Bank",
             v.findViewById<LinearLayout>(R.id.btnJenisDigital)   to "Dompet Digital",
@@ -237,84 +254,43 @@ class DompetFragment : Fragment() {
             ?: highlight(v.findViewById(R.id.btnJenisLainnya))
 
         jenisMap.forEach { (btn, jenis) ->
-            btn.setOnClickListener {
-                jenisTerpilih = jenis
-                highlight(btn)
-            }
+            btn.setOnClickListener { jenisTerpilih = jenis; highlight(btn) }
         }
 
-        // Simpan
         btnSimpan.setOnClickListener {
             val nama     = etNama.text.toString().trim()
             val saldoStr = etSaldo.text.toString().trim()
-
-            if (nama.isEmpty()) {
-                tilNama.error = "Nama dompet tidak boleh kosong"
-                return@setOnClickListener
-            }
+            if (nama.isEmpty()) { tilNama.error = "Nama dompet tidak boleh kosong"; return@setOnClickListener }
             tilNama.error = null
-
-            val saldo = if (saldoStr.isEmpty()) 0.0
-            else CurrencyFormatter.parse(saldoStr)
+            val saldo = if (saldoStr.isEmpty()) 0.0 else CurrencyFormatter.parse(saldoStr)
 
             if (dompetEdit == null) {
-                // ── TAMBAH DOMPET BARU ──────────────────────────────────────
-                val dompetBaru = Dompet(
-                    nama         = nama,
-                    jenis        = jenisTerpilih,
-                    saldo        = saldo,
-                    ikon         = getIkonByJenis(jenisTerpilih),
-                    tanggalDibuat = tanggalDipilih   // ← dari DatePicker
-                )
+                val dompetBaru = Dompet(nama = nama, jenis = jenisTerpilih, saldo = saldo,
+                    ikon = getIkonByJenis(jenisTerpilih), tanggalDibuat = tanggalDipilih)
                 dompetViewModel.insert(dompetBaru)
-
-                // Otomatis catat PEMASUKAN jika saldo > 0
                 if (saldo > 0) {
                     dompetViewModel.allDompet.observe(viewLifecycleOwner) { listDompet ->
-                        val dompetBaik = listDompet.firstOrNull {
-                            it.nama == nama && it.jenis == jenisTerpilih
-                        }
+                        val dompetBaik = listDompet.firstOrNull { it.nama == nama && it.jenis == jenisTerpilih }
                         dompetBaik?.let { d ->
-                            val transaksiSaldoAwal = Transaksi(
-                                nominal  = saldo,
-                                jenis    = "PEMASUKAN",
-                                kategori = "Saldo Awal",
-                                catatan  = "Saldo awal dompet ${d.nama}",
-                                tanggal  = tanggalDipilih,  // ← pakai tanggal dari DatePicker
-                                dompetId = d.id
-                            )
-                            transaksiViewModel.insertTanpaUpdateSaldo(transaksiSaldoAwal)
+                            transaksiViewModel.insertTanpaUpdateSaldo(Transaksi(
+                                nominal = saldo, jenis = "PEMASUKAN", kategori = "Saldo Awal",
+                                catatan = "Saldo awal dompet ${d.nama}",
+                                tanggal = tanggalDipilih, dompetId = d.id))
                         }
                     }
                 }
-
-                Toast.makeText(
-                    requireContext(),
-                    "Dompet \"$nama\" ditambahkan!",
-                    Toast.LENGTH_SHORT
-                ).show()
-
+                Toast.makeText(requireContext(), "Dompet \"$nama\" ditambahkan!", Toast.LENGTH_SHORT).show()
             } else {
-                // ── EDIT DOMPET ─────────────────────────────────────────────
-                dompetViewModel.update(
-                    dompetEdit.copy(
-                        nama          = nama,
-                        jenis         = jenisTerpilih,
-                        saldo         = saldo,
-                        ikon          = getIkonByJenis(jenisTerpilih),
-                        tanggalDibuat = tanggalDipilih  // ← bisa diubah juga saat edit
-                    )
-                )
+                dompetViewModel.update(dompetEdit.copy(nama = nama, jenis = jenisTerpilih,
+                    saldo = saldo, ikon = getIkonByJenis(jenisTerpilih), tanggalDibuat = tanggalDipilih))
                 Toast.makeText(requireContext(), "Dompet diperbarui!", Toast.LENGTH_SHORT).show()
             }
-
             dialog.dismiss()
         }
-
         dialog.show()
     }
 
-    // ─── Edit / Hapus ─────────────────────────────────────────────────────────
+    // ── Edit / Hapus ─────────────────────────────────────────────────────────
 
     private fun showEditDeleteDialog(dompet: Dompet) {
         AlertDialog.Builder(requireContext())
@@ -324,26 +300,21 @@ class DompetFragment : Fragment() {
                     0 -> showTambahDompetDialog(dompetEdit = dompet)
                     1 -> konfirmasiHapus(dompet)
                 }
-            }
-            .show()
+            }.show()
     }
 
     private fun konfirmasiHapus(dompet: Dompet) {
         AlertDialog.Builder(requireContext())
             .setTitle("Hapus Dompet")
-            .setMessage(
-                "Yakin ingin menghapus \"${dompet.nama}\"?\n" +
-                        "Saldo ${CurrencyFormatter.format(dompet.saldo)} akan hilang."
-            )
+            .setMessage("Yakin ingin menghapus \"${dompet.nama}\"?\nSaldo ${CurrencyFormatter.format(dompet.saldo)} akan hilang.")
             .setPositiveButton("Hapus") { _, _ ->
                 dompetViewModel.delete(dompet)
                 Toast.makeText(requireContext(), "Dompet dihapus", Toast.LENGTH_SHORT).show()
             }
-            .setNegativeButton("Batal", null)
-            .show()
+            .setNegativeButton("Batal", null).show()
     }
 
-    // ─── Helpers ──────────────────────────────────────────────────────────────
+    // ── Helpers ──────────────────────────────────────────────────────────────
 
     private fun updateEmptyState(isEmpty: Boolean) {
         rvDompet.visibility          = if (isEmpty) View.GONE else View.VISIBLE
