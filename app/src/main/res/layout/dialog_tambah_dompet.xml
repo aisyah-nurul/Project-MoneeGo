@@ -330,10 +330,10 @@
                 android:textColor="#90A4AE" />
 
             <ImageView
-                android:layout_width="16dp"
+                android:layout_width="12dp"
                 android:layout_height="16dp"
-                android:src="@drawable/ic_chevron_down"
-                android:contentDescription="Pilih" />
+                android:contentDescription="Pilih"
+                android:src="@drawable/ic_chevron_down" />
         </LinearLayout>
 
         <!-- Tombol Simpan -->
