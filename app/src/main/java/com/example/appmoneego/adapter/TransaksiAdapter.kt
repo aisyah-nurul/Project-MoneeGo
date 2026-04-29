@@ -79,27 +79,22 @@ class TransaksiAdapter(
     private fun rebuildDisplayList() {
         val newList = mutableListOf<TransaksiItem>()
 
-        // Transfer = transaksi dengan kategori "Transfer"
-        // Kelompokkan PEMASUKAN+PENGELUARAN "Transfer" ke header Transfer sendiri
         val transfer    = semuaData.filter { it.kategori == "Transfer" }
         val pemasukan   = semuaData.filter { it.jenis == "PEMASUKAN"   && it.kategori != "Transfer" }
         val pengeluaran = semuaData.filter { it.jenis == "PENGELUARAN" && it.kategori != "Transfer" }
 
-        // Header Transfer
         if (transfer.isNotEmpty()) {
             newList.add(TransaksiItem.Header("Transfer", "TRANSFER"))
             if (!collapsedHeaders.contains("TRANSFER"))
                 transfer.forEach { newList.add(TransaksiItem.Item(it)) }
         }
 
-        // Header Pemasukan
         if (pemasukan.isNotEmpty()) {
             newList.add(TransaksiItem.Header("Pemasukan", "PEMASUKAN"))
             if (!collapsedHeaders.contains("PEMASUKAN"))
                 pemasukan.forEach { newList.add(TransaksiItem.Item(it)) }
         }
 
-        // Header Pengeluaran
         if (pengeluaran.isNotEmpty()) {
             newList.add(TransaksiItem.Header("Pengeluaran", "PENGELUARAN"))
             if (!collapsedHeaders.contains("PENGELUARAN"))
@@ -124,7 +119,6 @@ class TransaksiAdapter(
         diff.dispatchUpdatesTo(this)
     }
 
-    // ── ViewHolder Header ──────────────────────────────────────────────────────
     inner class HeaderViewHolder(private val binding: ItemHeaderTransaksiBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -148,7 +142,6 @@ class TransaksiAdapter(
         }
     }
 
-    // ── ViewHolder Item ────────────────────────────────────────────────────────
     inner class ItemViewHolder(private val binding: ItemTransaksiBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -164,19 +157,15 @@ class TransaksiAdapter(
 
             if (nominalVisible) {
                 val formatted = CurrencyFormatter.format(transaksi.nominal)
-                binding.tvNominal.text       = "$prefix$formatted"
-                binding.tvNominalDetail.text = "$prefix$formatted"
+                binding.tvNominal.text = "$prefix$formatted"
             } else {
-                binding.tvNominal.text       = "${prefix}Rp ***"
-                binding.tvNominalDetail.text = "${prefix}Rp ***"
+                binding.tvNominal.text = "${prefix}Rp ***"
             }
             binding.tvNominal.setTextColor(warna)
-            binding.tvNominalDetail.setTextColor(warna)
 
             val namaDompet = daftarDompet.find { it.id == transaksi.dompetId }?.nama ?: "-"
             binding.tvSumberDana.text = namaDompet
 
-            // Tap item → dialog Edit / Hapus
             binding.cardItemTransaksi.setOnClickListener {
                 val context = binding.root.context
                 val pilihan = arrayOf("✏️  Edit Transaksi", "🗑️  Hapus Transaksi")
