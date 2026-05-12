@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.appmoneego.databinding.FragmentHutangBinding
 import com.example.appmoneego.hutang.CicilanBottomSheetFragment
 import com.example.appmoneego.utils.CurrencyFormatter
+import com.example.appmoneego.R
 import com.google.android.material.tabs.TabLayout
 
 class HutangFragment : Fragment() {
@@ -20,6 +21,7 @@ class HutangFragment : Fragment() {
 
     private lateinit var viewModel: HutangViewModel
     private lateinit var adapter: HutangAdapter
+    private var isNominalVisible = true
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -92,6 +94,19 @@ class HutangFragment : Fragment() {
         }
         binding.ibBack.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+        binding.ivEye.setOnClickListener {
+            isNominalVisible = !isNominalVisible
+            if (isNominalVisible) {
+                binding.ivEye.setImageResource(R.drawable.ic_eye)
+                val total = viewModel.hutangList.value
+                    ?.filter { !it.selesai }
+                    ?.sumOf { it.sisaHutang } ?: 0L
+                binding.tvTotalHutang.text = CurrencyFormatter.format(total.toDouble())
+            } else {
+                binding.ivEye.setImageResource(R.drawable.ic_eye_off)
+                binding.tvTotalHutang.text = "Rp ••••••"
+            }
         }
     }
 
