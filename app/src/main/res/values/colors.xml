@@ -69,4 +69,12 @@
     <color name="tab_active_text">#FFFFFF</color>
     <color name="tab_inactive_bg">#D6D0C8</color>
     <color name="tab_inactive_text">#546E7A</color>
+
+    <color name="ungu_primer">#6B828D</color>
+    <color name="ungu_gelap">#26215C</color>
+    <color name="ungu_muted">#7F77DD</color>
+    <color name="teks_utama">#1A1A2E</color>
+    <color name="teks_muted">#888888</color>
+    <color name="bg_halaman">#F0EFF5</color>
+    <color name="bg_progress">#EEEEEE</color>
 </resources>

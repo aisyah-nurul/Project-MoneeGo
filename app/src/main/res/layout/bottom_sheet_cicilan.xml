@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@android:color/white">
+
+    <!-- Handle bar -->
+    <View
+        android:layout_width="36dp"
+        android:layout_height="3dp"
+        android:background="#DDDDDD"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="14dp" />
+
+    <!-- Judul -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Input cicilan"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:textColor="#1A1A2E" />
+
+    <!-- Nama hutang -->
+    <TextView
+        android:id="@+id/tvSheetNama"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nama hutang"
+        android:textSize="12sp"
+        android:textColor="#888888"
+        android:layout_marginBottom="14dp" />
+
+    <!-- Box info sisa hutang -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#EEF3F6"
+        android:padding="10dp"
+        android:layout_marginBottom="14dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="4dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Sisa hutang"
+                android:textColor="@color/ungu_primer"
+                android:textSize="11sp" />
+            <TextView
+                android:id="@+id/tvSheetSisa"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rp0"
+                android:textColor="@color/teks_utama"
+                android:textStyle="bold"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="4dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Sudah dibayar"
+                android:textColor="@color/ungu_primer"
+                android:textSize="11sp" />
+            <TextView
+                android:id="@+id/tvSheetSudahDibayar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rp0"
+                android:textColor="@color/teks_utama"
+                android:textStyle="bold"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="6dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Progress"
+                android:textColor="@color/ungu_primer"
+                android:textSize="11sp" />
+            <TextView
+                android:id="@+id/tvSheetPersen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0%"
+                android:textColor="@color/teks_utama"
+                android:textStyle="bold"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progressSheet"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="5dp"
+            android:max="100"
+            android:progress="0"
+            android:progressTint="@color/ungu_primer"
+            android:progressBackgroundTint="#DDDDDD" />
+    </LinearLayout>
+
+    <!-- Riwayat cicilan -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Riwayat cicilan"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:textColor="#1A1A2E"
+        android:layout_marginBottom="6dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvRiwayatCicilan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:nestedScrollingEnabled="false"
+        android:layout_marginBottom="14dp" />
+
+    <!-- Form input -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nominal cicilan"
+        android:textSize="11sp"
+        android:textColor="#555555"
+        android:layout_marginBottom="4dp" />
+
+    <EditText
+        android:id="@+id/etNominalCicilan"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:hint="Rp0"
+        android:inputType="numberDecimal"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:textSize="13sp"
+        android:background="@drawable/bg_input_rounded"
+        android:layout_marginBottom="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Tanggal bayar"
+        android:textSize="11sp"
+        android:textColor="#555555"
+        android:layout_marginBottom="4dp" />
+
+    <EditText
+        android:id="@+id/etTanggalCicilan"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:hint="dd/mm/yyyy"
+        android:focusable="false"
+        android:clickable="true"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:textSize="13sp"
+        android:background="@drawable/bg_input_rounded"
+        android:layout_marginBottom="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Catatan (opsional)"
+        android:textSize="11sp"
+        android:textColor="#555555"
+        android:layout_marginBottom="4dp" />
+
+    <EditText
+        android:id="@+id/etCatatanCicilan"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:hint="Transfer BCA..."
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:textSize="13sp"
+        android:background="@drawable/bg_input_rounded"
+        android:layout_marginBottom="14dp" />
+
+    <!-- Tombol simpan -->
+    <Button
+        android:id="@+id/btnSimpanCicilan"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:text="Simpan cicilan"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/ungu_primer"
+        android:textSize="13sp" />
+
+    <!-- Tombol batal -->
+    <Button
+        android:id="@+id/btnBatalCicilan"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="Batal"
+        android:backgroundTint="@android:color/transparent"
+        android:textColor="#888888"
+        android:textSize="12sp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp"
+        android:elevation="0dp" />
+
+</LinearLayout>
