@@ -1,60 +1,161 @@
 package com.example.appmoneego.ui.hutang
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.appmoneego.R
+import com.example.appmoneego.databinding.FragmentHutangBinding
+import com.example.appmoneego.model.Hutang
+import java.text.NumberFormat
+import java.util.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [HutangFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class HutangFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    private var _binding: FragmentHutangBinding? = null
+    private val binding get() = _binding!!
+
+    private lateinit var adapter: HutangAdapter
+    private val hutangList = mutableListOf<Hutang>()
+
+    // Tab: true = BERJALAN, false = SELESAI
+    private var tabBerjalan = true
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentHutangBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupRecyclerView()
+        setupClickListeners()
+        updateSummary()
+        refreshList()
+    }
+
+    private fun setupRecyclerView() {
+        adapter = HutangAdapter(
+            items = mutableListOf(),
+            onItemClick = { _ -> },
+            onLunasChanged = { hutang, isLunas ->
+                val index = hutangList.indexOfFirst { it.id == hutang.id }
+                if (index != -1) {
+                    hutangList[index] = hutang.copy(lunas = isLunas)
+                    updateSummary()
+                    refreshList()
+                }
+            }
+        )
+        binding.rvHutang.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvHutang.adapter = adapter
+    }
+
+    private fun setupClickListeners() {
+        binding.btnTambah.setOnClickListener {
+            TambahHutangDialog { hutang ->
+                hutangList.add(0, hutang)
+                updateSummary()
+                // Tambah hutang baru → otomatis ke tab berjalan
+                if (!tabBerjalan) switchTab(true)
+                else refreshList()
+            }.show(parentFragmentManager, "TambahHutangDialog")
+        }
+
+        binding.tabBerjalan.setOnClickListener { switchTab(true) }
+        binding.tabSelesai.setOnClickListener { switchTab(false) }
+
+        binding.tvLunasBulanIni.setOnClickListener {
+            switchTab(false)
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_hutang, container, false)
+    private fun switchTab(toBerjalan: Boolean) {
+        tabBerjalan = toBerjalan
+
+        if (toBerjalan) {
+            binding.tabBerjalan.setBackgroundResource(R.drawable.bg_jenis_selected)
+            binding.tabBerjalan.setTextColor(android.graphics.Color.WHITE)
+            binding.tabSelesai.setBackgroundResource(R.drawable.bg_card_white_rounded)
+            binding.tabSelesai.setTextColor(android.graphics.Color.parseColor("#888888"))
+        } else {
+            binding.tabSelesai.setBackgroundResource(R.drawable.bg_jenis_selected)
+            binding.tabSelesai.setTextColor(android.graphics.Color.WHITE)
+            binding.tabBerjalan.setBackgroundResource(R.drawable.bg_card_white_rounded)
+            binding.tabBerjalan.setTextColor(android.graphics.Color.parseColor("#888888"))
+        }
+
+        refreshList()
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HutangFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            HutangFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    private fun refreshList() {
+        val filtered = if (tabBerjalan)
+            hutangList.filter { !it.lunas }.toMutableList()
+        else
+            hutangList.filter { it.lunas }.toMutableList()
+
+        // Update adapter items
+        val adapterItems = (binding.rvHutang.adapter as HutangAdapter)
+            .let {
+                // rebuild adapter dengan list baru
+                adapter = HutangAdapter(
+                    items = filtered,
+                    onItemClick = { _ -> },
+                    onLunasChanged = { hutang, isLunas ->
+                        val index = hutangList.indexOfFirst { it.id == hutang.id }
+                        if (index != -1) {
+                            hutangList[index] = hutang.copy(lunas = isLunas)
+                            updateSummary()
+                            refreshList()
+                        }
+                    }
+                )
+                binding.rvHutang.adapter = adapter
             }
+
+        if (filtered.isEmpty()) {
+            binding.layoutEmpty.visibility = View.VISIBLE
+            binding.rvHutang.visibility = View.GONE
+        } else {
+            binding.layoutEmpty.visibility = View.GONE
+            binding.rvHutang.visibility = View.VISIBLE
+        }
+    }
+
+    private fun updateSummary() {
+        val aktif = hutangList.filter { !it.lunas }
+        val total = aktif.sumOf { it.jumlah }
+        val lunas = hutangList.count { it.lunas }
+
+        val fmt = NumberFormat.getCurrencyInstance(Locale("id", "ID"))
+        binding.tvTotalHutang.text = fmt.format(total).replace("IDR", "Rp").replace(",00", "")
+        binding.tvHutangAktif.text = "${aktif.size} Hutang Aktif"
+        binding.tvLunasBulanIni.text = lunas.toString()
+
+        val jatuhTempoBaru = aktif
+            .filter { it.isJatuhTempoBaru }
+            .minByOrNull { it.jatuhTempo?.time ?: Long.MAX_VALUE }
+
+        if (jatuhTempoBaru?.jatuhTempo != null) {
+            val cal = Calendar.getInstance()
+            cal.time = jatuhTempoBaru.jatuhTempo
+            val bulan = arrayOf("Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des")
+            binding.tvJatuhTempo.text = "${cal.get(Calendar.DAY_OF_MONTH)} ${bulan[cal.get(Calendar.MONTH)]}"
+        } else {
+            binding.tvJatuhTempo.text = "-"
+        }
+
+        binding.tvDompetAktif.text = "5"
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
