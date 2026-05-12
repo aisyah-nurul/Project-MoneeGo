@@ -1,4 +1,4 @@
-package com.example.appmoneego.viewmodel
+package com.example.appmoneego.ui.hutang
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -6,32 +6,31 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.example.appmoneego.data.database.MoneeGoDatabase
 import com.example.appmoneego.data.entity.Hutang
-import com.example.appmoneego.repository.HutangRepository
 import kotlinx.coroutines.launch
 
 class HutangViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repo: HutangRepository
+    private val dao = MoneeGoDatabase.getDatabase(application).hutangDao()
 
-    val allHutang: LiveData<List<Hutang>>
-
-
-    init {
-        val db = MoneeGoDatabase.getDatabase(application)
-        repo = HutangRepository(db.hutangDao())
-        allHutang = repo.allHutang
-
-    }
+    val hutangList: LiveData<List<Hutang>> = dao.getAllHutang()
 
     fun insert(hutang: Hutang) = viewModelScope.launch {
-        repo.insert(hutang)
+        dao.insertHutang(hutang)
     }
 
     fun update(hutang: Hutang) = viewModelScope.launch {
-        repo.update(hutang)
+        dao.updateHutang(hutang)
     }
 
     fun delete(hutang: Hutang) = viewModelScope.launch {
-        repo.delete(hutang)
+        dao.deleteHutang(hutang)
+    }
+
+    fun tandaiSelesai(hutang: Hutang) = viewModelScope.launch {
+        dao.updateHutang(hutang.copy(selesai = true))
     }
 }
+
+// Extension property: sisa = totalHutang - sudahDibayar
+val Hutang.sisaHutang: Long
+    get() = (totalHutang - sudahDibayar).coerceAtLeast(0L)
