@@ -8,10 +8,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.appmoneego.databinding.FragmentHutangBinding
-import com.example.appmoneego.hutang.CicilanBottomSheetFragment
-import com.example.appmoneego.utils.CurrencyFormatter
 import com.example.appmoneego.R
+import com.example.appmoneego.databinding.FragmentHutangBinding
+import com.example.appmoneego.utils.CurrencyFormatter
+import com.example.appmoneego.utils.VisibilityPrefs
 import com.google.android.material.tabs.TabLayout
 
 class HutangFragment : Fragment() {
@@ -21,6 +21,7 @@ class HutangFragment : Fragment() {
 
     private lateinit var viewModel: HutangViewModel
     private lateinit var adapter: HutangAdapter
+
     private var isNominalVisible = true
 
     override fun onCreateView(
@@ -34,20 +35,33 @@ class HutangFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        isNominalVisible = VisibilityPrefs.isNominalVisible(requireContext())
+
         viewModel = ViewModelProvider(this)[HutangViewModel::class.java]
         setupRecyclerView()
         setupObservers()
         setupClickListeners()
+        syncIkonMata()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        isNominalVisible = VisibilityPrefs.isNominalVisible(requireContext())
+        syncIkonMata()
+        refreshTampilan()
     }
 
     private fun setupRecyclerView() {
         adapter = HutangAdapter(
             lifecycleScope = viewLifecycleOwner.lifecycleScope
         ) { hutang ->
-            // Buka bottom sheet cicilan saat kartu diklik
             val sheet = CicilanBottomSheetFragment.newInstance(hutang)
             sheet.setOnCicilanSavedListener { updated ->
                 viewModel.update(updated)
+            }
+            sheet.setOnHutangDeletedListener { deleted ->
+                viewModel.delete(deleted)
             }
             sheet.show(parentFragmentManager, "CicilanSheet")
         }
@@ -72,7 +86,11 @@ class HutangFragment : Fragment() {
             val lunas = list.filter { it.selesai }
             val total = aktif.sumOf { it.sisaHutang }
 
-            binding.tvTotalHutang.text  = CurrencyFormatter.format(total.toDouble())
+            binding.tvTotalHutang.text = if (isNominalVisible)
+                CurrencyFormatter.format(total.toDouble())
+            else
+                "Rp ***"
+
             binding.tvStatBerjalan.text = aktif.size.toString()
             binding.tvStatLunas.text    = lunas.size.toString()
 
@@ -80,7 +98,7 @@ class HutangFragment : Fragment() {
         }
 
         binding.tabLayoutHutang.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) { refreshList() }
+            override fun onTabSelected(tab: TabLayout.Tab?)   { refreshList() }
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabReselected(tab: TabLayout.Tab?) {}
         })
@@ -92,21 +110,33 @@ class HutangFragment : Fragment() {
                 viewModel.insert(hutang)
             }.show(parentFragmentManager, "TambahHutangDialog")
         }
+
         binding.ibBack.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
+
         binding.ivEye.setOnClickListener {
             isNominalVisible = !isNominalVisible
-            if (isNominalVisible) {
-                binding.ivEye.setImageResource(R.drawable.ic_eye)
-                val total = viewModel.hutangList.value
-                    ?.filter { !it.selesai }
-                    ?.sumOf { it.sisaHutang } ?: 0L
-                binding.tvTotalHutang.text = CurrencyFormatter.format(total.toDouble())
-            } else {
-                binding.ivEye.setImageResource(R.drawable.ic_eye_off)
-                binding.tvTotalHutang.text = "Rp ••••••"
-            }
+            VisibilityPrefs.setNominalVisible(requireContext(), isNominalVisible)
+            syncIkonMata()
+            refreshTampilan()
+        }
+    }
+
+    private fun syncIkonMata() {
+        binding.ivEye.setImageResource(
+            if (isNominalVisible) R.drawable.ic_eye else R.drawable.ic_eye_off
+        )
+    }
+
+    private fun refreshTampilan() {
+        if (isNominalVisible) {
+            val total = viewModel.hutangList.value
+                ?.filter { !it.selesai }
+                ?.sumOf { it.sisaHutang } ?: 0L
+            binding.tvTotalHutang.text = CurrencyFormatter.format(total.toDouble())
+        } else {
+            binding.tvTotalHutang.text = "Rp ***"
         }
     }
 

@@ -1,6 +1,5 @@
 package com.example.appmoneego.ui.dompet
 
-import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -31,9 +30,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 
 class DompetFragment : Fragment() {
 
@@ -74,6 +70,15 @@ class DompetFragment : Fragment() {
         setupClickListeners()
         setupTombolMata()
         syncIkonMata()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        nominalVisible = VisibilityPrefs.isNominalVisible(requireContext())
+        syncIkonMata()
+        tvTotalSaldo.text = if (nominalVisible)
+            CurrencyFormatter.format(totalSaldo) else "Rp ***"
+        adapter.notifyDataSetChanged()
     }
 
     private fun initViews(view: View) {
@@ -179,37 +184,19 @@ class DompetFragment : Fragment() {
             skipCollapsed = true
         }
 
-        val etNama          = v.findViewById<TextInputEditText>(R.id.etNamaDompet)
-        val etSaldo         = v.findViewById<TextInputEditText>(R.id.etSaldoAwal)
-        val tilNama         = v.findViewById<TextInputLayout>(R.id.tilNamaDompet)
-        val btnSimpan       = v.findViewById<Button>(R.id.btnSimpanDompet)
-        val btnPilihTanggal = v.findViewById<LinearLayout>(R.id.btnPilihTanggal)
-        val tvTanggal       = v.findViewById<TextView>(R.id.tvTanggalDipilih)
+        val etNama    = v.findViewById<TextInputEditText>(R.id.etNamaDompet)
+        val etSaldo   = v.findViewById<TextInputEditText>(R.id.etSaldoAwal)
+        val tilNama   = v.findViewById<TextInputLayout>(R.id.tilNamaDompet)
+        val btnSimpan = v.findViewById<Button>(R.id.btnSimpanDompet)
 
-        val sdf = SimpleDateFormat("dd MMMM yyyy", Locale("id"))
+        // Tanggal otomatis pakai waktu sekarang, tidak perlu input user
         var tanggalDipilih: Long = System.currentTimeMillis()
-        tvTanggal.text = sdf.format(tanggalDipilih)
-        tvTanggal.setTextColor(resources.getColor(android.R.color.black, null))
 
         dompetEdit?.let {
             etNama.setText(it.nama)
             etSaldo.setText(it.saldo.toLong().toString())
             btnSimpan.text = "Simpan Perubahan"
             tanggalDipilih = it.tanggalDibuat
-            tvTanggal.text = sdf.format(tanggalDipilih)
-            tvTanggal.setTextColor(resources.getColor(android.R.color.black, null))
-        }
-
-        btnPilihTanggal.setOnClickListener {
-            val cal = Calendar.getInstance()
-            cal.timeInMillis = tanggalDipilih
-            DatePickerDialog(requireContext(), { _, year, month, day ->
-                cal.set(year, month, day, 0, 0, 0)
-                cal.set(Calendar.MILLISECOND, 0)
-                tanggalDipilih = cal.timeInMillis
-                tvTanggal.text = sdf.format(tanggalDipilih)
-                tvTanggal.setTextColor(resources.getColor(android.R.color.black, null))
-            }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
         }
 
         var jenisTerpilih = dompetEdit?.jenis ?: "Lainnya"
@@ -249,10 +236,10 @@ class DompetFragment : Fragment() {
 
             if (dompetEdit == null) {
                 val dompetBaru = Dompet(
-                    nama = nama,
-                    jenis = jenisTerpilih,
-                    saldo = saldo,
-                    ikon = getIkonByJenis(jenisTerpilih),
+                    nama          = nama,
+                    jenis         = jenisTerpilih,
+                    saldo         = saldo,
+                    ikon          = getIkonByJenis(jenisTerpilih),
                     tanggalDibuat = tanggalDipilih
                 )
                 dompetViewModel.insert(dompetBaru)

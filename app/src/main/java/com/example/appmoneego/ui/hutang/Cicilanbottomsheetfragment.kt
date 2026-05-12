@@ -1,14 +1,17 @@
-package com.example.appmoneego.hutang
+package com.example.appmoneego.ui.hutang
 
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,6 +30,7 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
 
     private var hutang: Hutang? = null
     private var onSaved: ((Hutang) -> Unit)? = null
+    private var onDeleted: ((Hutang) -> Unit)? = null
 
     companion object {
         private const val ARG_HUTANG = "hutang"
@@ -59,33 +63,46 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
         val tvPersen       = view.findViewById<TextView>(R.id.tvSheetPersen)
         val progressBar    = view.findViewById<ProgressBar>(R.id.progressSheet)
         val rvRiwayat      = view.findViewById<RecyclerView>(R.id.rvRiwayatCicilan)
+        val layoutForm     = view.findViewById<View>(R.id.layoutFormCicilan)
+        val layoutLunas    = view.findViewById<View>(R.id.layoutLunas)
         val etNominal      = view.findViewById<EditText>(R.id.etNominalCicilan)
         val etTanggal      = view.findViewById<EditText>(R.id.etTanggalCicilan)
         val etCatatan      = view.findViewById<EditText>(R.id.etCatatanCicilan)
         val btnSimpan      = view.findViewById<Button>(R.id.btnSimpanCicilan)
         val btnBatal       = view.findViewById<Button>(R.id.btnBatalCicilan)
+        val btnHapus       = view.findViewById<Button>(R.id.btnHapusHutang)
 
         val db         = MoneeGoDatabase.getDatabase(requireContext())
         val cicilanDao = db.cicilanDao()
         val hutangDao  = db.hutangDao()
         val sdf        = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
-        // Tampilkan info hutang
-        val sisaAwal  = (h.totalHutang - h.sudahDibayar).coerceAtLeast(0L)
-        val persenAwal = if (h.totalHutang > 0)
-            ((h.sudahDibayar.toDouble() / h.totalHutang) * 100).toInt() else 0
+        fun refreshInfo(current: Hutang) {
+            val sisa   = (current.totalHutang - current.sudahDibayar).coerceAtLeast(0L)
+            val persen = if (current.totalHutang > 0)
+                ((current.sudahDibayar.toDouble() / current.totalHutang) * 100).toInt() else 0
 
-        tvNama?.text         = h.nama
-        tvSisa?.text         = formatRupiah(sisaAwal)
-        tvSudahDibayar?.text = formatRupiah(h.sudahDibayar)
-        tvPersen?.text       = "$persenAwal%"
-        progressBar?.progress = persenAwal
+            tvNama?.text          = current.nama
+            tvSisa?.text          = formatRupiah(sisa)
+            tvSudahDibayar?.text  = formatRupiah(current.sudahDibayar)
+            tvPersen?.text        = "$persen%"
+            progressBar?.progress = persen
+        }
 
-        // Tanggal default hari ini
+        refreshInfo(h)
+
+        if (h.selesai) {
+            layoutForm?.visibility  = View.GONE
+            layoutLunas?.visibility = View.VISIBLE
+        } else {
+            layoutForm?.visibility  = View.VISIBLE
+            layoutLunas?.visibility = View.GONE
+        }
+
         etTanggal?.setText(sdf.format(Date()))
         etTanggal?.setOnClickListener {
             val cal = Calendar.getInstance()
-            android.app.DatePickerDialog(
+            DatePickerDialog(
                 requireContext(),
                 { _, y, m, d ->
                     cal.set(y, m, d)
@@ -97,18 +114,72 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
             ).show()
         }
 
-        // Load riwayat cicilan dari Room
-        lifecycleScope.launch {
-            val riwayat = withContext(Dispatchers.IO) {
-                cicilanDao.getCicilanByHutangId(h.id)
-            }
-            rvRiwayat?.apply {
-                layoutManager = LinearLayoutManager(requireContext())
-                adapter = RiwayatCicilanAdapter(riwayat)
+        fun loadRiwayat() {
+            lifecycleScope.launch {
+                val riwayat = withContext(Dispatchers.IO) {
+                    cicilanDao.getCicilanByHutangId(h.id)
+                }
+                rvRiwayat?.layoutManager = LinearLayoutManager(requireContext())
+                rvRiwayat?.adapter = RiwayatCicilanAdapter(
+                    list = riwayat,
+                    onHapus = { cicilan ->
+                        AlertDialog.Builder(requireContext())
+                            .setTitle("Hapus Cicilan?")
+                            .setMessage("Cicilan sebesar ${formatRupiah(cicilan.nominal)} akan dihapus dan sisa hutang akan disesuaikan.")
+                            .setPositiveButton("Hapus") { _, _ ->
+                                lifecycleScope.launch {
+                                    val updatedHutang = withContext(Dispatchers.IO) {
+                                        cicilanDao.deleteCicilanById(cicilan.id)
+                                        val currentHutang = hutangDao.getHutangById(h.id)
+                                            ?: return@withContext null
+                                        val newSudahDibayar = (currentHutang.sudahDibayar - cicilan.nominal)
+                                            .coerceAtLeast(0L)
+                                        val updated = currentHutang.copy(
+                                            sudahDibayar = newSudahDibayar,
+                                            selesai = newSudahDibayar >= currentHutang.totalHutang
+                                        )
+                                        hutangDao.updateHutang(updated)
+                                        updated
+                                    }
+                                    if (updatedHutang != null) {
+                                        refreshInfo(updatedHutang)
+                                        loadRiwayat()
+                                        onSaved?.invoke(updatedHutang)
+                                    }
+                                }
+                            }
+                            .setNegativeButton("Batal", null)
+                            .show()
+                    }
+                )
             }
         }
 
-        // Simpan cicilan ke Room + update Hutang
+        loadRiwayat()
+
+        btnHapus?.setOnClickListener {
+            AlertDialog.Builder(requireContext())
+                .setTitle("Hapus Hutang?")
+                .setMessage("Hutang \"${h.nama}\" dan semua riwayat cicilannya akan dihapus permanen.")
+                .setPositiveButton("Hapus") { _, _ ->
+                    lifecycleScope.launch {
+                        withContext(Dispatchers.IO) {
+                            cicilanDao.deleteCicilanByHutangId(h.id)
+                            hutangDao.deleteHutang(h)
+                        }
+                        onDeleted?.invoke(h)
+                        Toast.makeText(
+                            requireContext(),
+                            "Hutang ${h.nama} dihapus",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        dismiss()
+                    }
+                }
+                .setNegativeButton("Batal", null)
+                .show()
+        }
+
         btnSimpan?.setOnClickListener {
             val nominalStr = etNominal?.text.toString().replace("[^0-9]".toRegex(), "")
             val nominal    = nominalStr.toLongOrNull() ?: 0L
@@ -121,8 +192,7 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
             val catatan = etCatatan?.text.toString()
 
             lifecycleScope.launch {
-                withContext(Dispatchers.IO) {
-                    // 1. Simpan cicilan baru ke tabel cicilan
+                val updatedHutang = withContext(Dispatchers.IO) {
                     val cicilanBaru = CicilanEntity(
                         id           = UUID.randomUUID().toString(),
                         hutangId     = h.id,
@@ -132,25 +202,23 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
                     )
                     cicilanDao.insertCicilan(cicilanBaru)
 
-                    // 2. Update sudahDibayar di tabel hutang
                     val newSudahDibayar = (h.sudahDibayar + nominal).coerceAtMost(h.totalHutang)
-                    val updatedHutang   = h.copy(
+                    val updated = h.copy(
                         sudahDibayar = newSudahDibayar,
                         selesai      = newSudahDibayar >= h.totalHutang
                     )
-                    hutangDao.updateHutang(updatedHutang)
+                    hutangDao.updateHutang(updated)
+                    updated
                 }
 
-                // 3. Notify fragment/activity agar refresh list
-                val newSudahDibayar = (h.sudahDibayar + nominal).coerceAtMost(h.totalHutang)
-                val updatedHutang   = h.copy(
-                    sudahDibayar = newSudahDibayar,
-                    selesai      = newSudahDibayar >= h.totalHutang
-                )
                 onSaved?.invoke(updatedHutang)
 
                 if (updatedHutang.selesai) {
-                    Toast.makeText(requireContext(), "🎉 Hutang ${h.nama} lunas!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "🎉 Hutang ${h.nama} lunas!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
                 dismiss()
             }
@@ -159,24 +227,26 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
         btnBatal?.setOnClickListener { dismiss() }
     }
 
-    fun setOnCicilanSavedListener(listener: (Hutang) -> Unit) {
-        onSaved = listener
-    }
+    fun setOnCicilanSavedListener(listener: (Hutang) -> Unit) { onSaved = listener }
+    fun setOnHutangDeletedListener(listener: (Hutang) -> Unit) { onDeleted = listener }
 
     private fun formatRupiah(value: Long): String =
         "Rp${String.format("%,d", value).replace(",", ".")}"
 }
 
-// ── Adapter riwayat cicilan ──────────────────────────────────────────────────
+
+// ── RiwayatCicilanAdapter ────────────────────────────────────────────────────
 
 class RiwayatCicilanAdapter(
-    private val list: List<com.example.appmoneego.data.entity.CicilanEntity>
+    private val list: List<CicilanEntity>,
+    private val onHapus: (CicilanEntity) -> Unit
 ) : RecyclerView.Adapter<RiwayatCicilanAdapter.VH>() {
 
     inner class VH(v: View) : RecyclerView.ViewHolder(v) {
-        val tvNominal: TextView = v.findViewById(R.id.tvRiwayatNominal)
-        val tvTanggal: TextView = v.findViewById(R.id.tvRiwayatTanggal)
-        val tvCatatan: TextView = v.findViewById(R.id.tvRiwayatCatatan)
+        val tvNominal : TextView    = v.findViewById(R.id.tvRiwayatNominal)
+        val tvTanggal : TextView    = v.findViewById(R.id.tvRiwayatTanggal)
+        val tvCatatan : TextView    = v.findViewById(R.id.tvRiwayatCatatan)
+        val btnHapus  : ImageButton = v.findViewById(R.id.btnHapusCicilan)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
@@ -186,11 +256,12 @@ class RiwayatCicilanAdapter(
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) {
-        val c  = list[position]
-        val ke = list.size - position
+        val c = list[position]
+        val nomorCicilan = position + 1
         holder.tvNominal.text = "+Rp${String.format("%,d", c.nominal).replace(",", ".")}"
-        holder.tvTanggal.text = "Cicilan ke-$ke • ${c.tanggalBayar}"
+        holder.tvTanggal.text = "Cicilan ke-$nomorCicilan • ${c.tanggalBayar}"
         holder.tvCatatan.text = c.catatan.ifBlank { "-" }
+        holder.btnHapus.setOnClickListener { onHapus(c) }
     }
 
     override fun getItemCount() = list.size

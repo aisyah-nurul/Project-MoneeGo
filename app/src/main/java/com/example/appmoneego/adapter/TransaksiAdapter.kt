@@ -15,6 +15,7 @@ import com.example.appmoneego.utils.CurrencyFormatter
 
 class TransaksiAdapter(
     nominalVisibleInit: Boolean = true,
+    private val onItemClick:   (Transaksi) -> Unit = {},   // ← buka popup detail
     private val onEditClick:   (Transaksi) -> Unit = {},
     private val onDeleteClick: (Transaksi) -> Unit = {}
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -58,7 +59,6 @@ class TransaksiAdapter(
     private var daftarDompet: List<Dompet>    = emptyList()
     private var displayList:  MutableList<TransaksiItem> = mutableListOf()
 
-    // Set ini menyimpan jenis header yang sedang di-collapse
     private val collapsedHeaders = mutableSetOf<String>()
 
     fun submitDompet(list: List<Dompet>) {
@@ -70,6 +70,9 @@ class TransaksiAdapter(
         semuaData = list
         rebuildDisplayList()
     }
+
+    // Expose daftarDompet ke luar agar Fragment bisa akses saat buka dialog
+    fun getDaftarDompet(): List<Dompet> = daftarDompet
 
     private fun rebuildDisplayList() {
         val newList     = mutableListOf<TransaksiItem>()
@@ -121,17 +124,12 @@ class TransaksiAdapter(
         fun bind(header: TransaksiItem.Header) {
             binding.tvHeaderLabel.text = header.label
 
-            // ✅ FIX: Set rotasi awal berdasarkan state SAAT INI
             val isCollapsedNow = collapsedHeaders.contains(header.jenis)
             binding.ivCollapse.rotation = if (isCollapsedNow) -90f else 0f
 
-            // ✅ FIX UTAMA: Baca state dari collapsedHeaders LANGSUNG di dalam listener,
-            // bukan dari variabel yang di-capture saat bind() dipanggil.
-            // Ini mencegah stale closure yang menyebabkan toggle tidak konsisten.
             binding.root.setOnClickListener {
                 val isCurrentlyCollapsed = collapsedHeaders.contains(header.jenis)
 
-                // Animasi chevron
                 val fromDeg = if (isCurrentlyCollapsed) -90f else 0f
                 val toDeg   = if (isCurrentlyCollapsed) 0f   else -90f
                 android.animation.ObjectAnimator
@@ -142,7 +140,6 @@ class TransaksiAdapter(
                         start()
                     }
 
-                // Toggle state
                 if (isCurrentlyCollapsed) collapsedHeaders.remove(header.jenis)
                 else                      collapsedHeaders.add(header.jenis)
 
@@ -156,7 +153,6 @@ class TransaksiAdapter(
     inner class ItemViewHolder(private val binding: ItemTransaksiBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        // State expand/collapse detail per item (reset setiap bind karena RecyclerView recycles view)
         private var isDetailExpanded = true
 
         fun bind(transaksi: Transaksi) {
@@ -166,10 +162,19 @@ class TransaksiAdapter(
             binding.tvCatatan.text  = transaksi.catatan.ifEmpty { "-" }
 
             val isIncome = transaksi.jenis == "PEMASUKAN"
-            val warna    = if (isIncome) 0xFF4CAF50.toInt() else 0xFFF44336.toInt()
-            val prefix   = if (isIncome) "+ " else "- "
+            val isTransfer = transaksi.kategori == "Transfer"
 
-            // Tampilkan atau sembunyikan nominal sesuai state mata
+            val warna = when {
+                isTransfer -> 0xFF1A2B34.toInt()   // hitam/text_primary
+                isIncome   -> 0xFF4CAF50.toInt()   // hijau
+                else       -> 0xFFF44336.toInt()   // merah
+            }
+            val prefix = when {
+                isTransfer -> ""
+                isIncome   -> "+ "
+                else       -> "- "
+            }
+
             if (nominalVisible) {
                 binding.tvNominal.text = "$prefix${CurrencyFormatter.format(transaksi.nominal)}"
             } else {
@@ -177,17 +182,14 @@ class TransaksiAdapter(
             }
             binding.tvNominal.setTextColor(warna)
 
-            // Nama dompet dari lookup
             binding.tvSumberDana.text =
                 daftarDompet.find { it.id == transaksi.dompetId }?.nama ?: "-"
 
-            // Reset state detail ke expanded setiap kali item di-bind ulang
-            // (karena RecyclerView recycle ViewHolder)
             isDetailExpanded = true
             binding.cardDetail.visibility = View.VISIBLE
             binding.ivArrowCollapse.rotation = 0f
 
-            // Klik header item → toggle detail card
+            // Klik header item → toggle detail card (tetap sama)
             binding.clHeaderInteraktif.setOnClickListener {
                 isDetailExpanded = !isDetailExpanded
                 val rotation = if (isDetailExpanded) 0f else -180f
@@ -199,17 +201,9 @@ class TransaksiAdapter(
                     if (isDetailExpanded) View.VISIBLE else View.GONE
             }
 
-            // Klik card utama → dialog Edit / Hapus
+            // ✅ PERUBAHAN: klik card utama → buka popup detail (bukan AlertDialog lagi)
             binding.clCardUtama.setOnClickListener {
-                val context = binding.root.context
-                val pilihan = arrayOf("✏️  Edit", "🗑️  Hapus")
-                android.app.AlertDialog.Builder(context)
-                    .setTitle(transaksi.kategori)
-                    .setItems(pilihan) { _, which ->
-                        if (which == 0) onEditClick(transaksi)
-                        else            onDeleteClick(transaksi)
-                    }
-                    .show()
+                onItemClick(transaksi)
             }
         }
     }

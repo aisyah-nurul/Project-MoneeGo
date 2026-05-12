@@ -53,6 +53,17 @@
         android:text="+Rp0"
         android:textColor="#3B6D11"
         android:textSize="12sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_marginEnd="8dp"/>
+
+    <!-- Tombol hapus cicilan pakai ic_delete -->
+    <ImageButton
+        android:id="@+id/btnHapusCicilan"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_delete"
+        android:contentDescription="Hapus cicilan"
+        android:padding="2dp"/>
 
 </LinearLayout>
