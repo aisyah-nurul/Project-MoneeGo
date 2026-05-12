@@ -2,14 +2,16 @@ package com.example.appmoneego.data.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.io.Serializable
 
 @Entity(tableName = "hutang")
 data class Hutang(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val nama: String,           // nama orang/pihak
-    val nominal: Double,
+    @PrimaryKey
+    val id: String,
+    val nama: String = "",
+    val totalHutang: Long = 0L,
+    val sudahDibayar: Long = 0L,
+    val tanggalJatuhTempo: String = "",
     val catatan: String = "",
-    val tanggal: Long = System.currentTimeMillis(),
-    val jenis: String,          // "SAYA_BERHUTANG" atau "DIPINJAMI"
-    val sudahLunas: Boolean = false
-)
+    val selesai: Boolean = false
+) : Serializable

@@ -1,37 +1,37 @@
-package com.example.appmoneego.model
+package com.example.appmoneego.hutang
 
-import java.util.Date
+import java.io.Serializable
 
-enum class JenisHutang(val label: String) {
-    KARTU_KREDIT("Kartu Kredit"),
-    PERSONAL("Personal"),
-    CICILAN("Cicilan"),
-    PINJAMAN_BANK("Pinjaman Bank"),
-    PINJOL("Pinjaman Online"),
-    PINJAM_KE_KERABAT("Pinjam ke Kerabat"),
-    LAINNYA("Lainnya")
-}
-
-data class Hutang(
-    val id: Long = System.currentTimeMillis(),
-    val nama: String,
-    val jenisHutang: JenisHutang,
-    val jumlah: Long,
-    val limitKredit: Long = 0L,
-    val jatuhTempo: Date? = null,
-    val tanggalDibuat: Date = Date(),
-    val lunas: Boolean = false
-) {
-    val persentase: Int
-        get() = if (limitKredit > 0) {
-            ((jumlah.toDouble() / limitKredit) * 100).toInt().coerceAtMost(100)
-        } else 0
-
-    val isJatuhTempoBaru: Boolean
+data class HutangModel(
+    val id: String = "",
+    val nama: String = "",
+    val totalHutang: Long = 0L,
+    val sudahDibayar: Long = 0L,
+    val tanggalJatuhTempo: String = "",
+    val catatan: String = "",
+    val dompetId: String = "",
+    val riwayatCicilan: List<CicilanModel> = emptyList(),
+    val selesai: Boolean = false
+) : Serializable {
+    val sisaHutang: Long get() = totalHutang - sudahDibayar
+    val persenLunas: Int
+        get() = if (totalHutang == 0L) 0
+        else ((sudahDibayar.toDouble() / totalHutang) * 100).toInt()
+    val hariSisaTempo: Int
         get() {
-            if (jatuhTempo == null) return false
-            val diff = jatuhTempo.time - System.currentTimeMillis()
-            val days = diff / (1000 * 60 * 60 * 24)
-            return days in 0..7
+            return try {
+                val sdf = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
+                val jt = sdf.parse(tanggalJatuhTempo) ?: return 0
+                val diff = jt.time - System.currentTimeMillis()
+                (diff / (1000 * 60 * 60 * 24)).toInt()
+            } catch (e: Exception) { 0 }
         }
 }
+
+data class CicilanModel(
+    val id: String = "",
+    val hutangId: String = "",
+    val nominal: Long = 0L,
+    val tanggalBayar: String = "",
+    val catatan: String = ""
+) : Serializable

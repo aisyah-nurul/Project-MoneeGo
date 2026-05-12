@@ -1,22 +1,24 @@
 package com.example.appmoneego.ui.hutang
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.LifecycleCoroutineScope
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.appmoneego.R
+import com.example.appmoneego.data.database.MoneeGoDatabase
+import com.example.appmoneego.data.entity.Hutang
 import com.example.appmoneego.databinding.ItemHutangBinding
-import com.example.appmoneego.model.Hutang
-import com.example.appmoneego.model.JenisHutang
-import java.text.NumberFormat
-import java.util.*
+import com.example.appmoneego.utils.CurrencyFormatter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HutangAdapter(
-    private val items: MutableList<Hutang>,
-    private val onItemClick: (Hutang) -> Unit,
-    private val onLunasChanged: (Hutang, Boolean) -> Unit = { _, _ -> }
-) : RecyclerView.Adapter<HutangAdapter.HutangViewHolder>() {
+    private val lifecycleScope: LifecycleCoroutineScope,
+    private val onItemClick: (Hutang) -> Unit
+) : ListAdapter<Hutang, HutangAdapter.HutangViewHolder>(DiffCallback()) {
 
     inner class HutangViewHolder(val binding: ItemHutangBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -29,72 +31,66 @@ class HutangAdapter(
     }
 
     override fun onBindViewHolder(holder: HutangViewHolder, position: Int) {
-        val hutang = items[position]
+        val hutang = getItem(position)
         val b = holder.binding
-        val rupiahFormat = NumberFormat.getCurrencyInstance(Locale("id", "ID"))
 
-        // Nama & jenis
+        // Nama
         b.tvNamaHutang.text = hutang.nama
-        b.tvJenisHutang.text = hutang.jenisHutang.label
 
-        // Warna teks jenis
-        val warnaJenis = when (hutang.jenisHutang) {
-            JenisHutang.KARTU_KREDIT       -> "#E53935"
-            JenisHutang.PERSONAL           -> "#1E88E5"
-            JenisHutang.CICILAN            -> "#FB8C00"
-            JenisHutang.PINJAMAN_BANK      -> "#43A047"
-            JenisHutang.PINJOL             -> "#8E24AA"
-            JenisHutang.PINJAM_KE_KERABAT  -> "#F57C00"
-            JenisHutang.LAINNYA            -> "#757575"
-        }
-        b.tvJenisHutang.setTextColor(Color.parseColor(warnaJenis))
-
-        // Checkbox — set tanpa listener dulu biar tidak trigger saat bind
-        b.cbLunas.setOnCheckedChangeListener(null)
-        b.cbLunas.isChecked = hutang.lunas
-        b.cbLunas.setOnCheckedChangeListener { _, isChecked ->
-            onLunasChanged(hutang, isChecked)
+        // Badge: tampilkan tanggal jatuh tempo jika ada, fallback "Berjalan" / "Lunas"
+        b.tvBadgeTempo.text = when {
+            hutang.selesai -> "Lunas"
+            hutang.tanggalJatuhTempo.isNotEmpty() -> hutang.tanggalJatuhTempo
+            else -> "Berjalan"
         }
 
-        // Label waktu
-        val diffMs = System.currentTimeMillis() - hutang.tanggalDibuat.time
-        val diffHours = diffMs / (1000 * 60 * 60)
-        b.tvWaktu.text = when {
-            diffHours < 1  -> "Baru ditambahkan"
-            diffHours < 24 -> "${diffHours}j lalu"
-            diffHours < 48 -> "Kemarin"
-            else           -> "${diffHours / 24} hari lalu"
+        // Nominal
+        b.tvTotalHutang.text  = CurrencyFormatter.format(hutang.totalHutang.toDouble())
+        b.tvSudahDibayar.text = CurrencyFormatter.format(hutang.sudahDibayar.toDouble())
+        b.tvSisaHutang.text   = CurrencyFormatter.format(hutang.sisaHutang.toDouble())
+
+        // Progress
+        val persen = if (hutang.totalHutang > 0)
+            ((hutang.sudahDibayar.toDouble() / hutang.totalHutang) * 100).toInt()
+        else 0
+        b.progressBayar.progress = persen
+        b.tvPersenLunas.text = "$persen%"
+
+        // Footer meta
+        val jenis = hutang.catatan.ifEmpty { "Hutang" }
+        b.tvFooterMeta.text = "$jenis • $persen% lunas"
+
+        // Tap hint
+        b.tvTapHint.text = if (hutang.selesai) "Selesai" else "input cicilan"
+        b.ivChevron.visibility = if (hutang.selesai) View.GONE else View.VISIBLE
+
+        // Reset cicilan terakhir dulu (penting untuk RecyclerView recycling)
+        b.layoutCicilanTerakhir.visibility = View.GONE
+
+        // Query cicilan terakhir dari Room secara async
+        val dao = MoneeGoDatabase.getDatabase(holder.itemView.context).cicilanDao()
+        lifecycleScope.launch {
+            val cicilan = withContext(Dispatchers.IO) {
+                dao.getCicilanByHutangId(hutang.id)
+            }
+            // Pastikan view masih untuk item yang sama (guard against recycling)
+            if (holder.bindingAdapterPosition == RecyclerView.NO_ID.toInt() ||
+                getItem(holder.bindingAdapterPosition).id != hutang.id) return@launch
+
+            if (cicilan.isNotEmpty()) {
+                val terakhir = cicilan.maxByOrNull { it.tanggalBayar } ?: cicilan.last()
+                b.tvCicilanTerakhirNominal.text =
+                    CurrencyFormatter.format(terakhir.nominal.toDouble())
+                b.tvCicilanTerakhirTanggal.text = terakhir.tanggalBayar
+                b.layoutCicilanTerakhir.visibility = View.VISIBLE
+            }
         }
 
-        // Jumlah
-        b.tvJumlahTercatat.text = rupiahFormat.format(hutang.jumlah)
-            .replace("IDR", "Rp").replace(",00", "")
-
-        // Progress & persentase
-        if (hutang.limitKredit > 0) {
-            b.progressHutang.progress = hutang.persentase
-            b.tvPersentase.text = "${hutang.persentase}%"
-            b.tvPersentaseTotal.text = "${hutang.persentase}% dari Limit"
-        } else {
-            b.progressHutang.progress = 0
-            b.tvPersentase.text = ""
-            b.tvPersentaseTotal.text = ""
-        }
-
-        // Jatuh tempo
-        if (hutang.jatuhTempo != null) {
-            val cal = Calendar.getInstance()
-            cal.time = hutang.jatuhTempo
-            val bulan = arrayOf("Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des")
-            b.tvJatuhTempo.text = "Jatuh Tempo ${cal.get(Calendar.DAY_OF_MONTH)} ${bulan[cal.get(Calendar.MONTH)]}"
-            b.layoutJatuhTempo.visibility = View.VISIBLE
-        } else {
-            b.layoutJatuhTempo.visibility = View.GONE
-        }
-
-        b.ivIconHutang.setImageResource(R.drawable.ic_hutang)
         holder.itemView.setOnClickListener { onItemClick(hutang) }
     }
 
-    override fun getItemCount() = items.size
+    class DiffCallback : DiffUtil.ItemCallback<Hutang>() {
+        override fun areItemsTheSame(old: Hutang, new: Hutang) = old.id == new.id
+        override fun areContentsTheSame(old: Hutang, new: Hutang) = old == new
+    }
 }
