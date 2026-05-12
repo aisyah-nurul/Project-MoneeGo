@@ -8,10 +8,11 @@ import com.example.appmoneego.data.entity.CicilanEntity
 @Dao
 interface HutangDao {
 
-    // ── Hutang ──────────────────────────────────────────────────────────────
-
     @Query("SELECT * FROM hutang ORDER BY rowid DESC")
     fun getAllHutang(): LiveData<List<Hutang>>
+
+    @Query("SELECT * FROM hutang WHERE id = :hutangId LIMIT 1")
+    suspend fun getHutangById(hutangId: String): Hutang?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertHutang(hutang: Hutang)
@@ -21,8 +22,6 @@ interface HutangDao {
 
     @Delete
     suspend fun deleteHutang(hutang: Hutang)
-
-    // ── Cicilan ─────────────────────────────────────────────────────────────
 
     @Query("SELECT * FROM cicilan WHERE hutangId = :hutangId ORDER BY rowid ASC")
     suspend fun getCicilanByHutang(hutangId: String): List<CicilanEntity>

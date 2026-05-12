@@ -4,18 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/bg_halaman">
+    android:background="#E2E2E2">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="#6B828D"
+        android:background="#78909C"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:paddingTop="40dp"
         android:paddingBottom="16dp">
 
+        <!-- Baris back + judul -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -43,44 +44,47 @@
                 android:layout_marginStart="8dp" />
         </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Total utang berjalan"
-            android:textColor="#CCFFFFFF"
-            android:textSize="11sp" />
-
+        <!-- Label "Total hutang" + icon eye di sebelah kanannya -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="14dp">
+            android:layout_marginBottom="2dp">
 
             <TextView
-                android:id="@+id/tvTotalHutang"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Rp0"
-                android:textColor="@android:color/white"
-                android:textSize="26sp"
-                android:textStyle="bold" />
+                android:text="Total hutang"
+                android:textColor="#CCFFFFFF"
+                android:textSize="11sp" />
 
             <ImageView
                 android:id="@+id/ivEye"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
                 android:src="@drawable/ic_eye"
                 android:tint="@android:color/white"
-                android:padding="2dp"
+                android:padding="1dp"
                 android:clickable="true"
                 android:focusable="true"
+                android:layout_marginStart="6dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Sembunyikan nominal" />
         </LinearLayout>
 
+        <!-- Nominal total hutang (tanpa icon eye) -->
+        <TextView
+            android:id="@+id/tvTotalHutang"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rp0"
+            android:textColor="@android:color/white"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="14dp" />
+
+        <!-- Stat berjalan & lunas -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -95,7 +99,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Utang berjalan"
+                    android:text="Hutang berjalan"
                     android:textColor="#AAFFFFFF"
                     android:textSize="10sp" />
                 <TextView
@@ -115,34 +119,10 @@
                 android:orientation="vertical"
                 android:gravity="center">
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Dompet aktif"
-                    android:textColor="#AAFFFFFF"
-                    android:textSize="10sp" />
-                <TextView
-                    android:id="@+id/tvStatDompet"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="5"
-                    android:textColor="@android:color/white"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <!-- Label: "Lunas Mei", "Lunas Maret", dst -->
-                <TextView
                     android:id="@+id/tvLabelLunasBulan"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Lunas bulan ini"
+                    android:text="Hutang Lunas"
                     android:textColor="#AAFFFFFF"
                     android:textSize="10sp" />
                 <TextView
@@ -191,7 +171,7 @@
         android:layout_marginTop="8dp"
         android:text="+ Tambah hutang"
         android:textColor="@android:color/white"
-        android:backgroundTint="#6B828D"
+        android:backgroundTint="#78909C"
         android:textSize="13sp"
         app:cornerRadius="10dp" />
 

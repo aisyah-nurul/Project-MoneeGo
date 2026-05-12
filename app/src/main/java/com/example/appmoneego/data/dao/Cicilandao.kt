@@ -20,4 +20,7 @@ interface CicilanDao {
 
     @Query("DELETE FROM cicilan WHERE hutangId = :hutangId")
     suspend fun deleteCicilanByHutangId(hutangId: String)
+
+    @Query("DELETE FROM cicilan WHERE id = :cicilanId")
+    suspend fun deleteCicilanById(cicilanId: String)
 }
