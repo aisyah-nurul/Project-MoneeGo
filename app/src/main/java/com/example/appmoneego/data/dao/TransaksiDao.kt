@@ -41,4 +41,12 @@ interface TransaksiDao {
 
     @Query("SELECT SUM(nominal) FROM transaksi WHERE jenis = 'PENGELUARAN' AND tanggal BETWEEN :start AND :end")
     fun getPengeluaranBulanIni(start: Long, end: Long): LiveData<Double?>
+
+    // ── Query untuk Analisis ──────────────────────────────────────────────────
+
+    @Query("SELECT * FROM transaksi WHERE jenis = :jenis AND tanggal BETWEEN :start AND :end ORDER BY tanggal DESC")
+    fun getByJenisAndBulan(jenis: String, start: Long, end: Long): LiveData<List<Transaksi>>
+
+    @Query("SELECT * FROM transaksi WHERE tanggal BETWEEN :start AND :end ORDER BY tanggal DESC LIMIT :limit")
+    fun getRecentByBulan(start: Long, end: Long, limit: Int = 5): LiveData<List<Transaksi>>
 }

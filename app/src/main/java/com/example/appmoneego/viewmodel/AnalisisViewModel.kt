@@ -1,41 +1,92 @@
 package com.example.appmoneego.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import com.example.appmoneego.data.database.MoneeGoDatabase
-import com.example.appmoneego.data.entity.Transaksi
-import com.example.appmoneego.repository.TransaksiRepository
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.example.appmoneego.model.KategoriSummary
+import java.text.SimpleDateFormat
+import java.util.*
 
-class AnalisisViewModel(application: Application) : AndroidViewModel(application) {
+class AnalisisViewModel : ViewModel() {
 
-    private val repo: TransaksiRepository
-    val allTransaksi: LiveData<List<Transaksi>>
+    // ================= TAB =================
+    private val _activeTab = MutableLiveData("PENGELUARAN")
+    val activeTab: LiveData<String> = _activeTab
 
-    // ringkasan per kategori untuk pie chart
-    val kategoriSummary = MediatorLiveData<List<KategoriSummary>>()
+    fun setTab(tab: String) {
+        _activeTab.value = tab
+    }
+
+    private val _subTab = MutableLiveData("kategori")
+    val subTab: LiveData<String> = _subTab
+
+    fun setSubTab(tab: String) {
+        _subTab.value = tab
+    }
+
+    // ================= BULAN =================
+    private val _currentCal = MutableLiveData(Calendar.getInstance())
+    val currentCal: LiveData<Calendar> = _currentCal
+
+    fun prevBulan() {
+        val cal = _currentCal.value ?: Calendar.getInstance()
+        cal.add(Calendar.MONTH, -1)
+        _currentCal.value = cal
+    }
+
+    fun nextBulan() {
+        val cal = _currentCal.value ?: Calendar.getInstance()
+        cal.add(Calendar.MONTH, 1)
+        _currentCal.value = cal
+    }
+
+    fun getLabelBulan(): String {
+        val cal = _currentCal.value ?: Calendar.getInstance()
+        val format = SimpleDateFormat("MMMM yyyy", Locale("id"))
+        return format.format(cal.time)
+    }
+
+    // ================= DATA =================
+    private val _kategoriSummaryPengeluaran = MutableLiveData<List<KategoriSummary>>()
+    val kategoriSummaryPengeluaran: LiveData<List<KategoriSummary>> = _kategoriSummaryPengeluaran
+
+    private val _kategoriSummaryPemasukan = MutableLiveData<List<KategoriSummary>>()
+    val kategoriSummaryPemasukan: LiveData<List<KategoriSummary>> = _kategoriSummaryPemasukan
+
+    private val _totalPengeluaran = MutableLiveData<Double>()
+    val totalPengeluaran: LiveData<Double> = _totalPengeluaran
+
+    private val _totalPemasukan = MutableLiveData<Double>()
+    val totalPemasukan: LiveData<Double> = _totalPemasukan
+
+    private val _transaksiTerbaru = MutableLiveData<List<KategoriSummary>>()
+    val transaksiTerbaru: LiveData<List<KategoriSummary>> = _transaksiTerbaru
 
     init {
-        val db = MoneeGoDatabase.getDatabase(application)
-        repo = TransaksiRepository(db.transaksiDao())
-        allTransaksi = repo.allTransaksi
+        loadDummyData()
+    }
 
-        kategoriSummary.addSource(allTransaksi) { list ->
-            val pengeluaran = list.filter { it.jenis == "PENGELUARAN" }
-            val total = pengeluaran.sumOf { it.nominal }
+    private fun loadDummyData() {
 
-            val grouped = pengeluaran
-                .groupBy { it.kategori }
-                .map { (kategori, items) ->
-                    val jumlah = items.sumOf { it.nominal }
-                    val persentase = if (total > 0) (jumlah / total * 100).toFloat() else 0f
-                    KategoriSummary(kategori, jumlah, persentase)
-                }
-                .sortedByDescending { it.jumlah }
+        val pengeluaran = listOf(
+            KategoriSummary("Makanan", 1500000.0, 40.0),
+            KategoriSummary("Transportasi", 800000.0, 25.0),
+            KategoriSummary("Belanja", 700000.0, 20.0),
+            KategoriSummary("Lainnya", 500000.0, 15.0)
+        )
 
-            kategoriSummary.value = grouped
-        }
+        val pemasukan = listOf(
+            KategoriSummary("Gaji", 5000000.0, 70.0),
+            KategoriSummary("Bonus", 1500000.0, 20.0),
+            KategoriSummary("Freelance", 500000.0, 10.0)
+        )
+
+        _kategoriSummaryPengeluaran.value = pengeluaran
+        _kategoriSummaryPemasukan.value = pemasukan
+
+        _totalPengeluaran.value = pengeluaran.sumOf { it.jumlah }
+        _totalPemasukan.value = pemasukan.sumOf { it.jumlah }
+
+        _transaksiTerbaru.value = pengeluaran
     }
 }

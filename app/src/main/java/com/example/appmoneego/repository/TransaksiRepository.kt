@@ -14,7 +14,6 @@ class TransaksiRepository(private val dao: TransaksiDao) {
     suspend fun update(transaksi: Transaksi) = dao.update(transaksi)
     suspend fun delete(transaksi: Transaksi) = dao.delete(transaksi)
 
-    // Hapus semua transaksi milik dompet tertentu
     suspend fun deleteByDompetId(dompetId: Int) = dao.deleteByDompetId(dompetId)
 
     fun getByDateRange(start: Long, end: Long) = dao.getByDateRange(start, end)
@@ -25,4 +24,10 @@ class TransaksiRepository(private val dao: TransaksiDao) {
 
     fun getPengeluaranBulanIni(start: Long, end: Long): LiveData<Double?> =
         dao.getPengeluaranBulanIni(start, end)
+
+    fun getByJenisAndBulan(jenis: String, start: Long, end: Long): LiveData<List<Transaksi>> =
+        dao.getByJenisAndBulan(jenis, start, end)
+
+    fun getRecentByBulan(start: Long, end: Long, limit: Int = 5): LiveData<List<Transaksi>> =
+        dao.getRecentByBulan(start, end, limit)
 }
