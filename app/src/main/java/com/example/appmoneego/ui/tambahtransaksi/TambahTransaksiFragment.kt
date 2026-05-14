@@ -9,13 +9,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.widget.*
+import android.widget.Button
+import android.widget.GridLayout
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.RadioButton
+import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.graphics.toColorInt
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import com.example.appmoneego.R
 import com.example.appmoneego.data.entity.Dompet
 import com.example.appmoneego.data.entity.Transaksi
@@ -25,7 +31,7 @@ import com.example.appmoneego.viewmodel.DompetViewModel
 import com.example.appmoneego.viewmodel.TransaksiViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
-import java.util.*
+import java.util.Calendar
 
 class TambahTransaksiFragment : Fragment() {
 
@@ -47,7 +53,7 @@ class TambahTransaksiFragment : Fragment() {
     private var isGridKategoriOpen = false
     private var isSumberDanaOpen   = false
     private var isTanggalOpen      = false
-    private var catatanString      = ""
+    private var catatanString      = ""   // ← sumber kebenaran catatan, SELALU string murni
     private var isUpperCase        = true
     private var isKeyboardModeTransfer = false
 
@@ -118,8 +124,7 @@ class TambahTransaksiFragment : Fragment() {
     private lateinit var kbShift:             Button
     private lateinit var llAksiCatatan:       View
     private lateinit var btnTransaksiBaru:    Button
-    private lateinit var btnKeDashboard:      Button
-    private lateinit var btnHapusTransaksi: Button
+    private lateinit var btnHapusTransaksi:   Button
     private lateinit var llFormNormal:        LinearLayout
     private lateinit var llFormTransfer:      LinearLayout
     private lateinit var tvDompetAsal:        TextView
@@ -131,7 +136,16 @@ class TambahTransaksiFragment : Fragment() {
     private lateinit var llStateTercatat:     LinearLayout
     private lateinit var tvLabelTercatat:     TextView
     private lateinit var tvNominalTercatat:   TextView
-    private lateinit var tvCatatanTercatat:   TextView
+    private lateinit var tvCatatanTercatat:    TextView
+    private lateinit var tvKategoriTercatat:   TextView
+    private lateinit var tvTanggalTercatat:    TextView
+    private lateinit var tvDompetTercatat:     TextView
+    private lateinit var tvLabelBaris1:        TextView
+    private lateinit var tvLabelBaris2:        TextView
+    private lateinit var tvLabelBaris3:        TextView
+    private lateinit var ivIconBaris1: ImageView
+    private lateinit var ivIconBaris2: ImageView
+    private lateinit var ivIconBaris3: ImageView
     private lateinit var btnSimpan:           Button
     private lateinit var btnEnter:            Button
 
@@ -150,9 +164,8 @@ class TambahTransaksiFragment : Fragment() {
     private fun buatBgTabAktif(): GradientDrawable = GradientDrawable().apply {
         shape        = GradientDrawable.RECTANGLE
         cornerRadius = 10f * resources.displayMetrics.density
-        setColor(Color.parseColor("#4A6FA5"))
+        setColor("#4A6FA5".toColorInt())
     }
-
     private fun buatBgTabNonAktif(): GradientDrawable = GradientDrawable().apply {
         shape        = GradientDrawable.RECTANGLE
         cornerRadius = 10f * resources.displayMetrics.density
@@ -208,7 +221,6 @@ class TambahTransaksiFragment : Fragment() {
             if (isEditMode) prefillEditForm()
         }
 
-        // ── Cek mode edit ───────────────────────────────────────────────────
         arguments?.let { args ->
             if (args.containsKey("edit_id")) {
                 isEditMode      = true
@@ -223,17 +235,11 @@ class TambahTransaksiFragment : Fragment() {
                 selectedDompetId = args.getInt("edit_dompet_id", 0)
                 jenisTransaksi   = editJenisLama
 
-                // Ganti judul
                 view.findViewById<TextView>(R.id.tv_title)?.text = "EDIT TRANSAKSI"
-
-                // Sembunyikan tab — tidak boleh ganti jenis saat edit
                 view.findViewById<LinearLayout>(R.id.ll_tab_jenis)?.visibility = View.GONE
 
-                // FIX #2: aktifkan form yang sesuai jenis transaksi
-                // (tanpa mengizinkan user ganti tab)
                 switchTabForEdit(jenisTransaksi)
 
-                // Override tombol simpan → update
                 btnSimpan.setOnClickListener { simpanEditTransaksi(view) }
                 btnEnter.setOnClickListener  { simpanEditTransaksi(view) }
             }
@@ -246,30 +252,20 @@ class TambahTransaksiFragment : Fragment() {
             ?.visibility = View.VISIBLE
     }
 
-    // ── FIX #2: switch form tanpa mengizinkan ganti jenis ─────────────────────
-    // Dipanggil HANYA untuk mode edit, sehingga form (normal/transfer) dan
-    // grid kategori menyesuaikan jenis transaksi yang diedit.
-
     private fun switchTabForEdit(jenis: String) {
         jenisTransaksi = jenis
         updateTabUI(jenis)
-
         if (jenis == "TRANSFER") {
-            // Transaksi transfer diedit sebagai form transfer
             llFormNormal.visibility   = View.GONE
             llFormTransfer.visibility = View.VISIBLE
             setupCardDompetTransfer()
         } else {
-            // PEMASUKAN atau PENGELUARAN → tampilkan form normal
             llFormNormal.visibility   = View.VISIBLE
             llFormTransfer.visibility = View.GONE
-
             val daftar = if (jenis == "PEMASUKAN") kategoriPemasukan else kategoriPengeluaran
             setupGridKategori(daftar)
         }
     }
-
-    // ── Pre-fill mode edit ────────────────────────────────────────────────────
 
     private fun prefillEditForm() {
         updateNominalDisplay()
@@ -283,13 +279,8 @@ class TambahTransaksiFragment : Fragment() {
         val iconItem = daftar.find { it.nama == selectedKategori }
         if (iconItem != null) ivKategoriIcon.setImageResource(iconItem.iconRes)
 
-        if (catatanString.isEmpty()) {
-            tvCatatan.text = "Tambah catatan..."
-            tvCatatan.setTextColor(0xFFAAAAAA.toInt())
-        } else {
-            tvCatatan.text = catatanString
-            tvCatatan.setTextColor(0xFF1A1A2E.toInt())
-        }
+        // FIX: gunakan catatanString langsung, bukan baca dari tvCatatan
+        tampilkanCatatan()
 
         val dompetDipilih = daftarDompet.find { it.id == selectedDompetId }
         if (dompetDipilih != null) {
@@ -298,8 +289,6 @@ class TambahTransaksiFragment : Fragment() {
         }
         renderOpsiSumberDana()
     }
-
-    // ── Simpan mode edit ──────────────────────────────────────────────────────
 
     private fun simpanEditTransaksi(view: View) {
         val nominal = nominalString.toDoubleOrNull() ?: 0.0
@@ -344,7 +333,18 @@ class TambahTransaksiFragment : Fragment() {
         btnNextMonth        = view.findViewById(R.id.btn_next_month)
         gridNamaHari        = view.findViewById(R.id.grid_nama_hari)
         gridTanggal         = view.findViewById(R.id.grid_tanggal)
-        tvCatatan           = view.findViewById(R.id.tv_catatan)
+        tvCatatan           = view.findViewById(R.id.tv_catatan)   // ← tambahkan ini
+        tvCatatanTercatat   = view.findViewById(R.id.tv_catatan_tercatat)
+        tvKategoriTercatat  = view.findViewById(R.id.tv_kategori_tercatat)
+        tvTanggalTercatat   = view.findViewById(R.id.tv_tanggal_tercatat)
+        tvDompetTercatat    = view.findViewById(R.id.tv_dompet_tercatat)
+        tvLabelBaris1       = view.findViewById(R.id.tv_label_baris1)
+        tvLabelBaris2       = view.findViewById(R.id.tv_label_baris2)
+        tvLabelBaris3       = view.findViewById(R.id.tv_label_baris3)
+        ivIconBaris1 = view.findViewById(R.id.iv_icon_baris1)
+        ivIconBaris2 = view.findViewById(R.id.iv_icon_baris2)
+        ivIconBaris3 = view.findViewById(R.id.iv_icon_baris3)
+
         tvSumberDana        = view.findViewById(R.id.tv_sumber_dana)
         ivChevronSumberDana = view.findViewById(R.id.iv_chevron_sumber_dana)
         llSumberDanaHeader  = view.findViewById(R.id.ll_sumber_dana_header)
@@ -405,7 +405,7 @@ class TambahTransaksiFragment : Fragment() {
     }
 
     private fun switchTab(jenis: String) {
-        if (isEditMode) return   // mode edit tidak boleh ganti tab
+        if (isEditMode) return
         jenisTransaksi = jenis
         updateTabUI(jenis)
         if (jenis == "TRANSFER") {
@@ -471,8 +471,7 @@ class TambahTransaksiFragment : Fragment() {
         tvDompetTujuan.text = "Silakan pilih dompet"
         tvDompetTujuan.setTextColor(0xFF888888.toInt())
         catatanString = ""
-        tvCatatanTransfer.text = "Tambah catatan..."
-        tvCatatanTransfer.setTextColor(0xFFAAAAAA.toInt())
+        tampilkanCatatanTransfer()
     }
 
     // ── Sumber Dana ────────────────────────────────────────────────────────────
@@ -528,6 +527,30 @@ class TambahTransaksiFragment : Fragment() {
         renderOpsiSumberDana(); tutupSumberDana()
     }
 
+    // ── Helper tampilan catatan — pakai catatanString, BUKAN baca tvCatatan ───
+
+    /** Update tvCatatan dari catatanString (sumber kebenaran). */
+    private fun tampilkanCatatan() {
+        if (catatanString.isEmpty()) {
+            tvCatatan.text = getString(R.string.hint_catatan)
+            tvCatatan.setTextColor(0xFFB0BEC5.toInt())
+        } else {
+            tvCatatan.text = catatanString
+            tvCatatan.setTextColor(0xFF1A1A2E.toInt())
+        }
+    }
+
+    /** Update tvCatatanTransfer dari catatanString. */
+    private fun tampilkanCatatanTransfer() {
+        if (catatanString.isEmpty()) {
+            tvCatatanTransfer.text = getString(R.string.hint_tambah_catatan)
+            tvCatatanTransfer.setTextColor(0xFFB0BEC5.toInt())
+        } else {
+            tvCatatanTransfer.text = catatanString
+            tvCatatanTransfer.setTextColor(0xFF1A1A2E.toInt())
+        }
+    }
+
     // ── Keyboard Huruf ────────────────────────────────────────────────────────
     private fun setupKeyboardHuruf(view: View) {
         isKeyboardModeTransfer = false
@@ -562,9 +585,13 @@ class TambahTransaksiFragment : Fragment() {
             }
         }
         kbShift.setOnClickListener { isUpperCase = !isUpperCase; updateShiftUI() }
-        view?.findViewById<Button>(R.id.kb_spasi)?.setOnClickListener { catatanString += " "; updateSemuaTampilanTransfer() }
+        view?.findViewById<Button>(R.id.kb_spasi)?.setOnClickListener {
+            catatanString += " "; updateSemuaTampilanTransfer()
+        }
         view?.findViewById<Button>(R.id.kb_hapus)?.apply {
-            setOnClickListener { if (catatanString.isNotEmpty()) { catatanString = catatanString.dropLast(1); updateSemuaTampilanTransfer() } }
+            setOnClickListener {
+                if (catatanString.isNotEmpty()) { catatanString = catatanString.dropLast(1); updateSemuaTampilanTransfer() }
+            }
             setOnLongClickListener { catatanString = ""; updateSemuaTampilanTransfer(); true }
         }
         view?.findViewById<Button>(R.id.kb_123)?.setOnClickListener     { tutupKeyboardHurufTransfer() }
@@ -575,18 +602,22 @@ class TambahTransaksiFragment : Fragment() {
         if (isGridKategoriOpen) tutupGridKategori()
         if (isSumberDanaOpen)   tutupSumberDana()
         if (isTanggalOpen)      tutupTanggal()
-        catatanString = tvCatatan.text.toString().let { if (it == "Tambah catatan...") "" else it }
-        updateSemuaTampilan(); isUpperCase = true; updateShiftUI()
+        // FIX: tidak perlu baca dari tvCatatan — catatanString sudah jadi sumber kebenaran
+        updateSemuaTampilan()
+        isUpperCase = true; updateShiftUI()
         setupKeyboardHuruf(requireView())
-        llNumpad.visibility = View.GONE; llAksiCatatan.visibility = View.GONE
+        llNumpad.visibility        = View.GONE
+        llAksiCatatan.visibility   = View.GONE
         llKeyboardHuruf.visibility = View.VISIBLE
     }
 
     private fun bukaKeyboardHurufTransfer() {
-        catatanString = tvCatatanTransfer.text.toString().let { if (it == "Tambah catatan...") "" else it }
-        updateSemuaTampilanTransfer(); isUpperCase = true; updateShiftUI()
+        // FIX: tidak perlu baca dari tvCatatanTransfer
+        updateSemuaTampilanTransfer()
+        isUpperCase = true; updateShiftUI()
         setupKeyboardHurufTransfer()
-        llNumpad.visibility = View.GONE; llAksiCatatan.visibility = View.GONE
+        llNumpad.visibility        = View.GONE
+        llAksiCatatan.visibility   = View.GONE
         llKeyboardHuruf.visibility = View.VISIBLE
     }
 
@@ -605,28 +636,27 @@ class TambahTransaksiFragment : Fragment() {
 
     private fun updateSemuaTampilan() {
         tvPreviewCatatan.text = catatanString.ifEmpty { null }
-        tvPreviewCatatan.hint = if (catatanString.isEmpty()) "Tulis catatan..." else null
-        if (catatanString.isEmpty()) { tvCatatan.text = "Tambah catatan..."; tvCatatan.setTextColor(0xFFAAAAAA.toInt()) }
-        else { tvCatatan.text = catatanString; tvCatatan.setTextColor(0xFF1A1A2E.toInt()) }
+        tvPreviewCatatan.hint = if (catatanString.isEmpty()) getString(R.string.hint_catatan) else null
+        tampilkanCatatan()
     }
 
     private fun updateSemuaTampilanTransfer() {
         tvPreviewCatatan.text = catatanString.ifEmpty { null }
-        tvPreviewCatatan.hint = if (catatanString.isEmpty()) "Tulis catatan..." else null
-        if (catatanString.isEmpty()) { tvCatatanTransfer.text = "Tambah catatan..."; tvCatatanTransfer.setTextColor(0xFFAAAAAA.toInt()) }
-        else { tvCatatanTransfer.text = catatanString; tvCatatanTransfer.setTextColor(0xFF1A1A2E.toInt()) }
+        tvPreviewCatatan.hint = if (catatanString.isEmpty()) getString(R.string.hint_catatan) else null
+        tampilkanCatatanTransfer()
     }
 
     private fun updateShiftUI() {
         kbShift.backgroundTintList = android.content.res.ColorStateList.valueOf(
             if (isUpperCase) Color.parseColor("#4A6FA5") else Color.parseColor("#C8C4BA"))
         kbShift.setTextColor(if (isUpperCase) Color.WHITE else Color.parseColor("#1A1A2E"))
-        hurufMap.forEach { (id, k) -> view?.findViewById<Button>(id)?.text = if (isUpperCase) k.uppercase() else k }
+        hurufMap.forEach { (id, k) ->
+            view?.findViewById<Button>(id)?.text = if (isUpperCase) k.uppercase() else k
+        }
     }
 
     private fun simpanCatatan() {
-        if (catatanString.isEmpty()) { tvCatatan.text = "Tambah catatan..."; tvCatatan.setTextColor(0xFFAAAAAA.toInt()) }
-        else { tvCatatan.text = catatanString; tvCatatan.setTextColor(0xFF1A1A2E.toInt()) }
+        tampilkanCatatan()
         if (isEditMode) { tutupKeyboardHuruf(); return }
         lastSavedTransaksi?.let { t ->
             val updated = t.copy(catatan = catatanString)
@@ -636,12 +666,14 @@ class TambahTransaksiFragment : Fragment() {
             tvCatatanTercatat.visibility = if (catatanString.isEmpty()) View.GONE else View.VISIBLE
         }
         tutupKeyboardHuruf()
-        if (lastSavedTransaksi != null) { llStateTercatat.visibility = View.VISIBLE; llAksiCatatan.visibility = View.VISIBLE }
+        if (lastSavedTransaksi != null) {
+            llStateTercatat.visibility = View.VISIBLE
+            llAksiCatatan.visibility   = View.VISIBLE
+        }
     }
 
     private fun simpanCatatanTransfer() {
-        if (catatanString.isEmpty()) { tvCatatanTransfer.text = "Tambah catatan..."; tvCatatanTransfer.setTextColor(0xFFAAAAAA.toInt()) }
-        else { tvCatatanTransfer.text = catatanString; tvCatatanTransfer.setTextColor(0xFF1A1A2E.toInt()) }
+        tampilkanCatatanTransfer()
         tutupKeyboardHurufTransfer()
     }
 
@@ -663,7 +695,9 @@ class TambahTransaksiFragment : Fragment() {
             view.findViewById<Button>(id).setOnClickListener { appendDigit(digit) }
         }
         view.findViewById<Button>(R.id.btn_hapus).apply {
-            setOnClickListener { if (nominalString.isNotEmpty()) { nominalString = nominalString.dropLast(1); updateNominalDisplay() } }
+            setOnClickListener {
+                if (nominalString.isNotEmpty()) { nominalString = nominalString.dropLast(1); updateNominalDisplay() }
+            }
             setOnLongClickListener { nominalString = ""; updateNominalDisplay(); true }
         }
         view.findViewById<Button>(R.id.btn_bintang).setOnClickListener { bukaKeyboardHuruf() }
@@ -702,7 +736,8 @@ class TambahTransaksiFragment : Fragment() {
                 ivKategoriIcon.setImageResource(item.iconRes)
                 for (i in 0 until gridKategori.childCount) {
                     val child = gridKategori.getChildAt(i)
-                    updateItemSelectedState(child, child.findViewById<TextView>(R.id.tv_item_kategori_nama).text.toString() == selectedKategori)
+                    updateItemSelectedState(child,
+                        child.findViewById<TextView>(R.id.tv_item_kategori_nama).text.toString() == selectedKategori)
                 }
                 tutupGridKategori()
             }
@@ -805,8 +840,10 @@ class TambahTransaksiFragment : Fragment() {
         val selCal   = Calendar.getInstance().apply { timeInMillis = selectedTanggal }
         repeat(offset) { gridTanggal.addView(buatSelKosong()) }
         for (day in 1..total) {
-            val isToday    = day == todayCal.get(Calendar.DAY_OF_MONTH) && bulan == todayCal.get(Calendar.MONTH) && tahun == todayCal.get(Calendar.YEAR)
-            val isSelected = day == selCal.get(Calendar.DAY_OF_MONTH)  && bulan == selCal.get(Calendar.MONTH)   && tahun == selCal.get(Calendar.YEAR)
+            val isToday    = day == todayCal.get(Calendar.DAY_OF_MONTH) &&
+                    bulan == todayCal.get(Calendar.MONTH) && tahun == todayCal.get(Calendar.YEAR)
+            val isSelected = day == selCal.get(Calendar.DAY_OF_MONTH)  &&
+                    bulan == selCal.get(Calendar.MONTH)   && tahun == selCal.get(Calendar.YEAR)
             gridTanggal.addView(TextView(requireContext()).apply {
                 text = day.toString(); textSize = 13f
                 gravity = android.view.Gravity.CENTER; setPadding(0, 8, 0, 8)
@@ -864,7 +901,6 @@ class TambahTransaksiFragment : Fragment() {
     }
 
     // ── Aksi setelah transaksi tercatat ───────────────────────────────────────
-
     private fun setupAksiCatatan() {
         btnTransaksiBaru.setOnClickListener { showStateInput() }
         btnHapusTransaksi.setOnClickListener {
@@ -891,7 +927,7 @@ class TambahTransaksiFragment : Fragment() {
         if (jenisTransaksi == "TRANSFER") {
             if (selectedDompetAsalId == 0)   { Snackbar.make(view, "Pilih dompet asal",   Snackbar.LENGTH_SHORT).show(); return }
             if (selectedDompetTujuanId == 0) { Snackbar.make(view, "Pilih dompet tujuan", Snackbar.LENGTH_SHORT).show(); return }
-            val catatanTransfer = tvCatatanTransfer.text.toString().let { if (it == "Tambah catatan...") "" else it }
+            val catatanTransfer = catatanString
             viewModel.insert(Transaksi(nominal = nominal, jenis = "PENGELUARAN", kategori = "Transfer",
                 catatan  = if (catatanTransfer.isNotEmpty()) catatanTransfer else "Transfer ke $selectedDompetTujuanNama",
                 tanggal  = selectedTanggal, dompetId = selectedDompetAsalId))
@@ -900,7 +936,12 @@ class TambahTransaksiFragment : Fragment() {
                 tanggal  = selectedTanggal, dompetId = selectedDompetTujuanId))
             lastSavedTransaksi = Transaksi(nominal = nominal, jenis = "TRANSFER", kategori = "Transfer",
                 catatan = catatanTransfer, tanggal = selectedTanggal, dompetId = 0)
-            resetFormTransfer(); showStateTercatat(nominal); return
+            val namaAsal    = selectedDompetAsalNama
+            val namaTujuan  = selectedDompetTujuanNama
+            val catatanFinal = catatanString   // ← simpan sebelum reset
+            resetFormTransfer()
+            showStateTercatat(nominal, namaAsal, namaTujuan, catatanFinal)
+            return
         }
         if (selectedDompetId == 0) { Snackbar.make(view, "Pilih sumber dana", Snackbar.LENGTH_SHORT).show(); return }
         if (isGridKategoriOpen) tutupGridKategori()
@@ -914,27 +955,67 @@ class TambahTransaksiFragment : Fragment() {
     }
 
     private fun showStateInput() {
-        llStateTercatat.visibility = View.GONE; llNumpad.visibility = View.VISIBLE
-        llKeyboardHuruf.visibility = View.GONE; llAksiCatatan.visibility = View.GONE
-        lastSavedTransaksi = null; nominalString = ""; tvNominal.text = "Rp 0"
-        catatanString = ""; tvCatatan.text = "Tambah catatan..."; tvCatatan.setTextColor(0xFFAAAAAA.toInt())
-        updateTanggalDisplay(); setupKeyboardHuruf(requireView())
+        llStateTercatat.visibility = View.GONE
+        llNumpad.visibility        = View.VISIBLE
+        llKeyboardHuruf.visibility = View.GONE
+        llAksiCatatan.visibility   = View.GONE
+        lastSavedTransaksi = null
+        nominalString = ""
+        tvNominal.text = "Rp 0"
+        catatanString = ""
+        tampilkanCatatan()
+        updateTanggalDisplay()
+        setupKeyboardHuruf(requireView())
     }
 
-    private fun showStateTercatat(nominal: Double) {
-        llNumpad.visibility = View.GONE; llKeyboardHuruf.visibility = View.GONE
+    private fun showStateTercatat(
+        nominal: Double,
+        dompetAsalOverride: String = "",
+        dompetTujuanOverride: String = "",
+        catatanOverride: String = ""
+    ) {
+        llNumpad.visibility        = View.GONE
+        llKeyboardHuruf.visibility = View.GONE
         tvLabelTercatat.text = when (jenisTransaksi) {
             "PEMASUKAN" -> "PEMASUKAN TERCATAT"
             "TRANSFER"  -> "TRANSFER TERCATAT"
             else        -> "PENGELUARAN TERCATAT"
         }
         tvNominalTercatat.text = CurrencyFormatter.format(nominal)
-        if (catatanString.isNotEmpty()) { tvCatatanTercatat.text = catatanString; tvCatatanTercatat.visibility = View.VISIBLE }
-        else tvCatatanTercatat.visibility = View.GONE
-        llStateTercatat.visibility = View.VISIBLE; llAksiCatatan.visibility = View.VISIBLE
-        nominalString = ""; tvNominal.text = "Rp 0"
-        tvCatatan.text = if (catatanString.isEmpty()) "Tambah catatan..." else catatanString
-        tvCatatan.setTextColor(if (catatanString.isEmpty()) 0xFFAAAAAA.toInt() else 0xFF1A1A2E.toInt())
+        if (jenisTransaksi == "TRANSFER") {
+            tvLabelBaris1.text = "Dompet Asal"
+            tvLabelBaris2.text = "Dompet Tujuan"
+            tvLabelBaris3.text = "Tanggal"
+            ivIconBaris1.setImageResource(R.drawable.ic_wallet)
+            ivIconBaris2.setImageResource(R.drawable.ic_wallet)
+            ivIconBaris3.setImageResource(R.drawable.ic_tanggal)
+            tvKategoriTercatat.text = dompetAsalOverride
+            tvTanggalTercatat.text  = dompetTujuanOverride
+            tvDompetTercatat.text   = DateUtils.formatTanggal(selectedTanggal)
+        } else {
+            tvLabelBaris1.text = "Kategori"
+            tvLabelBaris2.text = "Tanggal"
+            tvLabelBaris3.text = "Dompet"
+            val daftar = if (jenisTransaksi == "PEMASUKAN") kategoriPemasukan else kategoriPengeluaran
+            val iconRes = daftar.find { it.nama == selectedKategori }?.iconRes ?: R.drawable.ic_makanan
+            ivIconBaris1.setImageResource(iconRes)
+            ivIconBaris2.setImageResource(R.drawable.ic_tanggal)
+            ivIconBaris3.setImageResource(R.drawable.ic_wallet)
+            tvKategoriTercatat.text = selectedKategori
+            tvTanggalTercatat.text  = DateUtils.formatTanggal(selectedTanggal)
+            tvDompetTercatat.text   = selectedDompetNama
+        }
+
+        tvCatatanTercatat.text = if (jenisTransaksi == "TRANSFER")
+            catatanOverride
+        else
+            catatanString
+
+        llStateTercatat.visibility = View.VISIBLE
+        llAksiCatatan.visibility   = View.VISIBLE
+        nominalString = ""
+        tvNominal.text = "Rp 0"
+        tampilkanCatatan()
         updateTanggalDisplay()
     }
 }

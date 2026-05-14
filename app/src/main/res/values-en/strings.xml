@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">App MoneeGo</string>
+    <string name="hello_blank_fragment">Hello</string>
+
+    <!-- Settings -->
+    <string name="pengaturan_title">SETTINGS</string>
+    <string name="section_ekspor">EXPORT DATA</string>
+    <string name="ekspor_title">Export Data</string>
+    <string name="ekspor_desc">Download transaction data in CSV format</string>
+    <string name="section_tampilan">DISPLAY</string>
+    <string name="bahasa_label">Language</string>
+    <string name="bahasa_value">English</string>
+    <string name="dark_mode_title">Dark Mode</string>
+    <string name="dark_mode_desc">Switch to dark theme</string>
+    <string name="notifikasi_title">Notifications</string>
+    <string name="notifikasi_desc">Enable financial reminders</string>
+    <string name="section_tentang">ABOUT APP</string>
+    <string name="versi_label">App Version</string>
+    <string name="versi_value">v1 (2026)</string>
+    <string name="pengembang_label">Developer</string>
+    <string name="pengembang_value">Group 6</string>
+    <string name="footer_text">MoneeGo · Group 6 · 2026</string>
+
+    <!-- Dashboard -->
+    <string name="label_saldo">Current Balance</string>
+    <string name="label_pemasukan">Income</string>
+    <string name="label_pengeluaran">Expense</string>
+    <string name="menu_dompet">Wallet ›</string>
+    <string name="menu_tabungan">Savings ›</string>
+    <string name="menu_hutang">Debt ›</string>
+    <string name="banner_title">Start Saving Now!</string>
+    <string name="banner_desc">No savings target yet. Create your first target and reach your dream items!</string>
+    <string name="btn_buat_target">+ CREATE NEW TARGET</string>
+    <string name="label_insight">Insight</string>
+
+    <!-- Add Transaction -->
+    <string name="title_tambah_transaksi">ADD TRANSACTION</string>
+    <string name="tab_pengeluaran">EXPENSE</string>
+    <string name="tab_pemasukan">INCOME</string>
+    <string name="tab_transfer">TRANSFER</string>
+    <string name="label_kategori">Category</string>
+    <string name="label_tanggal">Date</string>
+    <string name="label_catatan">Note</string>
+    <string name="hint_catatan">Add a note...</string>
+    <string name="label_sumber_dana">Fund Source</string>
+    <string name="btn_simpan">SAVE\nTRANSACTION</string>
+    <string name="btn_transaksi_baru">+ New Transaction</string>
+    <string name="btn_hapus_transaksi">Delete Transaction</string>
+    <string name="btn_tambah_transfer">Add Transfer</string>
+    <string name="btn_hapus_transfer">Delete Transfer</string>
+    <string name="btn_selesai">DONE</string>
+    <string name="hint_tulis_catatan">Write a note...</string>
+    <string name="pilih_dompet">Please select a wallet</string>
+
+    <!-- Transaction History -->
+    <string name="label_persen_masuk"> Income 0%</string>
+    <string name="label_persen_keluar"> Expense 0%</string>
+    <string name="label_total_pemasukan">Income</string>
+    <string name="label_total_pengeluaran">Expense</string>
+
+    <!-- Wallet -->
+    <string name="title_dompet">MY WALLET</string>
+    <string name="label_saldo_bersih">Net Balance</string>
+    <string name="label_total_semua_dompet">Total All Wallets</string>
+    <string name="label_terbesar">Largest</string>
+    <string name="label_dompet_aktif">Active Wallets</string>
+    <string name="label_hutang_aktif">⚠️ Active Debt</string>
+    <string name="label_lihat_hutang">View »</string>
+    <string name="section_dompet">WALLET</string>
+    <string name="btn_tambah_dompet">+ Add</string>
+    <string name="empty_dompet">No wallets yet</string>
+    <string name="empty_dompet_desc">Add your first wallet now!</string>
+
+    <!-- Savings -->
+    <string name="title_tabungan">MY SAVINGS</string>
+    <string name="label_tercapai">Achieved</string>
+    <string name="label_berjalan">Ongoing</string>
+    <string name="label_total_terkumpul">Total Saved from 0 Goals</string>
+    <string name="tab_berjalan">ONGOING</string>
+    <string name="tab_selesai">COMPLETED</string>
+    <string name="insight_tabungan">Keep saving!</string>
+
+    <!-- Debt -->
+    <string name="title_hutang">Debt</string>
+    <string name="label_hutang_belum_bayar">Unpaid debts!</string>
+    <string name="label_selesai">Completed</string>
+</resources>
