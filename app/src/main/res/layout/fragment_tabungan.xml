@@ -20,7 +20,7 @@
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TABUNGANKU"
+        android:text="@string/title_tabungan"
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="#1A1A2E"
@@ -98,7 +98,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Tercapai"
+                            android:text="@string/label_tercapai"
                             android:textSize="12sp"
                             android:textColor="#4A4A4A"
                             android:layout_marginStart="4dp"/>
@@ -130,7 +130,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Berjalan"
+                            android:text="@string/label_berjalan"
                             android:textSize="12sp"
                             android:textColor="#4A4A4A"
                             android:layout_marginStart="4dp"/>
@@ -168,7 +168,7 @@
                         android:id="@+id/tv_insight_tabungan"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Semangat menabung!"
+                        android:text="@string/insight_tabungan"
                         android:textSize="12sp"
                         android:textColor="#1A1A2E"
                         android:layout_marginStart="8dp"/>
@@ -195,7 +195,7 @@
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="1"
-            android:text="BERJALAN"
+            android:text="@string/tab_berjalan"
             android:backgroundTint="#2C3E6B"
             android:textColor="@android:color/white"
             android:textSize="13sp"
@@ -206,7 +206,7 @@
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="1"
-            android:text="SELESAI"
+            android:text="@string/tab_selesai"
             android:backgroundTint="@android:color/white"
             android:textColor="#4A6FA5"
             android:textSize="13sp"/>

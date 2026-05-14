@@ -38,7 +38,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="TAMBAH TRANSAKSI"
+            android:text="@string/title_tambah_transaksi"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
@@ -76,7 +76,7 @@
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="4dp"
-            android:text="PENGELUARAN"
+            android:text="@string/tab_pengeluaran"
             android:textSize="11sp"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
@@ -91,7 +91,7 @@
             android:layout_marginHorizontal="4dp"
             android:gravity="center"
             android:letterSpacing="0.03"
-            android:text="PEMASUKAN"
+            android:text="@string/tab_pemasukan"
             android:textColor="#6B8FA3"
             android:textSize="11sp"
             android:textStyle="bold" />
@@ -102,7 +102,7 @@
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="4dp"
-            android:text="TRANSFER"
+            android:text="@string/tab_transfer"
             android:textSize="11sp"
             android:textStyle="bold"
             android:textColor="#6B8FA3"
@@ -218,7 +218,7 @@
                                         <TextView
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:text="Kategori"
+                                            android:text="@string/label_kategori"
                                             android:textSize="10sp"
                                             android:textColor="#78909C"
                                             android:letterSpacing="0.04"/>
@@ -293,7 +293,7 @@
                                         <TextView
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:text="Tanggal"
+                                            android:text="@string/label_tanggal"
                                             android:textSize="10sp"
                                             android:textColor="#78909C"
                                             android:letterSpacing="0.04"/>
@@ -411,7 +411,7 @@
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="Catatan"
+                                        android:text="@string/label_catatan"
                                         android:textSize="10sp"
                                         android:textColor="#78909C"
                                         android:letterSpacing="0.04"/>
@@ -419,7 +419,7 @@
                                         android:id="@+id/tv_catatan"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="Tambah catatan..."
+                                        android:text="@string/hint_catatan"
                                         android:textSize="14sp"
                                         android:textColor="#B0BEC5"/>
                                 </LinearLayout>
@@ -452,8 +452,8 @@
                                         android:layout_width="24dp"
                                         android:layout_height="24dp"
                                         android:src="@drawable/ic_wallet"
-                                        android:layout_marginEnd="14dp">
-                                    </ImageView>
+                                        android:layout_marginEnd="14dp"/>
+
                                     <LinearLayout
                                         android:layout_width="0dp"
                                         android:layout_height="wrap_content"
@@ -462,7 +462,7 @@
                                         <TextView
                                             android:layout_width="wrap_content"
                                             android:layout_height="wrap_content"
-                                            android:text="Sumber Dana"
+                                            android:text="@string/label_sumber_dana"
                                             android:textSize="10sp"
                                             android:textColor="#78909C"
                                             android:letterSpacing="0.04"/>
@@ -542,7 +542,7 @@
                                         android:id="@+id/tv_dompet_asal"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="Silakan pilih dompet"
+                                        android:text="@string/pilih_dompet"
                                         android:textSize="11sp"
                                         android:textColor="#90A4AE"
                                         android:gravity="center"/>
@@ -632,7 +632,7 @@
                                         android:id="@+id/tv_catatan_transfer"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="Tambah catatan..."
+                                        android:text="@string/hint_tambah_catatan"
                                         android:textSize="14sp"
                                         android:textColor="#B0BEC5"/>
                                 </LinearLayout>
@@ -646,54 +646,257 @@
 
             <!-- ── STATE TERCATAT ── -->
             <LinearLayout
-                android:id="@+id/ll_state_tercatat"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
+            android:id="@+id/ll_state_tercatat"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:background="#EEF4F8"
+            android:visibility="gone"
+            android:padding="20dp">
+
+            <!-- Ikon lingkaran -->
+            <LinearLayout
+                android:layout_width="88dp"
+                android:layout_height="88dp"
+                android:background="@drawable/bg_circle_white"
                 android:gravity="center"
-                android:background="#FFFFFF"
-                android:visibility="gone">
+                android:elevation="4dp"
+                android:layout_marginBottom="14dp">
 
                 <ImageView
                     android:id="@+id/iv_check_tercatat"
-                    android:layout_width="72dp"
-                    android:layout_height="72dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:src="@drawable/ic_check_green"
-                    android:layout_marginBottom="16dp"/>
-
-                <TextView
-                    android:id="@+id/tv_label_tercatat"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="PENGELUARAN TERCATAT"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="#1A2B34"
-                    android:letterSpacing="0.05"
-                    android:layout_marginBottom="8dp"/>
-
-                <TextView
-                    android:id="@+id/tv_nominal_tercatat"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Rp 0"
-                    android:textSize="28sp"
-                    android:textStyle="bold"
-                    android:textColor="#6B8FA3"
-                    android:layout_marginBottom="6dp"/>
-
-                <TextView
-                    android:id="@+id/tv_catatan_tercatat"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:textSize="13sp"
-                    android:textColor="#90A4AE"
-                    android:gravity="center"
-                    android:paddingHorizontal="24dp"/>
+                    android:scaleType="fitCenter"/>
 
             </LinearLayout>
 
+            <!-- Label jenis transaksi -->
+            <TextView
+                android:id="@+id/tv_label_tercatat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PENGELUARAN TERCATAT"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:textColor="#2C3E6B"
+                android:letterSpacing="0.08"
+                android:layout_marginBottom="14dp"/>
+
+            <!-- Card nominal -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginBottom="10dp"
+                app:cardCornerRadius="20dp"
+                app:cardBackgroundColor="#D6E8F5"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:paddingVertical="18dp"
+                    android:paddingHorizontal="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TOTAL"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:textColor="#6B8FA3"
+                        android:letterSpacing="0.12"
+                        android:layout_marginBottom="4dp"/>
+
+                    <TextView
+                        android:id="@+id/tv_nominal_tercatat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Rp 0"
+                        android:textSize="34sp"
+                        android:textStyle="bold"
+                        android:textColor="#1E2D4E"/>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Card info detail -->
+                <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginBottom="10dp"
+                app:cardCornerRadius="20dp"
+                app:cardBackgroundColor="#D6E8F5"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingVertical="6dp"
+                    android:paddingHorizontal="16dp">
+
+                    <!-- Kategori -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:id="@+id/iv_icon_baris1"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_makanan"
+                            android:layout_marginEnd="12dp"/>
+
+                        <TextView
+                            android:id="@+id/tv_label_baris1"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="Kategori"
+                            android:textSize="11sp"
+                            android:textColor="#6B8FA3"/>
+
+                        <TextView
+                            android:id="@+id/tv_kategori_tercatat"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="#1E2D4E"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#C2D8EA"/>
+
+                    <!-- Tanggal -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:id="@+id/iv_icon_baris2"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_tanggal"
+                            android:layout_marginEnd="12dp"/>
+
+                        <TextView
+                            android:id="@+id/tv_label_baris2"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="Tanggal"
+                            android:textSize="11sp"
+                            android:textColor="#6B8FA3"/>
+
+
+                        <TextView
+                            android:id="@+id/tv_tanggal_tercatat"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="#1E2D4E"/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#C2D8EA"/>
+
+                    <!-- Dompet -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:id="@+id/iv_icon_baris3"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_wallet"
+                            android:layout_marginEnd="12dp"/>
+
+                        <TextView
+                            android:id="@+id/tv_label_baris3"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="Dompet"
+                            android:textSize="11sp"
+                            android:textColor="#6B8FA3"/>
+
+                        <TextView
+                            android:id="@+id/tv_dompet_tercatat"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="#1E2D4E"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Card catatan -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4dp"
+                app:cardCornerRadius="20dp"
+                app:cardBackgroundColor="#D6E8F5"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="16dp"
+                    android:paddingHorizontal="16dp"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:src="@drawable/ic_catatan"
+                        android:layout_marginEnd="12dp"/>
+
+                    <TextView
+                        android:id="@+id/tv_catatan_tercatat"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:hint="Tidak ada catatan"
+                        android:textSize="15sp"
+                        android:textColor="#1E2D4E"
+                        android:textColorHint="#6B8FA3"/>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
         </FrameLayout>
     </androidx.cardview.widget.CardView>
 
@@ -823,7 +1026,7 @@
                 android:layout_columnWeight="1"
                 android:layout_margin="3dp"
                 android:backgroundTint="#2C3E6B"
-                android:text="SIMPAN&#10;TRANSAKSI"
+                android:text="@string/btn_simpan"
                 android:textColor="@android:color/white"
                 android:textSize="8sp"
                 android:textStyle="bold"
@@ -847,7 +1050,7 @@
                 android:id="@+id/tv_preview_catatan"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:hint="Tulis catatan..."
+                android:hint="@string/hint_catatan"
                 android:textSize="14sp"
                 android:textColor="#1A2B34"
                 android:textColorHint="#90A4AE"
@@ -945,6 +1148,9 @@
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="6dp"
+            android:gravity="center_vertical"
             android:visibility="gone">
 
             <Button
@@ -952,7 +1158,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="+ Transaksi Baru"
+                android:layout_marginEnd="8dp"
+                android:text="@string/btn_transaksi_baru"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 android:textColor="#4A6E85"
@@ -963,7 +1170,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Hapus Transaksi"
+                android:text="@string/btn_hapus_transaksi"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 android:textColor="#FFFFFF"
@@ -983,7 +1190,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Tambah Transfer"
+                android:text="@string/btn_tambah_transfer"
                 android:textSize="13sp"
                 android:textStyle="bold"
                 android:textColor="#1A2B34"
@@ -993,7 +1200,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Hapus Transfer"
+                android:text="@string/btn_hapus_transfer"
                 android:textSize="13sp"
                 android:textStyle="bold"
                 android:textColor="#F44336"
@@ -1004,7 +1211,7 @@
             android:id="@+id/btn_selesai_transfer"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:text="SELESAI"
+            android:text="@string/btn_selesai"
             android:textSize="14sp"
             android:textStyle="bold"
             android:textColor="@android:color/white"

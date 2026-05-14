@@ -49,7 +49,7 @@
                     android:id="@+id/tv_label_saldo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Saldo saat ini"
+                    android:text="@string/label_saldo"
                     android:textSize="13sp"
                     android:textColor="#4A4A4A"
                     app:layout_constraintTop_toTopOf="parent"
@@ -105,7 +105,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Pemasukan"
+                            android:text="@string/label_pemasukan"
                             android:textSize="12sp"
                             android:textColor="#4A4A4A"/>
                         <TextView
@@ -125,7 +125,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Pengeluaran"
+                            android:text="@string/label_pengeluaran"
                             android:textSize="12sp"
                             android:textColor="#4A4A4A"/>
                         <TextView
@@ -173,7 +173,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Dompet ›"
+                    android:text="@string/menu_dompet"
                     android:textSize="12sp"
                     android:textColor="#4A4A4A"
                     android:layout_marginTop="8dp"/>
@@ -199,7 +199,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tabungan ›"
+                    android:text="@string/menu_tabungan"
                     android:textSize="12sp"
                     android:textColor="#4A4A4A"
                     android:layout_marginTop="8dp"/>
@@ -222,7 +222,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Hutang ›"
+                    android:text="@string/menu_hutang"
                     android:textSize="12sp"
                     android:textColor="#4A4A4A"
                     android:layout_marginTop="8dp"/>
@@ -268,7 +268,7 @@
                     android:id="@+id/tv_banner_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Ayo Mulai Menabung!"
+                    android:text="@string/banner_title"
                     android:textColor="#1A1A2E"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -278,7 +278,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Belum ada target tabungan. Buat target pertama kamu dan raih barang impian!"
+                    android:text="@string/banner_desc"
                     android:textColor="#4A4A4A"
                     android:textSize="13sp" />
 
@@ -288,7 +288,7 @@
                     android:layout_height="40dp"
                     android:layout_marginTop="12dp"
                     android:backgroundTint="#4A6FA5"
-                    android:text="+ BUAT TARGET BARU"
+                    android:text="@string/btn_buat_target"
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -317,7 +317,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Insight"
+                    android:text="@string/label_insight"
                     android:textColor="#1A1A2E"
                     android:textSize="16sp"
                     android:textStyle="bold" />
