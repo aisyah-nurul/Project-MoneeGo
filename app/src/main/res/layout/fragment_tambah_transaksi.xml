@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#EEF2F6">
+    android:background="#E2E2E2">
 
     <!-- ═══════════════════════════════════════════════════════════════
          HEADER — soft slate blue, flat modern
@@ -63,7 +63,7 @@
         android:orientation="horizontal"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="14dp"
-        android:background="#EEF2F6"
+        android:background="#E2E2E2"
         android:padding="4dp"
         app:layout_constraintTop_toBottomOf="@id/header_container"
         app:layout_constraintStart_toStartOf="parent"
@@ -121,7 +121,7 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="12dp"
         app:cardCornerRadius="24dp"
-        app:cardBackgroundColor="#90A4AE"
+        app:cardBackgroundColor="#98ACB6"
         app:cardElevation="2dp"
         app:layout_constraintTop_toBottomOf="@id/ll_tab_jenis"
         app:layout_constraintBottom_toTopOf="@id/ll_bottom_area"
@@ -154,7 +154,7 @@
                         android:layout_height="wrap_content"
                         android:text="NOMINAL (Rp)"
                         android:textSize="10sp"
-                        android:textColor="#90A4AE"
+                        android:textColor="#FFFFFF"
                         android:letterSpacing="0.1"
                         android:gravity="center"
                         android:layout_marginBottom="6dp"/>
@@ -920,7 +920,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:columnCount="4"
-            android:background="#EEF2F6"
+            android:background="#E2E2E2"
             android:paddingHorizontal="8dp"
             android:paddingTop="6dp"
             android:paddingBottom="4dp"

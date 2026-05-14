@@ -65,37 +65,53 @@ class RiwayatTransaksiFragment : Fragment() {
     private fun setupAdapter() {
         adapter = TransaksiAdapter(
             nominalVisibleInit = nominalVisible,
-            onEditClick = { transaksi ->
-                val isTransfer = transaksi.kategori == "Transfer"
-                val jenisEdit  = if (isTransfer) "TRANSFER" else transaksi.jenis
 
-                val bundle = Bundle().apply {
-                    putInt("edit_id",          transaksi.id)
-                    putDouble("edit_nominal",  transaksi.nominal)
-                    putString("edit_jenis",    jenisEdit)
-                    putString("edit_kategori", transaksi.kategori)
-                    putString("edit_catatan",  transaksi.catatan)
-                    putLong("edit_tanggal",    transaksi.tanggal)
-                    putInt("edit_dompet_id",   transaksi.dompetId)
-                    putBoolean("edit_is_transfer", isTransfer)
-                }
-                findNavController().navigate(R.id.action_riwayat_to_tambahTransaksi, bundle)
+            // ✅ BARU: tap card → buka popup detail
+            onItemClick = { transaksi ->
+                val dialog = DetailTransaksiDialog(
+                    transaksi    = transaksi,
+                    daftarDompet = adapter.getDaftarDompet(),
+                    onEditClick  = { t ->
+                        val isTransfer = t.kategori == "Transfer"
+                        val jenisEdit  = if (isTransfer) "TRANSFER" else t.jenis
+
+                        val bundle = Bundle().apply {
+                            putInt("edit_id",              t.id)
+                            putDouble("edit_nominal",      t.nominal)
+                            putString("edit_jenis",        jenisEdit)
+                            putString("edit_kategori",     t.kategori)
+                            putString("edit_catatan",      t.catatan)
+                            putLong("edit_tanggal",        t.tanggal)
+                            putInt("edit_dompet_id",       t.dompetId)
+                            putBoolean("edit_is_transfer", isTransfer)
+                        }
+                        findNavController()
+                            .navigate(R.id.action_riwayat_to_tambahTransaksi, bundle)
+                    },
+                    onDeleteClick = { t ->
+                        AlertDialog.Builder(requireContext())
+                            .setTitle("Hapus Transaksi")
+                            .setMessage(
+                                "Yakin ingin menghapus " +
+                                        "\"${t.catatan.ifEmpty { t.kategori }}\"?"
+                            )
+                            .setPositiveButton("Hapus") { _, _ -> viewModel.delete(t) }
+                            .setNegativeButton("Batal", null)
+                            .show()
+                    }
+                )
+                dialog.show(parentFragmentManager, DetailTransaksiDialog.TAG)
             },
-            onDeleteClick = { transaksi ->
-                AlertDialog.Builder(requireContext())
-                    .setTitle("Hapus Transaksi")
-                    .setMessage("Yakin ingin menghapus \"${transaksi.catatan.ifEmpty { transaksi.kategori }}\"?")
-                    .setPositiveButton("Hapus") { _, _ -> viewModel.delete(transaksi) }
-                    .setNegativeButton("Batal", null)
-                    .show()
-            }
+
+            // onEditClick & onDeleteClick di sini tidak dipakai lagi
+            // (sudah dipindah ke dalam DetailTransaksiDialog),
+            // tapi tetap ada agar signature tidak berubah
+            onEditClick   = {},
+            onDeleteClick = {}
         )
 
         binding.rvTransaksi.layoutManager = LinearLayoutManager(requireContext())
         binding.rvTransaksi.adapter       = adapter
-
-        // ✅ FIX SCROLL: setHasFixedSize(false) agar RecyclerView
-        // bisa recalculate ukuran saat kalender muncul/hilang
         binding.rvTransaksi.setHasFixedSize(false)
     }
 
@@ -153,9 +169,7 @@ class RiwayatTransaksiFragment : Fragment() {
     private fun setupTombolMata() {
         binding.btnToggleMata.setOnClickListener {
             nominalVisible = !nominalVisible
-
             VisibilityPrefs.setNominalVisible(requireContext(), nominalVisible)
-
             syncIkonMata()
             adapter.nominalVisible = nominalVisible
             updateTotalHarian()

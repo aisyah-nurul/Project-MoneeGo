@@ -82,6 +82,7 @@
         <action
             android:id="@+id/action_tambahTransaksi_to_dompet"
             app:destination="@id/dompetFragment"/>
+
     </fragment>
 
 </navigation>

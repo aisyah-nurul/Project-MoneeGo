@@ -14,15 +14,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.appmoneego.R
 import com.example.appmoneego.data.entity.Dompet
 import com.example.appmoneego.utils.CurrencyFormatter
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class DompetAdapter(
     private val onItemClick:     (Dompet) -> Unit,
     private val onItemLongClick: (Dompet) -> Boolean,
     private val totalSaldo:      () -> Double,
-    // Lambda agar adapter selalu baca nilai terbaru saat bind dipanggil
     private val nominalVisible:  () -> Boolean = { true }
 ) : ListAdapter<Dompet, DompetAdapter.DompetViewHolder>(DIFF_CALLBACK) {
 
@@ -39,7 +35,7 @@ class DompetAdapter(
         val tvNama:     TextView  = itemView.findViewById(R.id.tvNamaDompet)
         val tvJenis:    TextView  = itemView.findViewById(R.id.tvTipeDompet)
         val tvSaldo:    TextView  = itemView.findViewById(R.id.tvSaldoDompet)
-        val tvTanggal:  TextView  = itemView.findViewById(R.id.tvTanggalDompet)
+        // tvTanggal DIHAPUS — tidak ada lagi di item_dompet.xml
         val viewStripe: View      = itemView.findViewById(R.id.viewJenisStripe)
         val viewIconBg: View      = itemView.findViewById(R.id.viewIconBg)
     }
@@ -67,7 +63,7 @@ class DompetAdapter(
         else
             "Rp ***"
 
-        holder.tvTanggal.text = formatTanggal(dompet.tanggalDibuat)
+        // holder.tvTanggal — DIHAPUS, tidak di-bind lagi
 
         val style = getJenisStyle(dompet.jenis)
         try {
@@ -102,10 +98,5 @@ class DompetAdapter(
         "Investasi"      -> R.drawable.ic_wallet_investasi
         "Tabungan"       -> R.drawable.ic_wallet_tabungan
         else             -> R.drawable.ic_wallet_lainnya
-    }
-
-    private fun formatTanggal(timestamp: Long): String {
-        if (timestamp == 0L) return "-"
-        return SimpleDateFormat("dd MMMM yyyy", Locale("id")).format(Date(timestamp))
     }
 }

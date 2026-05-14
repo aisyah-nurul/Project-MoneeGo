@@ -1,102 +1,239 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="12dp"
-    app:cardCornerRadius="16dp"
+    android:layout_marginBottom="10dp"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="2dp"
     app:cardBackgroundColor="@android:color/white"
-    app:cardElevation="2dp">
+    android:foreground="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:padding="14dp">
 
-        <View
-            android:id="@+id/view_garis"
-            android:layout_width="6dp"
-            android:layout_height="match_parent"
-            android:background="#F44336"/>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <!-- Baris atas: nama + badge tanggal -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="14dp">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="10dp">
 
             <TextView
-                android:id="@+id/tv_nama_hutang"
+                android:id="@+id/tvNamaHutang"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Nama"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:textColor="#1A1A2E"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/btn_selesai"/>
+                android:layout_weight="1"
+                android:text="Nama hutang"
+                android:textColor="@color/teks_utama"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvBadgeTempo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Berjalan"
+                android:textSize="10sp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:background="@drawable/bg_badge_hijau" />
+        </LinearLayout>
+
+        <!-- Baris nominal: total / dibayar / sisa -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp">
 
             <LinearLayout
-                android:id="@+id/ll_info"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginTop="4dp"
-                app:layout_constraintTop_toBottomOf="@id/tv_nama_hutang"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/btn_selesai">
-
+                android:layout_weight="1"
+                android:orientation="vertical">
                 <TextView
-                    android:id="@+id/tv_nominal_hutang"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Total hutang"
+                    android:textColor="@color/teks_muted"
+                    android:textSize="10sp" />
+                <TextView
+                    android:id="@+id/tvTotalHutang"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Rp0"
-                    android:textSize="13sp"
-                    android:textStyle="bold"
-                    android:textColor="#F44336"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="  •  "
-                    android:textColor="#888888"/>
-
-                <TextView
-                    android:id="@+id/tv_tanggal_hutang"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="-"
+                    android:textColor="@color/teks_utama"
                     android:textSize="12sp"
-                    android:textColor="#888888"/>
+                    android:textStyle="bold" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_catatan_hutang"
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Catatan"
-                android:textSize="13sp"
-                android:textColor="#4A4A4A"
-                android:layout_marginTop="4dp"
-                app:layout_constraintTop_toBottomOf="@id/ll_info"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/btn_selesai"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sudah dibayar"
+                    android:textColor="@color/teks_muted"
+                    android:textSize="10sp" />
+                <TextView
+                    android:id="@+id/tvSudahDibayar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rp0"
+                    android:textColor="#3B6D11"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
-            <Button
-                android:id="@+id/btn_selesai"
-                android:layout_width="80dp"
-                android:layout_height="36dp"
-                android:text="Selesai"
-                android:textSize="12sp"
-                android:backgroundTint="#4A6FA5"
-                android:textColor="@android:color/white"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="end">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sisa hutang"
+                    android:textColor="@color/teks_muted"
+                    android:textSize="10sp" />
+                <TextView
+                    android:id="@+id/tvSisaHutang"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rp0"
+                    android:textColor="#A32D2D"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Progress bar + persentase -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="4dp">
+
+            <ProgressBar
+                android:id="@+id/progressBayar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="6dp"
+                android:max="100"
+                android:progress="0"
+                android:progressTint="@color/ungu_primer"
+                android:progressBackgroundTint="@color/bg_progress"
+                android:layout_marginEnd="8dp" />
+
+            <TextView
+                android:id="@+id/tvPersenLunas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0%"
+                android:textColor="@color/ungu_primer"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <!-- Cicilan terakhir (visible hanya jika ada cicilan) -->
+        <LinearLayout
+            android:id="@+id/layoutCicilanTerakhir"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_chip_muted"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="4dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cicilan terakhir: "
+                android:textColor="@color/teks_muted"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/tvCicilanTerakhirNominal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Rp0"
+                android:textColor="#3B6D11"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvCicilanTerakhirTanggal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="dd/mm/yyyy"
+                android:textColor="@color/teks_muted"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/bg_progress"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp" />
+
+        <!-- Footer: jenis hutang + tap hint -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tvFooterMeta"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Belum ada cicilan • 0% lunas"
+                android:textColor="@color/teks_muted"
+                android:textSize="10sp" />
+
+            <TextView
+                android:id="@+id/tvTapHint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="input cicilan"
+                android:textColor="@color/ungu_primer"
+                android:textSize="10sp" />
+
+            <ImageView
+                android:id="@+id/ivChevron"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:src="@drawable/ic_chevron_right"
+                android:tint="@color/ungu_primer"
+                android:layout_marginStart="2dp"
+                android:contentDescription="Detail" />
+        </LinearLayout>
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

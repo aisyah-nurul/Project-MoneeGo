@@ -1,60 +1,147 @@
 package com.example.appmoneego.ui.hutang
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.appmoneego.R
+import com.example.appmoneego.databinding.FragmentHutangBinding
+import com.example.appmoneego.utils.CurrencyFormatter
+import com.example.appmoneego.utils.VisibilityPrefs
+import com.google.android.material.tabs.TabLayout
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [HutangFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class HutangFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    private var _binding: FragmentHutangBinding? = null
+    private val binding get() = _binding!!
+
+    private lateinit var viewModel: HutangViewModel
+    private lateinit var adapter: HutangAdapter
+
+    private var isNominalVisible = true
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentHutangBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        isNominalVisible = VisibilityPrefs.isNominalVisible(requireContext())
+
+        viewModel = ViewModelProvider(this)[HutangViewModel::class.java]
+        setupRecyclerView()
+        setupObservers()
+        setupClickListeners()
+        syncIkonMata()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        isNominalVisible = VisibilityPrefs.isNominalVisible(requireContext())
+        syncIkonMata()
+        refreshTampilan()
+    }
+
+    private fun setupRecyclerView() {
+        adapter = HutangAdapter(
+            lifecycleScope = viewLifecycleOwner.lifecycleScope
+        ) { hutang ->
+            val sheet = CicilanBottomSheetFragment.newInstance(hutang)
+            sheet.setOnCicilanSavedListener { updated ->
+                viewModel.update(updated)
+            }
+            sheet.setOnHutangDeletedListener { deleted ->
+                viewModel.delete(deleted)
+            }
+            sheet.show(parentFragmentManager, "CicilanSheet")
+        }
+        binding.rvHutang.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvHutang.adapter = adapter
+    }
+
+    private fun refreshList() {
+        val list     = viewModel.hutangList.value ?: return
+        val aktif    = list.filter { !it.selesai }
+        val lunas    = list.filter { it.selesai }
+        val tabIndex = binding.tabLayoutHutang.selectedTabPosition
+        val tampil   = if (tabIndex == 0) aktif else lunas
+        adapter.submitList(tampil)
+        binding.layoutEmpty.visibility = if (tampil.isEmpty()) View.VISIBLE else View.GONE
+        binding.rvHutang.visibility    = if (tampil.isEmpty()) View.GONE   else View.VISIBLE
+    }
+
+    private fun setupObservers() {
+        viewModel.hutangList.observe(viewLifecycleOwner) { list ->
+            val aktif = list.filter { !it.selesai }
+            val lunas = list.filter { it.selesai }
+            val total = aktif.sumOf { it.sisaHutang }
+
+            binding.tvTotalHutang.text = if (isNominalVisible)
+                CurrencyFormatter.format(total.toDouble())
+            else
+                "Rp ***"
+
+            binding.tvStatBerjalan.text = aktif.size.toString()
+            binding.tvStatLunas.text    = lunas.size.toString()
+
+            refreshList()
+        }
+
+        binding.tabLayoutHutang.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?)   { refreshList() }
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
+        })
+    }
+
+    private fun setupClickListeners() {
+        binding.btnTambahHutang.setOnClickListener {
+            TambahHutangDialog { hutang ->
+                viewModel.insert(hutang)
+            }.show(parentFragmentManager, "TambahHutangDialog")
+        }
+
+        binding.ibBack.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
+        binding.ivEye.setOnClickListener {
+            isNominalVisible = !isNominalVisible
+            VisibilityPrefs.setNominalVisible(requireContext(), isNominalVisible)
+            syncIkonMata()
+            refreshTampilan()
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_hutang, container, false)
+    private fun syncIkonMata() {
+        binding.ivEye.setImageResource(
+            if (isNominalVisible) R.drawable.ic_eye else R.drawable.ic_eye_off
+        )
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HutangFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            HutangFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    private fun refreshTampilan() {
+        if (isNominalVisible) {
+            val total = viewModel.hutangList.value
+                ?.filter { !it.selesai }
+                ?.sumOf { it.sisaHutang } ?: 0L
+            binding.tvTotalHutang.text = CurrencyFormatter.format(total.toDouble())
+        } else {
+            binding.tvTotalHutang.text = "Rp ***"
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

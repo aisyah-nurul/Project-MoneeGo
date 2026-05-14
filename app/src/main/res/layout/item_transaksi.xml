@@ -13,7 +13,7 @@
         android:id="@+id/cl_header_interaktif"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#F0F0F0"
+        android:background="#8598A2"
         android:paddingHorizontal="16dp"
         android:paddingVertical="8dp"
         android:clickable="true"
@@ -23,12 +23,12 @@
             android:id="@+id/iv_arrow_collapse"
             android:layout_width="10dp"
             android:layout_height="10dp"
-            android:src="@drawable/ic_chevron_down"
-            app:tint="@color/text_primary"
             android:rotation="0"
+            android:src="@drawable/ic_chevron_down"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:tint="@color/text_primary" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -36,7 +36,7 @@
         android:id="@+id/cl_card_utama"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#F5F5F5"
+        android:background="#AAB8C1"
         android:padding="16dp">
 
         <ImageView
@@ -78,7 +78,7 @@
         android:id="@+id/card_detail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#DCDCDC"
+        android:background="#8598A2"
         android:paddingHorizontal="16dp"
         android:paddingVertical="12dp"
         android:visibility="visible">
