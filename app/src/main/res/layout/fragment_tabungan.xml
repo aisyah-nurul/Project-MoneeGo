@@ -12,7 +12,7 @@
         android:layout_height="24dp"
         android:src="@drawable/ic_back"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
@@ -70,7 +70,7 @@
                 android:id="@+id/tv_jumlah_impian"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Total Terkumpul dari 0 Impian"
+                android:text="@string/label_total_terkumpul_impian"
                 android:textSize="12sp"
                 android:textColor="#4A4A4A"/>
 

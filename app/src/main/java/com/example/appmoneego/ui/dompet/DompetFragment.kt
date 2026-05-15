@@ -195,7 +195,7 @@ class DompetFragment : Fragment() {
         dompetEdit?.let {
             etNama.setText(it.nama)
             etSaldo.setText(it.saldo.toLong().toString())
-            btnSimpan.text = "Simpan Perubahan"
+            btnSimpan.text = getString(R.string.btn_simpan_perubahan)
             tanggalDipilih = it.tanggalDibuat
         }
 
@@ -228,7 +228,7 @@ class DompetFragment : Fragment() {
             val nama     = etNama.text.toString().trim()
             val saldoStr = etSaldo.text.toString().trim()
             if (nama.isEmpty()) {
-                tilNama.error = "Nama dompet tidak boleh kosong"
+                tilNama.error = getString(R.string.error_nama_dompet_kosong)
                 return@setOnClickListener
             }
             tilNama.error = null
@@ -262,7 +262,7 @@ class DompetFragment : Fragment() {
                         }
                     }
                 }
-                Toast.makeText(requireContext(), "Dompet \"$nama\" ditambahkan!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.toast_dompet_ditambahkan, nama), Toast.LENGTH_SHORT).show()
             } else {
                 dompetViewModel.update(
                     dompetEdit.copy(
@@ -273,7 +273,7 @@ class DompetFragment : Fragment() {
                         tanggalDibuat = tanggalDipilih
                     )
                 )
-                Toast.makeText(requireContext(), "Dompet diperbarui!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.toast_dompet_diperbarui), Toast.LENGTH_SHORT).show()
             }
             dialog.dismiss()
         }
@@ -283,7 +283,7 @@ class DompetFragment : Fragment() {
     private fun showEditDeleteDialog(dompet: Dompet) {
         AlertDialog.Builder(requireContext())
             .setTitle(dompet.nama)
-            .setItems(arrayOf("✏️  Edit Dompet", "🗑️  Hapus Dompet")) { _, which ->
+            .setItems(arrayOf(getString(R.string.menu_edit_dompet), getString(R.string.menu_hapus_dompet))) { _, which ->
                 when (which) {
                     0 -> showTambahDompetDialog(dompetEdit = dompet)
                     1 -> konfirmasiHapus(dompet)
@@ -293,13 +293,13 @@ class DompetFragment : Fragment() {
 
     private fun konfirmasiHapus(dompet: Dompet) {
         AlertDialog.Builder(requireContext())
-            .setTitle("Hapus Dompet")
-            .setMessage("Yakin ingin menghapus \"${dompet.nama}\"?\nSaldo ${CurrencyFormatter.format(dompet.saldo)} akan hilang.")
-            .setPositiveButton("Hapus") { _, _ ->
+            .setTitle(getString(R.string.dialog_hapus_dompet_title))
+            .setMessage(getString(R.string.dialog_hapus_dompet_pesan, dompet.nama, CurrencyFormatter.format(dompet.saldo)))
+            .setPositiveButton(getString(R.string.dialog_hapus_transaksi_konfirmasi)) { _, _ ->
                 dompetViewModel.delete(dompet)
-                Toast.makeText(requireContext(), "Dompet dihapus", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.toast_dompet_dihapus), Toast.LENGTH_SHORT).show()
             }
-            .setNegativeButton("Batal", null)
+            .setNegativeButton(getString(R.string.btn_batal), null)
             .show()
     }
 

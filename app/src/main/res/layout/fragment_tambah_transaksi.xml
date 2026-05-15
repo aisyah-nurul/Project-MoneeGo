@@ -12,7 +12,7 @@
     <LinearLayout
         android:id="@+id/header_container"
         android:layout_width="0dp"
-        android:layout_height="64dp"
+        android:layout_height="84dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:background="#6B8FA3"
@@ -584,7 +584,7 @@
                                         android:id="@+id/tv_dompet_tujuan"
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="Silakan pilih dompet"
+                                        android:text="@string/pilih_dompet"
                                         android:textSize="11sp"
                                         android:textColor="#90A4AE"
                                         android:gravity="center"/>
@@ -624,7 +624,7 @@
                                     <TextView
                                         android:layout_width="wrap_content"
                                         android:layout_height="wrap_content"
-                                        android:text="Catatan"
+                                        android:text="@string/label_catatan_transfer"
                                         android:textSize="10sp"
                                         android:textColor="#78909C"
                                         android:letterSpacing="0.04"/>
@@ -1127,13 +1127,13 @@
                     style="@style/Widget.Material3.Button.TonalButton"/>
                 <Button android:id="@+id/kb_spasi"
                     android:layout_width="0dp" android:layout_columnWeight="5"
-                    android:layout_height="44dp" android:text="SPASI" android:textSize="12sp"
+                    android:layout_height="44dp" android:text="@string/kb_spasi" android:textSize="12sp"
                     android:backgroundTint="#FFFFFF" android:textColor="#546E7A"
                     android:padding="0dp" android:layout_margin="2dp"
                     style="@style/Widget.Material3.Button.TonalButton"/>
                 <Button android:id="@+id/kb_selesai"
                     android:layout_width="0dp" android:layout_columnWeight="2"
-                    android:layout_height="44dp" android:text="SELESAI" android:textSize="10sp"
+                    android:layout_height="44dp" android:text="@string/kb_selesai" android:textSize="10sp"
                     android:textStyle="bold" android:backgroundTint="#2C3E6B"
                     android:textColor="@android:color/white" android:padding="0dp"
                     android:layout_margin="2dp"

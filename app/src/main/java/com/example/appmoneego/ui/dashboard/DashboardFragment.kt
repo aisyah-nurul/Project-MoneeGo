@@ -40,9 +40,13 @@ class DashboardFragment : Fragment() {
     // Di-clone dari Calendar.getInstance() agar selalu mulai dari bulan saat ini.
     private val calBulanAktif: Calendar = Calendar.getInstance()
 
-    private val NAMA_BULAN = listOf(
-        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    private val namaBulan get() = listOf(
+        getString(R.string.bulan_jan), getString(R.string.bulan_feb),
+        getString(R.string.bulan_mar), getString(R.string.bulan_apr),
+        getString(R.string.bulan_mei), getString(R.string.bulan_jun),
+        getString(R.string.bulan_jul), getString(R.string.bulan_agu),
+        getString(R.string.bulan_sep), getString(R.string.bulan_okt),
+        getString(R.string.bulan_nov), getString(R.string.bulan_des)
     )
 
     override fun onCreateView(
@@ -84,21 +88,19 @@ class DashboardFragment : Fragment() {
     private fun setupViewModel() {
         dashboardViewModel = ViewModelProvider(this)[DashboardViewModel::class.java]
 
-        // Saldo total semua dompet — tidak terpengaruh navigasi bulan
         dashboardViewModel.totalSaldo.observe(viewLifecycleOwner) { total ->
             nilaiSaldo   = CurrencyFormatter.format(total ?: 0.0)
-            tvSaldo.text = if (isSaldoVisible) nilaiSaldo else "Rp ***"
+            tvSaldo.text = if (isSaldoVisible) nilaiSaldo else getString(R.string.mask_saldo)
         }
 
-        // Pemasukan & Pengeluaran — berubah sesuai bulan aktif
         dashboardViewModel.totalPemasukan.observe(viewLifecycleOwner) { pemasukan ->
             nilaiPemasukan   = CurrencyFormatter.format(pemasukan ?: 0.0)
-            tvPemasukan.text = if (isSaldoVisible) nilaiPemasukan else "***"
+            tvPemasukan.text = if (isSaldoVisible) nilaiPemasukan else getString(R.string.mask_nominal)
         }
 
         dashboardViewModel.totalPengeluaran.observe(viewLifecycleOwner) { pengeluaran ->
             nilaiPengeluaran   = CurrencyFormatter.format(pengeluaran ?: 0.0)
-            tvPengeluaran.text = if (isSaldoVisible) nilaiPengeluaran else "***"
+            tvPengeluaran.text = if (isSaldoVisible) nilaiPengeluaran else getString(R.string.mask_nominal)
         }
     }
 
@@ -121,9 +123,11 @@ class DashboardFragment : Fragment() {
     }
 
     private fun updateLabelBulan() {
-        val bulan = calBulanAktif.get(Calendar.MONTH)   // 0–11
+        val bulanIdx = calBulanAktif.get(Calendar.MONTH)
         val tahun = calBulanAktif.get(Calendar.YEAR)
-        tvBulan.text = "${NAMA_BULAN[bulan]} $tahun"
+
+        // Menggunakan getString dengan argumen untuk format yang benar
+        tvBulan.text = getString(R.string.format_bulan_tahun, namaBulan[bulanIdx], tahun)
     }
 
     // ── Toggle Mata ───────────────────────────────────────────────────────────
@@ -149,9 +153,10 @@ class DashboardFragment : Fragment() {
             tvPemasukan.text   = nilaiPemasukan
             tvPengeluaran.text = nilaiPengeluaran
         } else {
-            tvSaldo.text       = "Rp ***"
-            tvPemasukan.text   = "***"
-            tvPengeluaran.text = "***"
+            // Mengambil dari strings.xml agar bisa diterjemahkan (Localization)
+            tvSaldo.text       = getString(R.string.mask_saldo)
+            tvPemasukan.text   = getString(R.string.mask_nominal)
+            tvPengeluaran.text = getString(R.string.mask_nominal)
         }
     }
 

@@ -35,7 +35,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Detail Hutang"
+                android:text="@string/title_detail_hutang"
                 android:textColor="#1A1A2E"
                 android:textSize="18sp"
                 android:textStyle="bold"/>
@@ -54,7 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="36dp"
             android:backgroundTint="#E74C3C"
-            android:text="Hapus"
+            android:text="@string/btn_hapus_hutang"
             android:textColor="#FFFFFF"
             android:textSize="13sp"/>
     </LinearLayout>
@@ -89,7 +89,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Sisa hutang"
+                        android:text="@string/label_sisa_hutang"
                         android:textColor="#534AB7"
                         android:textSize="12sp"/>
                     <TextView
@@ -111,7 +111,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Sudah dibayar"
+                        android:text="@string/label_sudah_dibayar"
                         android:textColor="#534AB7"
                         android:textSize="12sp"/>
                     <TextView
@@ -133,7 +133,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Progress"
+                        android:text="@string/label_progress"
                         android:textColor="#534AB7"
                         android:textSize="12sp"/>
                     <TextView
@@ -161,7 +161,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Riwayat cicilan"
+                android:text="@string/label_riwayat_cicilan"
                 android:textColor="#333333"
                 android:textSize="13sp"
                 android:textStyle="bold"
@@ -184,7 +184,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Nominal cicilan"
+                    android:text="@string/label_nominal_cicilan"
                     android:textColor="#333333"
                     android:textSize="13sp"
                     android:textStyle="bold"
@@ -207,7 +207,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tanggal bayar"
+                    android:text="@string/label_tanggal_bayar"
                     android:textColor="#333333"
                     android:textSize="13sp"
                     android:textStyle="bold"
@@ -231,7 +231,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Catatan (opsional)"
+                    android:text="@string/label_catatan_opsional"
                     android:textColor="#333333"
                     android:textSize="13sp"
                     android:textStyle="bold"
@@ -255,7 +255,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:backgroundTint="#2ECC71"
-                    android:text="Simpan cicilan"
+                    android:text="@string/btn_simpan_cicilan"
                     android:textColor="#FFFFFF"
                     android:textSize="14sp"/>
 
@@ -264,7 +264,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:backgroundTint="@android:color/transparent"
-                    android:text="Batal"
+                    android:text="@string/btn_batal"
                     android:textColor="#888888"
                     android:textSize="13sp"
                     android:elevation="0dp"
@@ -294,7 +294,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Hutang ini sudah lunas!"
+                    android:text="@string/label_hutang_lunas"
                     android:textColor="#27AE60"
                     android:textSize="14sp"
                     android:textStyle="bold"/>
