@@ -11,9 +11,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import com.example.appmoneego.R
+import com.example.appmoneego.data.entity.Hutang
 import com.example.appmoneego.databinding.DialogTambahHutangBinding
-import com.example.appmoneego.model.Hutang
-import com.example.appmoneego.model.JenisHutang
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -26,8 +25,8 @@ class TambahHutangDialog(
     private var _binding: DialogTambahHutangBinding? = null
     private val binding get() = _binding!!
 
-    private var jenisHutangDipilih: JenisHutang = JenisHutang.KARTU_KREDIT
-    private var tanggalDipilih: Date? = null
+    private var jenisHutangDipilih = "Personal"
+    private var tanggalDipilih = ""
     private var jumlahAngka: Long = 0L
 
     override fun onCreateView(
@@ -48,26 +47,33 @@ class TambahHutangDialog(
     }
 
     private fun setupJenisHutang() {
+        // Pakai TextView (sesuai XML) bukan Button
         val buttons = mapOf(
-            binding.btnKartuKredit      to JenisHutang.KARTU_KREDIT,
-            binding.btnPinjol           to JenisHutang.PINJOL,
-            binding.btnCicilan          to JenisHutang.CICILAN,
-            binding.btnPinjamanBank     to JenisHutang.PINJAMAN_BANK,
-            binding.btnPinjamKeKerabat  to JenisHutang.PINJAM_KE_KERABAT,
-            binding.btnLainnya          to JenisHutang.LAINNYA
+            binding.btnKartuKredit     to "Kartu Kredit",
+            binding.btnPinjol          to "Pinjaman Online",
+            binding.btnCicilan         to "Cicilan",
+            binding.btnPinjamanBank    to "Pinjaman Bank",
+            binding.btnPinjamKeKerabat to "Pinjam ke Kerabat",
+            binding.btnLainnya         to "Lainnya"
         )
-        updateSelectedJenis(JenisHutang.KARTU_KREDIT, buttons)
+
+        // Default: tidak ada yang dipilih, set semua unselected dulu
+        buttons.keys.forEach { tv ->
+            tv.setBackgroundResource(R.drawable.bg_jenis_unselected)
+            tv.setTextColor(Color.parseColor("#555555"))
+        }
+
         buttons.forEach { (tv, jenis) ->
             tv.setOnClickListener {
                 jenisHutangDipilih = jenis
-                updateSelectedJenis(jenis, buttons)
+                updateSelected(jenis, buttons)
                 binding.layoutLimitKredit.visibility =
-                    if (jenis == JenisHutang.KARTU_KREDIT) View.VISIBLE else View.GONE
+                    if (jenis == "Kartu Kredit") View.VISIBLE else View.GONE
             }
         }
     }
 
-    private fun updateSelectedJenis(selected: JenisHutang, buttons: Map<TextView, JenisHutang>) {
+    private fun updateSelected(selected: String, buttons: Map<TextView, String>) {
         buttons.forEach { (tv, jenis) ->
             if (jenis == selected) {
                 tv.setBackgroundResource(R.drawable.bg_jenis_selected)
@@ -105,8 +111,8 @@ class TambahHutangDialog(
             val cal = Calendar.getInstance()
             DatePickerDialog(requireContext(), { _, y, m, d ->
                 cal.set(y, m, d)
-                tanggalDipilih = cal.time
-                binding.etJatuhTempo.setText(sdf.format(cal.time))
+                tanggalDipilih = sdf.format(cal.time)
+                binding.etJatuhTempo.setText(tanggalDipilih)
             }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
         }
     }
@@ -122,17 +128,23 @@ class TambahHutangDialog(
                 binding.etJumlah.error = "Jumlah hutang wajib diisi"
                 return@setOnClickListener
             }
-            val limitKredit = if (jenisHutangDipilih == JenisHutang.KARTU_KREDIT) {
-                binding.etLimitKredit.text.toString().replace(Regex("[^0-9]"), "").toLongOrNull() ?: 0L
+
+            val limitKredit = if (jenisHutangDipilih == "Kartu Kredit") {
+                binding.etLimitKredit.text.toString()
+                    .replace(Regex("[^0-9]"), "").toLongOrNull() ?: 0L
             } else 0L
 
-            onSimpan(Hutang(
-                nama = nama,
-                jenisHutang = jenisHutangDipilih,
-                jumlah = jumlahAngka,
-                limitKredit = limitKredit,
-                jatuhTempo = tanggalDipilih
-            ))
+            val hutangBaru = Hutang(
+                id                = UUID.randomUUID().toString(),
+                nama              = nama,
+                totalHutang       = if (jenisHutangDipilih == "Kartu Kredit" && limitKredit > 0) limitKredit else jumlahAngka,
+                sudahDibayar      = 0L,
+                tanggalJatuhTempo = tanggalDipilih,
+                catatan           = jenisHutangDipilih,
+                selesai           = false
+            )
+
+            onSimpan(hutangBaru)
             dismiss()
             Toast.makeText(requireContext(), "Hutang berhasil ditambahkan!", Toast.LENGTH_SHORT).show()
         }

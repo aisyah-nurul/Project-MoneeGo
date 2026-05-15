@@ -20,17 +20,15 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
 
-        // Hubungkan bottom nav dengan nav controller
         binding.bottomNavigationView.setupWithNavController(navController)
 
-        // Atur visibility bottomNav per halaman
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                // Splash → sembunyikan bottomNav
-                R.id.splashFragment -> {
+                R.id.splashFragment,
+                R.id.hutangFragment,
+                R.id.dompetFragment -> {
                     binding.bottomNavigationView.visibility = View.GONE
                 }
-                // Halaman lain → tampilkan bottomNav
                 else -> {
                     binding.bottomNavigationView.visibility = View.VISIBLE
                 }

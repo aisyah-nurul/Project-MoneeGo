@@ -268,7 +268,7 @@
             android:id="@+id/tilSaldoAwal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="24dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
@@ -288,53 +288,6 @@
                 android:textColor="#1A2B34"
                 android:textColorHint="#90A4AE" />
         </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Label Tanggal -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tanggal Ditambahkan"
-            android:textSize="13sp"
-            android:textColor="#546E7A"
-            android:textStyle="bold"
-            android:layout_marginBottom="6dp" />
-
-        <!-- Tombol pilih tanggal — klik buka DatePicker -->
-        <LinearLayout
-            android:id="@+id/btnPilihTanggal"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:layout_marginBottom="24dp"
-            android:background="@drawable/bg_outline_rounded"
-            android:clickable="true"
-            android:focusable="true">
-
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_kalender"
-                android:contentDescription="Kalender"
-                android:layout_marginEnd="12dp" />
-
-            <TextView
-                android:id="@+id/tvTanggalDipilih"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Pilih tanggal..."
-                android:textSize="14sp"
-                android:textColor="#90A4AE" />
-
-            <ImageView
-                android:layout_width="12dp"
-                android:layout_height="16dp"
-                android:contentDescription="Pilih"
-                android:src="@drawable/ic_chevron_down" />
-        </LinearLayout>
 
         <!-- Tombol Simpan -->
         <Button

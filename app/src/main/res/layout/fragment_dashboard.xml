@@ -4,19 +4,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#EDE8DC">
+    android:background="#E2E2E2">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="80dp">
 
-        <!-- Header -->
-
-        <!-- Avatar pojok kanan -->
-
-        <!-- Card Saldo -->
-
+        <!-- ── Avatar pojok kanan ──────────────────────────────────────── -->
         <ImageView
             android:id="@+id/iv_avatar"
             android:layout_width="44dp"
@@ -27,6 +22,21 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- ── Judul ───────────────────────────────────────────────────── -->
+        <TextView
+            android:id="@+id/tv_greeting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="16dp"
+            android:text="MoneeGo!"
+            android:textColor="#1A1A2E"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- ── Card Saldo ──────────────────────────────────────────────── -->
         <androidx.cardview.widget.CardView
             android:id="@+id/card_saldo"
             android:layout_width="0dp"
@@ -45,11 +55,12 @@
                 android:layout_height="wrap_content"
                 android:padding="20dp">
 
+                <!-- Label "Saldo saat ini" + ikon mata -->
                 <TextView
                     android:id="@+id/tv_label_saldo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Saldo saat ini"
+                    android:text="@string/label_saldo"
                     android:textSize="13sp"
                     android:textColor="#4A4A4A"
                     app:layout_constraintTop_toTopOf="parent"
@@ -61,15 +72,19 @@
                     android:layout_height="20dp"
                     android:src="@drawable/ic_eye"
                     android:layout_marginStart="8dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
                     app:layout_constraintTop_toTopOf="@id/tv_label_saldo"
                     app:layout_constraintBottom_toBottomOf="@id/tv_label_saldo"
                     app:layout_constraintStart_toEndOf="@id/tv_label_saldo"/>
 
+                <!-- Nominal saldo -->
                 <TextView
                     android:id="@+id/tv_saldo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Rp0"
+                    android:text="Rp 0"
                     android:textSize="28sp"
                     android:textStyle="bold"
                     android:textColor="#1A1A2E"
@@ -77,24 +92,68 @@
                     app:layout_constraintTop_toBottomOf="@id/tv_label_saldo"
                     app:layout_constraintStart_toStartOf="parent"/>
 
-                <!-- Pemasukan & Pengeluaran bulan ini -->
-                <TextView
-                    android:id="@+id/tv_bulan"
+                <!-- ── Navigator Bulan: ◀  Januari 2026  ▶ ──────────── -->
+                <!--
+                    Dipecah menjadi 3 view terpisah agar tombol ◀ dan ▶
+                    bisa diklik secara individual.
+                    btn_prev_bulan dan btn_next_bulan bertipe TextView
+                    sehingga area kliknya cukup luas.
+                -->
+                <LinearLayout
+                    android:id="@+id/ll_nav_bulan"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="◀  April 2026  ▶"
-                    android:textSize="12sp"
-                    android:textColor="#4A4A4A"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
                     android:layout_marginTop="16dp"
                     app:layout_constraintTop_toBottomOf="@id/tv_saldo"
-                    app:layout_constraintStart_toStartOf="parent"/>
+                    app:layout_constraintStart_toStartOf="parent">
 
+                    <!-- Tombol bulan sebelumnya -->
+                    <TextView
+                        android:id="@+id/btn_prev_bulan"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:text="◀"
+                        android:textSize="14sp"
+                        android:textColor="#4A4A4A"
+                        android:gravity="center"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:focusable="true"/>
+
+                    <!-- Label bulan + tahun (hanya teks, tidak bisa diklik) -->
+                    <TextView
+                        android:id="@+id/tv_bulan"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Januari 2026"
+                        android:textSize="12sp"
+                        android:textColor="#4A4A4A"
+                        android:paddingHorizontal="4dp"/>
+
+                    <!-- Tombol bulan berikutnya -->
+                    <TextView
+                        android:id="@+id/btn_next_bulan"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:text="▶"
+                        android:textSize="14sp"
+                        android:textColor="#4A4A4A"
+                        android:gravity="center"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:focusable="true"/>
+
+                </LinearLayout>
+
+                <!-- Pemasukan & Pengeluaran bulan terpilih -->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_marginTop="8dp"
-                    app:layout_constraintTop_toBottomOf="@id/tv_bulan"
+                    app:layout_constraintTop_toBottomOf="@id/ll_nav_bulan"
                     app:layout_constraintStart_toStartOf="parent">
 
                     <LinearLayout
@@ -105,14 +164,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Pemasukan"
+                            android:text="@string/label_pemasukan"
                             android:textSize="12sp"
                             android:textColor="#4A4A4A"/>
                         <TextView
                             android:id="@+id/tv_pemasukan"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Rp0"
+                            android:text="Rp 0"
                             android:textSize="14sp"
                             android:textStyle="bold"
                             android:textColor="#4CAF50"/>
@@ -125,14 +184,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Pengeluaran"
+                            android:text="@string/label_pengeluaran"
                             android:textSize="12sp"
                             android:textColor="#4A4A4A"/>
                         <TextView
                             android:id="@+id/tv_pengeluaran"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Rp0"
+                            android:text="Rp 0"
                             android:textSize="14sp"
                             android:textStyle="bold"
                             android:textColor="#F44336"/>
@@ -142,7 +201,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Menu Shortcut: Dompet, Tabungan, Hutang -->
+        <!-- ── Menu Shortcut: Dompet, Tabungan, Hutang ────────────────── -->
         <LinearLayout
             android:id="@+id/ll_menu_shortcut"
             android:layout_width="0dp"
@@ -165,7 +224,9 @@
                 android:gravity="center"
                 android:background="@drawable/bg_card_white_rounded"
                 android:padding="16dp"
-                android:layout_marginEnd="8dp">
+                android:layout_marginEnd="8dp"
+                android:clickable="true"
+                android:focusable="true">
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
@@ -173,7 +234,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Dompet ›"
+                    android:text="@string/menu_dompet"
                     android:textSize="12sp"
                     android:textColor="#4A4A4A"
                     android:layout_marginTop="8dp"/>
@@ -189,17 +250,17 @@
                 android:gravity="center"
                 android:background="@drawable/bg_card_white_rounded"
                 android:padding="16dp"
-                android:layout_marginEnd="8dp">
-
+                android:layout_marginEnd="8dp"
+                android:clickable="true"
+                android:focusable="true">
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
                     android:src="@drawable/ic_tabungan_menu" />
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tabungan ›"
+                    android:text="@string/menu_tabungan"
                     android:textSize="12sp"
                     android:textColor="#4A4A4A"
                     android:layout_marginTop="8dp"/>
@@ -214,7 +275,9 @@
                 android:orientation="vertical"
                 android:gravity="center"
                 android:background="@drawable/bg_card_white_rounded"
-                android:padding="16dp">
+                android:padding="16dp"
+                android:clickable="true"
+                android:focusable="true">
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
@@ -222,7 +285,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Hutang ›"
+                    android:text="@string/menu_hutang"
                     android:textSize="12sp"
                     android:textColor="#4A4A4A"
                     android:layout_marginTop="8dp"/>
@@ -230,21 +293,7 @@
 
         </LinearLayout>
 
-        <!-- Card Banner Tabungan -->
-
-        <TextView
-            android:id="@+id/tv_greeting"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="16dp"
-            android:text="MoneeGo!"
-            android:textColor="#1A1A2E"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
+        <!-- ── Card Banner Tabungan ────────────────────────────────────── -->
         <androidx.cardview.widget.CardView
             android:id="@+id/card_banner_tabungan"
             android:layout_width="0dp"
@@ -268,7 +317,7 @@
                     android:id="@+id/tv_banner_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Ayo Mulai Menabung!"
+                    android:text="@string/banner_title"
                     android:textColor="#1A1A2E"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -278,7 +327,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="Belum ada target tabungan. Buat target pertama kamu dan raih barang impian!"
+                    android:text="@string/banner_desc"
                     android:textColor="#4A4A4A"
                     android:textSize="13sp" />
 
@@ -288,13 +337,13 @@
                     android:layout_height="40dp"
                     android:layout_marginTop="12dp"
                     android:backgroundTint="#4A6FA5"
-                    android:text="+ BUAT TARGET BARU"
+                    android:text="@string/btn_buat_target"
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Card Insight -->
+        <!-- ── Card Insight ────────────────────────────────────────────── -->
         <androidx.cardview.widget.CardView
             android:id="@+id/card_insight"
             android:layout_width="0dp"
@@ -317,7 +366,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Insight"
+                    android:text="@string/label_insight"
                     android:textColor="#1A1A2E"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -336,18 +385,15 @@
                         android:layout_weight="1"
                         app:cardBackgroundColor="#FFCDD2"
                         app:cardCornerRadius="12dp">
-
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
                             android:padding="12dp">
-
                             <View
                                 android:layout_width="12dp"
                                 android:layout_height="12dp"
                                 android:background="#F44336" />
-
                             <TextView
                                 android:id="@+id/tv_insight1_title"
                                 android:layout_width="wrap_content"
@@ -357,7 +403,6 @@
                                 android:textColor="#1A1A2E"
                                 android:textSize="11sp"
                                 android:textStyle="bold" />
-
                             <TextView
                                 android:id="@+id/tv_insight1_desc"
                                 android:layout_width="wrap_content"
@@ -376,19 +421,15 @@
                         android:layout_weight="1"
                         app:cardBackgroundColor="#FFF9C4"
                         app:cardCornerRadius="12dp">
-
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
                             android:padding="12dp">
-
                             <View
                                 android:layout_width="12dp"
                                 android:layout_height="12dp"
-                                android:background="#FFC107"
-                                />
-
+                                android:background="#FFC107"/>
                             <TextView
                                 android:id="@+id/tv_insight2_title"
                                 android:layout_width="wrap_content"
@@ -398,7 +439,6 @@
                                 android:textColor="#1A1A2E"
                                 android:textSize="11sp"
                                 android:textStyle="bold" />
-
                             <TextView
                                 android:id="@+id/tv_insight2_desc"
                                 android:layout_width="wrap_content"

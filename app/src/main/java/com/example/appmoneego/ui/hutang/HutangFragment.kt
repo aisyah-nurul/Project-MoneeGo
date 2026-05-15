@@ -5,23 +5,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.appmoneego.R
 import com.example.appmoneego.databinding.FragmentHutangBinding
-import com.example.appmoneego.model.Hutang
-import java.text.NumberFormat
-import java.util.*
+import com.example.appmoneego.utils.CurrencyFormatter
+import com.example.appmoneego.utils.VisibilityPrefs
+import com.google.android.material.tabs.TabLayout
 
 class HutangFragment : Fragment() {
 
     private var _binding: FragmentHutangBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var viewModel: HutangViewModel
     private lateinit var adapter: HutangAdapter
-    private val hutangList = mutableListOf<Hutang>()
 
-    // Tab: true = BERJALAN, false = SELESAI
-    private var tabBerjalan = true
+    private var isNominalVisible = true
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,124 +35,109 @@ class HutangFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        isNominalVisible = VisibilityPrefs.isNominalVisible(requireContext())
+
+        viewModel = ViewModelProvider(this)[HutangViewModel::class.java]
         setupRecyclerView()
+        setupObservers()
         setupClickListeners()
-        updateSummary()
-        refreshList()
+        syncIkonMata()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        isNominalVisible = VisibilityPrefs.isNominalVisible(requireContext())
+        syncIkonMata()
+        refreshTampilan()
     }
 
     private fun setupRecyclerView() {
         adapter = HutangAdapter(
-            items = mutableListOf(),
-            onItemClick = { _ -> },
-            onLunasChanged = { hutang, isLunas ->
-                val index = hutangList.indexOfFirst { it.id == hutang.id }
-                if (index != -1) {
-                    hutangList[index] = hutang.copy(lunas = isLunas)
-                    updateSummary()
-                    refreshList()
-                }
+            lifecycleScope = viewLifecycleOwner.lifecycleScope
+        ) { hutang ->
+            val sheet = CicilanBottomSheetFragment.newInstance(hutang)
+            sheet.setOnCicilanSavedListener { updated ->
+                viewModel.update(updated)
             }
-        )
+            sheet.setOnHutangDeletedListener { deleted ->
+                viewModel.delete(deleted)
+            }
+            sheet.show(parentFragmentManager, "CicilanSheet")
+        }
         binding.rvHutang.layoutManager = LinearLayoutManager(requireContext())
         binding.rvHutang.adapter = adapter
     }
 
+    private fun refreshList() {
+        val list     = viewModel.hutangList.value ?: return
+        val aktif    = list.filter { !it.selesai }
+        val lunas    = list.filter { it.selesai }
+        val tabIndex = binding.tabLayoutHutang.selectedTabPosition
+        val tampil   = if (tabIndex == 0) aktif else lunas
+        adapter.submitList(tampil)
+        binding.layoutEmpty.visibility = if (tampil.isEmpty()) View.VISIBLE else View.GONE
+        binding.rvHutang.visibility    = if (tampil.isEmpty()) View.GONE   else View.VISIBLE
+    }
+
+    private fun setupObservers() {
+        viewModel.hutangList.observe(viewLifecycleOwner) { list ->
+            val aktif = list.filter { !it.selesai }
+            val lunas = list.filter { it.selesai }
+            val total = aktif.sumOf { it.sisaHutang }
+
+            binding.tvTotalHutang.text = if (isNominalVisible)
+                CurrencyFormatter.format(total.toDouble())
+            else
+                "Rp ***"
+
+            binding.tvStatBerjalan.text = aktif.size.toString()
+            binding.tvStatLunas.text    = lunas.size.toString()
+
+            refreshList()
+        }
+
+        binding.tabLayoutHutang.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?)   { refreshList() }
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
+        })
+    }
+
     private fun setupClickListeners() {
-        binding.btnTambah.setOnClickListener {
+        binding.btnTambahHutang.setOnClickListener {
             TambahHutangDialog { hutang ->
-                hutangList.add(0, hutang)
-                updateSummary()
-                // Tambah hutang baru → otomatis ke tab berjalan
-                if (!tabBerjalan) switchTab(true)
-                else refreshList()
+                viewModel.insert(hutang)
             }.show(parentFragmentManager, "TambahHutangDialog")
         }
 
-        binding.tabBerjalan.setOnClickListener { switchTab(true) }
-        binding.tabSelesai.setOnClickListener { switchTab(false) }
+        binding.ibBack.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
 
-        binding.tvLunasBulanIni.setOnClickListener {
-            switchTab(false)
+        binding.ivEye.setOnClickListener {
+            isNominalVisible = !isNominalVisible
+            VisibilityPrefs.setNominalVisible(requireContext(), isNominalVisible)
+            syncIkonMata()
+            refreshTampilan()
         }
     }
 
-    private fun switchTab(toBerjalan: Boolean) {
-        tabBerjalan = toBerjalan
-
-        if (toBerjalan) {
-            binding.tabBerjalan.setBackgroundResource(R.drawable.bg_jenis_selected)
-            binding.tabBerjalan.setTextColor(android.graphics.Color.WHITE)
-            binding.tabSelesai.setBackgroundResource(R.drawable.bg_card_white_rounded)
-            binding.tabSelesai.setTextColor(android.graphics.Color.parseColor("#888888"))
-        } else {
-            binding.tabSelesai.setBackgroundResource(R.drawable.bg_jenis_selected)
-            binding.tabSelesai.setTextColor(android.graphics.Color.WHITE)
-            binding.tabBerjalan.setBackgroundResource(R.drawable.bg_card_white_rounded)
-            binding.tabBerjalan.setTextColor(android.graphics.Color.parseColor("#888888"))
-        }
-
-        refreshList()
+    private fun syncIkonMata() {
+        binding.ivEye.setImageResource(
+            if (isNominalVisible) R.drawable.ic_eye else R.drawable.ic_eye_off
+        )
     }
 
-    private fun refreshList() {
-        val filtered = if (tabBerjalan)
-            hutangList.filter { !it.lunas }.toMutableList()
-        else
-            hutangList.filter { it.lunas }.toMutableList()
-
-        // Update adapter items
-        val adapterItems = (binding.rvHutang.adapter as HutangAdapter)
-            .let {
-                // rebuild adapter dengan list baru
-                adapter = HutangAdapter(
-                    items = filtered,
-                    onItemClick = { _ -> },
-                    onLunasChanged = { hutang, isLunas ->
-                        val index = hutangList.indexOfFirst { it.id == hutang.id }
-                        if (index != -1) {
-                            hutangList[index] = hutang.copy(lunas = isLunas)
-                            updateSummary()
-                            refreshList()
-                        }
-                    }
-                )
-                binding.rvHutang.adapter = adapter
-            }
-
-        if (filtered.isEmpty()) {
-            binding.layoutEmpty.visibility = View.VISIBLE
-            binding.rvHutang.visibility = View.GONE
+    private fun refreshTampilan() {
+        if (isNominalVisible) {
+            val total = viewModel.hutangList.value
+                ?.filter { !it.selesai }
+                ?.sumOf { it.sisaHutang } ?: 0L
+            binding.tvTotalHutang.text = CurrencyFormatter.format(total.toDouble())
         } else {
-            binding.layoutEmpty.visibility = View.GONE
-            binding.rvHutang.visibility = View.VISIBLE
+            binding.tvTotalHutang.text = "Rp ***"
         }
-    }
-
-    private fun updateSummary() {
-        val aktif = hutangList.filter { !it.lunas }
-        val total = aktif.sumOf { it.jumlah }
-        val lunas = hutangList.count { it.lunas }
-
-        val fmt = NumberFormat.getCurrencyInstance(Locale("id", "ID"))
-        binding.tvTotalHutang.text = fmt.format(total).replace("IDR", "Rp").replace(",00", "")
-        binding.tvHutangAktif.text = "${aktif.size} Hutang Aktif"
-        binding.tvLunasBulanIni.text = lunas.toString()
-
-        val jatuhTempoBaru = aktif
-            .filter { it.isJatuhTempoBaru }
-            .minByOrNull { it.jatuhTempo?.time ?: Long.MAX_VALUE }
-
-        if (jatuhTempoBaru?.jatuhTempo != null) {
-            val cal = Calendar.getInstance()
-            cal.time = jatuhTempoBaru.jatuhTempo
-            val bulan = arrayOf("Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des")
-            binding.tvJatuhTempo.text = "${cal.get(Calendar.DAY_OF_MONTH)} ${bulan[cal.get(Calendar.MONTH)]}"
-        } else {
-            binding.tvJatuhTempo.text = "-"
-        }
-
-        binding.tvDompetAktif.text = "5"
     }
 
     override fun onDestroyView() {
