@@ -9,7 +9,7 @@ import com.example.appmoneego.data.entity.*
 
 @Database(
     entities = [Transaksi::class, Dompet::class, Tabungan::class, Hutang::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 
@@ -26,11 +26,15 @@ abstract class MoneeGoDatabase : RoomDatabase() {
 
         fun getDatabase(context: Context): MoneeGoDatabase {
             return INSTANCE ?: synchronized(this) {
+
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     MoneeGoDatabase::class.java,
                     "moneego_database"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
+
                 INSTANCE = instance
                 instance
             }

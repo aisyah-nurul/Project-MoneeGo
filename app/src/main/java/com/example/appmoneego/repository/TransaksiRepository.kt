@@ -13,7 +13,6 @@ class TransaksiRepository(private val dao: TransaksiDao) {
     suspend fun insert(transaksi: Transaksi) = dao.insert(transaksi)
     suspend fun update(transaksi: Transaksi) = dao.update(transaksi)
     suspend fun delete(transaksi: Transaksi) = dao.delete(transaksi)
-
     suspend fun deleteByDompetId(dompetId: Int) = dao.deleteByDompetId(dompetId)
 
     fun getByDateRange(start: Long, end: Long) = dao.getByDateRange(start, end)
@@ -30,4 +29,10 @@ class TransaksiRepository(private val dao: TransaksiDao) {
 
     fun getRecentByBulan(start: Long, end: Long, limit: Int = 5): LiveData<List<Transaksi>> =
         dao.getRecentByBulan(start, end, limit)
+
+    fun getByKategoriAndBulan(kategori: String, start: Long, end: Long): LiveData<List<Transaksi>> =
+        dao.getByKategoriAndBulan(kategori, start, end)
+
+    fun getByDompetAndBulan(dompetId: Int, start: Long, end: Long): LiveData<List<Transaksi>> =
+        dao.getByDompetAndBulan(dompetId, start, end)
 }
