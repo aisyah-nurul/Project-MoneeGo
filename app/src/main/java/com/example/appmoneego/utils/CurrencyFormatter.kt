@@ -8,12 +8,12 @@ object CurrencyFormatter {
     private val localeID = Locale("in", "ID")
 
     /**
-     * Format double ke "Rp 10.400.000"
+     * Format double ke "Rp10.400.000" (tanpa spasi)
      */
     fun format(amount: Double): String {
         val nf = NumberFormat.getInstance(localeID)
         nf.maximumFractionDigits = 0
-        return "Rp ${nf.format(amount)}"
+        return "Rp${nf.format(amount)}"
     }
 
     /**
@@ -22,12 +22,12 @@ object CurrencyFormatter {
     fun formatWithSign(amount: Double): String {
         val nf = NumberFormat.getInstance(localeID)
         nf.maximumFractionDigits = 0
-        return if (amount >= 0) "+ Rp ${nf.format(amount)}"
-        else "- Rp ${nf.format(-amount)}"
+        return if (amount >= 0) "+Rp${nf.format(amount)}"
+        else "-Rp${nf.format(-amount)}"
     }
 
     /**
-     * Parse string "10.400.000" atau "Rp 10.400.000" ke Double
+     * Parse string "10.400.000" atau "Rp10.400.000" ke Double
      */
     fun parse(input: String): Double {
         return try {
