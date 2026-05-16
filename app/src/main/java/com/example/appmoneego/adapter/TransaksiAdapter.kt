@@ -3,13 +3,11 @@ package com.example.appmoneego.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.appmoneego.R
 import com.example.appmoneego.data.entity.Dompet
 import com.example.appmoneego.data.entity.Transaksi
-import com.example.appmoneego.databinding.ItemHeaderTransaksiBinding
 import com.example.appmoneego.databinding.ItemTransaksiBinding
 import com.example.appmoneego.utils.CurrencyFormatter
 
@@ -24,9 +22,9 @@ class TransaksiAdapter(
         set(value) { field = value; notifyDataSetChanged() }
 
     // Mode filter dari Fragment:
-    // "SEMUA"        → tampilkan semua (Transfer + Pemasukan + Pengeluaran)
-    // "PENGELUARAN"  → hanya pengeluaran (tanpa transfer)
-    // "PEMASUKAN"    → hanya pemasukan (tanpa transfer)
+    // "SEMUA"        → tampilkan semua
+    // "PENGELUARAN"  → hanya pengeluaran
+    // "PEMASUKAN"    → hanya pemasukan
     // "TRANSFER"     → hanya transfer
     var filterMode: String = "SEMUA"
         set(value) { field = value; rebuildDisplayList() }
@@ -40,16 +38,16 @@ class TransaksiAdapter(
         val transferId: String
     )
 
+    // ── Hanya dua tipe item: transaksi biasa & transfer pair ─────────────────
+    // Header dihapus total dari displayList
     sealed class TransaksiItem {
-        data class Header(val label: String, val jenis: String) : TransaksiItem()
-        data class Item(val transaksi: Transaksi)               : TransaksiItem()
-        data class TransferItem(val pair: TransferPair)         : TransaksiItem()
+        data class Item(val transaksi: Transaksi)       : TransaksiItem()
+        data class TransferItem(val pair: TransferPair) : TransaksiItem()
     }
 
     companion object {
-        const val TYPE_HEADER   = 0
-        const val TYPE_ITEM     = 1
-        const val TYPE_TRANSFER = 2
+        const val TYPE_ITEM     = 0
+        const val TYPE_TRANSFER = 1
 
         private val KATEGORI_ICON = mapOf(
             "Makanan"           to R.drawable.ic_makanan,
@@ -74,23 +72,21 @@ class TransaksiAdapter(
     private var semuaData:    List<Transaksi>      = emptyList()
     private var daftarDompet: List<Dompet>         = emptyList()
     private var displayList:  MutableList<TransaksiItem> = mutableListOf()
-    private val collapsedHeaders = mutableSetOf<String>()
 
-    fun submitDompet(list: List<Dompet>)    { daftarDompet = list; rebuildDisplayList() }
-    fun submitList(list: List<Transaksi>)   { semuaData    = list; rebuildDisplayList() }
-    fun getDaftarDompet(): List<Dompet>     = daftarDompet
+    fun submitDompet(list: List<Dompet>)  { daftarDompet = list; rebuildDisplayList() }
+    fun submitList(list: List<Transaksi>) { semuaData    = list; rebuildDisplayList() }
+    fun getDaftarDompet(): List<Dompet>   = daftarDompet
 
     private fun rebuildDisplayList() {
         val newList = mutableListOf<TransaksiItem>()
 
-        // ── Bangun TransferPairs dari semua data ──────────────────────────
+        // ── Bangun TransferPairs ──────────────────────────────────────────────
         val transferData  = semuaData.filter { it.kategori == "Transfer" }
         val transferPairs = mutableListOf<TransferPair>()
         val sudahDiproses = mutableSetOf<Int>()
 
         transferData.forEach { t ->
             if (t.id in sudahDiproses) return@forEach
-
             val pasangan = if (t.transferId != null) {
                 transferData.find { other ->
                     other.id != t.id && other.transferId == t.transferId
@@ -103,7 +99,6 @@ class TransaksiAdapter(
                             other.id !in sudahDiproses
                 }
             }
-
             if (pasangan != null) {
                 val asal   = if (t.jenis == "PENGELUARAN") t else pasangan
                 val tujuan = if (t.jenis == "PEMASUKAN")   t else pasangan
@@ -130,57 +125,18 @@ class TransaksiAdapter(
             }
         }
 
-        // Pemasukan & Pengeluaran murni (tidak termasuk Transfer)
         val pemasukan   = semuaData.filter { it.jenis == "PEMASUKAN"   && it.kategori != "Transfer" }
         val pengeluaran = semuaData.filter { it.jenis == "PENGELUARAN" && it.kategori != "Transfer" }
 
-        // ── Bangun displayList sesuai filterMode ─────────────────────────
+        // ── Bangun displayList sesuai filterMode — TANPA header grup ─────────
         when (filterMode) {
-
-            "PENGELUARAN" -> {
-                // Hanya pengeluaran murni — transfer TIDAK muncul
-                if (pengeluaran.isNotEmpty()) {
-                    newList.add(TransaksiItem.Header("Pengeluaran", "PENGELUARAN"))
-                    if (!collapsedHeaders.contains("PENGELUARAN"))
-                        pengeluaran.forEach { newList.add(TransaksiItem.Item(it)) }
-                }
-            }
-
-            "PEMASUKAN" -> {
-                // Hanya pemasukan murni — transfer TIDAK muncul
-                if (pemasukan.isNotEmpty()) {
-                    newList.add(TransaksiItem.Header("Pemasukan", "PEMASUKAN"))
-                    if (!collapsedHeaders.contains("PEMASUKAN"))
-                        pemasukan.forEach { newList.add(TransaksiItem.Item(it)) }
-                }
-            }
-
-            "TRANSFER" -> {
-                // Hanya transfer
-                if (transferPairs.isNotEmpty()) {
-                    newList.add(TransaksiItem.Header("Transfer", "TRANSFER"))
-                    if (!collapsedHeaders.contains("TRANSFER"))
-                        transferPairs.forEach { newList.add(TransaksiItem.TransferItem(it)) }
-                }
-            }
-
+            "PENGELUARAN" -> pengeluaran.forEach { newList.add(TransaksiItem.Item(it)) }
+            "PEMASUKAN"   -> pemasukan.forEach   { newList.add(TransaksiItem.Item(it)) }
+            "TRANSFER"    -> transferPairs.forEach { newList.add(TransaksiItem.TransferItem(it)) }
             else -> {
-                // "SEMUA" — tampilkan semua kelompok
-                if (transferPairs.isNotEmpty()) {
-                    newList.add(TransaksiItem.Header("Transfer", "TRANSFER"))
-                    if (!collapsedHeaders.contains("TRANSFER"))
-                        transferPairs.forEach { newList.add(TransaksiItem.TransferItem(it)) }
-                }
-                if (pemasukan.isNotEmpty()) {
-                    newList.add(TransaksiItem.Header("Pemasukan", "PEMASUKAN"))
-                    if (!collapsedHeaders.contains("PEMASUKAN"))
-                        pemasukan.forEach { newList.add(TransaksiItem.Item(it)) }
-                }
-                if (pengeluaran.isNotEmpty()) {
-                    newList.add(TransaksiItem.Header("Pengeluaran", "PENGELUARAN"))
-                    if (!collapsedHeaders.contains("PENGELUARAN"))
-                        pengeluaran.forEach { newList.add(TransaksiItem.Item(it)) }
-                }
+                transferPairs.forEach { newList.add(TransaksiItem.TransferItem(it)) }
+                pemasukan.forEach     { newList.add(TransaksiItem.Item(it)) }
+                pengeluaran.forEach   { newList.add(TransaksiItem.Item(it)) }
             }
         }
 
@@ -189,38 +145,15 @@ class TransaksiAdapter(
             override fun getNewListSize() = newList.size
             override fun areItemsTheSame(oldPos: Int, newPos: Int): Boolean {
                 val old = displayList[oldPos]; val new = newList[newPos]
-                if (old is TransaksiItem.Header       && new is TransaksiItem.Header)       return old.jenis == new.jenis
                 if (old is TransaksiItem.Item         && new is TransaksiItem.Item)         return old.transaksi.id == new.transaksi.id
                 if (old is TransaksiItem.TransferItem && new is TransaksiItem.TransferItem) return old.pair.transferId == new.pair.transferId
                 return false
             }
-            override fun areContentsTheSame(oldPos: Int, newPos: Int) = displayList[oldPos] == newList[newPos]
+            override fun areContentsTheSame(oldPos: Int, newPos: Int) =
+                displayList[oldPos] == newList[newPos]
         })
         displayList = newList
         diff.dispatchUpdatesTo(this)
-    }
-
-    // ── HeaderViewHolder ──────────────────────────────────────────────────────
-
-    inner class HeaderViewHolder(private val binding: ItemHeaderTransaksiBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-
-        fun bind(header: TransaksiItem.Header) {
-            binding.tvHeaderLabel.text = header.label
-            val isCollapsedNow = collapsedHeaders.contains(header.jenis)
-            binding.ivCollapse.rotation = if (isCollapsedNow) -90f else 0f
-            binding.root.setOnClickListener {
-                val isCurrentlyCollapsed = collapsedHeaders.contains(header.jenis)
-                val fromDeg = if (isCurrentlyCollapsed) -90f else 0f
-                val toDeg   = if (isCurrentlyCollapsed) 0f   else -90f
-                android.animation.ObjectAnimator
-                    .ofFloat(binding.ivCollapse, "rotation", fromDeg, toDeg)
-                    .apply { duration = 200; interpolator = AccelerateDecelerateInterpolator(); start() }
-                if (isCurrentlyCollapsed) collapsedHeaders.remove(header.jenis)
-                else                      collapsedHeaders.add(header.jenis)
-                rebuildDisplayList()
-            }
-        }
     }
 
     // ── TransferViewHolder ────────────────────────────────────────────────────
@@ -228,35 +161,25 @@ class TransaksiAdapter(
     inner class TransferViewHolder(private val binding: ItemTransaksiBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        private var isDetailExpanded = true
-
         fun bind(pair: TransferPair) {
             binding.ivKategoriIcon.setImageResource(R.drawable.ic_wallet)
             binding.tvKategori.text = "Transfer"
 
             val namaAsal   = daftarDompet.find { it.id == pair.keluarTransaksi.dompetId }?.nama ?: "?"
             val namaTujuan = daftarDompet.find { it.id == pair.masukTransaksi.dompetId  }?.nama ?: "?"
-            val subLabel   = if (namaAsal == namaTujuan) pair.catatan.ifEmpty { "Transfer" }
+            binding.tvCatatan.text    = if (namaAsal == namaTujuan)
+                pair.catatan.ifEmpty { "Transfer" }
             else "$namaAsal → $namaTujuan"
-
-            binding.tvCatatan.text    = subLabel
             binding.tvSumberDana.text = ""
 
             binding.tvNominal.text = if (nominalVisible)
                 CurrencyFormatter.format(pair.nominal) else "Rp ***"
             binding.tvNominal.setTextColor(0xFF1A2B34.toInt())
 
-            isDetailExpanded             = true
-            binding.cardDetail.visibility    = View.VISIBLE
-            binding.ivArrowCollapse.rotation = 0f
+            // Sembunyikan toggle collapse — tidak ada header grup lagi
+            binding.clHeaderInteraktif.visibility = View.GONE
+            binding.cardDetail.visibility         = View.VISIBLE
 
-            binding.clHeaderInteraktif.setOnClickListener {
-                isDetailExpanded = !isDetailExpanded
-                binding.ivArrowCollapse.animate()
-                    .rotation(if (isDetailExpanded) 0f else -180f)
-                    .setDuration(200).start()
-                binding.cardDetail.visibility = if (isDetailExpanded) View.VISIBLE else View.GONE
-            }
             binding.clCardUtama.setOnClickListener { onItemClick(pair.keluarTransaksi) }
         }
     }
@@ -266,8 +189,6 @@ class TransaksiAdapter(
     inner class ItemViewHolder(private val binding: ItemTransaksiBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        private var isDetailExpanded = true
-
         fun bind(transaksi: Transaksi) {
             val iconRes = KATEGORI_ICON[transaksi.kategori] ?: R.drawable.ic_wallet
             binding.ivKategoriIcon.setImageResource(iconRes)
@@ -275,7 +196,7 @@ class TransaksiAdapter(
             binding.tvCatatan.text  = transaksi.catatan.ifEmpty { "-" }
 
             val isIncome = transaksi.jenis == "PEMASUKAN"
-            val warna    = if (isIncome) 0xFF4CAF50.toInt() else 0xFFF44336.toInt()
+            val warna    = if (isIncome) 0xFF276F29.toInt() else 0xFFF44336.toInt()
             val prefix   = if (isIncome) "+ " else "- "
 
             binding.tvNominal.text = if (nominalVisible)
@@ -286,17 +207,10 @@ class TransaksiAdapter(
             binding.tvSumberDana.text =
                 daftarDompet.find { it.id == transaksi.dompetId }?.nama ?: "-"
 
-            isDetailExpanded             = true
-            binding.cardDetail.visibility    = View.VISIBLE
-            binding.ivArrowCollapse.rotation = 0f
+            // Sembunyikan toggle collapse — tidak ada header grup lagi
+            binding.clHeaderInteraktif.visibility = View.GONE
+            binding.cardDetail.visibility         = View.VISIBLE
 
-            binding.clHeaderInteraktif.setOnClickListener {
-                isDetailExpanded = !isDetailExpanded
-                binding.ivArrowCollapse.animate()
-                    .rotation(if (isDetailExpanded) 0f else -180f)
-                    .setDuration(200).start()
-                binding.cardDetail.visibility = if (isDetailExpanded) View.VISIBLE else View.GONE
-            }
             binding.clCardUtama.setOnClickListener { onItemClick(transaksi) }
         }
     }
@@ -304,7 +218,6 @@ class TransaksiAdapter(
     // ── Boilerplate ───────────────────────────────────────────────────────────
 
     override fun getItemViewType(position: Int) = when (displayList[position]) {
-        is TransaksiItem.Header       -> TYPE_HEADER
         is TransaksiItem.TransferItem -> TYPE_TRANSFER
         is TransaksiItem.Item         -> TYPE_ITEM
     }
@@ -312,7 +225,6 @@ class TransaksiAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
-            TYPE_HEADER   -> HeaderViewHolder(ItemHeaderTransaksiBinding.inflate(inflater, parent, false))
             TYPE_TRANSFER -> TransferViewHolder(ItemTransaksiBinding.inflate(inflater, parent, false))
             else          -> ItemViewHolder(ItemTransaksiBinding.inflate(inflater, parent, false))
         }
@@ -320,7 +232,6 @@ class TransaksiAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (val item = displayList[position]) {
-            is TransaksiItem.Header       -> (holder as HeaderViewHolder).bind(item)
             is TransaksiItem.TransferItem -> (holder as TransferViewHolder).bind(item.pair)
             is TransaksiItem.Item         -> (holder as ItemViewHolder).bind(item.transaksi)
         }
