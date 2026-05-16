@@ -15,7 +15,7 @@ import com.example.appmoneego.data.entity.*
         Hutang::class,
         CicilanEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class MoneeGoDatabase : RoomDatabase() {
