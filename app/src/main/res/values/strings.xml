@@ -52,6 +52,9 @@
     <string name="btn_selesai">SELESAI</string>
     <string name="hint_tambah_catatan">Tambah catatan...</string>
     <string name="pilih_dompet">Silakan pilih dompet</string>
+    <string name="kb_spasi">SPASI</string>
+    <string name="kb_selesai">SELESAI</string>
+    <string name="label_catatan_transfer">Catatan</string>
 
     <!-- Riwayat Transaksi -->
     <string name="label_persen_masuk"> Pemasukan 0%</string>
@@ -76,7 +79,7 @@
     <string name="title_tabungan">TABUNGANKU</string>
     <string name="label_tercapai">Tercapai</string>
     <string name="label_berjalan">Berjalan</string>
-    <string name="label_total_terkumpul">Total Terkumpul dari 0 Impian</string>
+    <string name="label_total_terkumpul_impian">Total Terkumpul dari %d Impian</string>
     <string name="tab_berjalan">BERJALAN</string>
     <string name="tab_selesai">SELESAI</string>
     <string name="insight_tabungan">Semangat menabung!</string>
@@ -85,4 +88,149 @@
     <string name="title_hutang">Hutang</string>
     <string name="label_hutang_belum_bayar">Hutang yang belum dibayar!</string>
     <string name="label_selesai">Selesai</string>
+    <string name="label_total_hutang">Total hutang</string>
+    <string name="label_hutang_berjalan">Hutang berjalan</string>
+    <string name="btn_tambah_hutang">+ Tambah hutang</string>
+    <string name="empty_hutang">Belum ada hutang</string>
+
+    <!-- Dialog Detail Transaksi -->
+    <string name="label_tanggal_detail">Tanggal</string>
+    <string name="label_dompet_detail">Dompet</string>
+    <string name="label_dari_detail">Dari</string>
+    <string name="label_ke_detail">Ke</string>
+    <string name="label_catatan_detail">Catatan</string>
+
+    <!-- Dialog Tambah Hutang -->
+    <string name="title_tambah_hutang">Tambah Hutang Baru</string>
+    <string name="btn_simpan_hutang">Simpan</string>
+    <string name="label_nama_hutang">Nama/Keterangan</string>
+    <string name="hint_nama_hutang">Contoh, Pinjam ke Jingga</string>
+    <string name="label_jenis_hutang">Jenis Hutang</string>
+    <string name="jenis_kartu_kredit">Kartu Kredit</string>
+    <string name="jenis_pinjol">Pinjaman Online</string>
+    <string name="jenis_cicilan">Cicilan</string>
+    <string name="jenis_pinjaman_bank">Pinjaman Bank</string>
+    <string name="jenis_pinjam_kerabat">Pinjam ke Kerabat</string>
+    <string name="jenis_lainnya">Lainnya</string>
+    <string name="label_jumlah_hutang">Jumlah Hutang</string>
+    <string name="label_limit_kredit">Limit Kartu Kredit</string>
+    <string name="label_jatuh_tempo">Jatuh Tempo (Opsional)</string>
+
+    <!-- Dialog Tambah Dompet -->
+    <string name="title_tambah_dompet">Tambah Dompet Baru</string>
+    <string name="label_nama_dompet">Nama Dompet</string>
+    <string name="hint_nama_dompet">Contoh, BCA Tabungan</string>
+    <string name="label_jenis_dompet">Jenis Dompet</string>
+    <string name="jenis_rekening_bank">Rekening Bank</string>
+    <string name="jenis_dompet_digital">Dompet Digital</string>
+    <string name="jenis_uang_tunai">Uang Tunai</string>
+    <string name="jenis_investasi">Investasi</string>
+    <string name="jenis_tabungan">Tabungan</string>
+    <string name="label_saldo_awal">Saldo Awal</string>
+    <string name="btn_simpan_dompet">Simpan</string>
+
+    <!-- Dialog Tambah Tabungan -->
+    <string name="title_tambah_tabungan">Tambah Target Tabungan</string>
+    <string name="label_nama_target">Nama Target</string>
+    <string name="hint_nama_target">Contoh: Beli Laptop</string>
+    <string name="label_target_nominal">Target Nominal</string>
+    <string name="btn_simpan_tabungan">Simpan</string>
+
+    <!-- Bottom Sheet Cicilan -->
+    <string name="title_detail_hutang">Detail Hutang</string>
+    <string name="btn_hapus_hutang">Hapus</string>
+    <string name="label_sisa_hutang">Sisa hutang</string>
+    <string name="label_sudah_dibayar">Sudah dibayar</string>
+    <string name="label_progress">Progress</string>
+    <string name="label_riwayat_cicilan">Riwayat cicilan</string>
+    <string name="label_nominal_cicilan">Nominal cicilan</string>
+    <string name="label_tanggal_bayar">Tanggal bayar</string>
+    <string name="label_catatan_opsional">Catatan (opsional)</string>
+    <string name="btn_simpan_cicilan">Simpan cicilan</string>
+    <string name="btn_batal">Batal</string>
+    <string name="label_hutang_lunas">Hutang ini sudah lunas!</string>
+
+    <!-- Kategori Pengeluaran -->
+    <string name="kat_makanan">Makanan</string>
+    <string name="kat_fashion">Fashion</string>
+    <string name="kat_transportasi">Transportasi</string>
+    <string name="kat_pendidikan">Pendidikan</string>
+    <string name="kat_sosial">Sosial</string>
+    <string name="kat_kesehatan">Kesehatan</string>
+    <string name="kat_rumah_tangga">Rumah Tangga</string>
+    <string name="kat_kebutuhan_pribadi">Kebutuhan Pribadi</string>
+    <!-- Kategori Pemasukan -->
+    <string name="kat_gaji">Gaji</string>
+    <string name="kat_bonus">Bonus</string>
+    <string name="kat_freelance">Freelance</string>
+    <string name="kat_investasi">Investasi</string>
+    <string name="kat_hadiah">Hadiah</string>
+    <string name="kat_penjualan">Penjualan</string>
+
+    <string name="hari_sen">SEN</string>
+    <string name="hari_sel">SEL</string>
+    <string name="hari_rab">RAB</string>
+    <string name="hari_kam">KAM</string>
+    <string name="hari_jum">JUM</string>
+    <string name="hari_sab">SAB</string>
+    <string name="hari_min">MIN</string>
+    <string name="bulan_jan">Januari</string>
+    <string name="bulan_feb">Februari</string>
+    <string name="bulan_mar">Maret</string>
+    <string name="bulan_apr">April</string>
+    <string name="bulan_mei">Mei</string>
+    <string name="bulan_jun">Juni</string>
+    <string name="bulan_jul">Juli</string>
+    <string name="bulan_agu">Agustus</string>
+    <string name="bulan_sep">September</string>
+    <string name="bulan_okt">Oktober</string>
+    <string name="bulan_nov">November</string>
+    <string name="bulan_des">Desember</string>
+    <string name="label_hari_ini">Hari ini</string>
+    <string name="label_kemarin">Kemarin</string>
+    <string name="label_pilih_dompet">Pilih dompet</string>
+    <string name="label_belum_ada_dompet">Belum ada dompet.</string>
+
+    <!-- Dialog Hapus Transaksi -->
+    <string name="dialog_hapus_transaksi_title">Hapus Transaksi</string>
+    <string name="dialog_hapus_transaksi_pesan">Yakin ingin menghapus transaksi ini?</string>
+    <string name="dialog_hapus_transaksi_konfirmasi">Hapus</string>
+
+    <!-- Label state tercatat -->
+    <string name="label_pengeluaran_tercatat">PENGELUARAN TERCATAT</string>
+    <string name="label_pemasukan_tercatat">PEMASUKAN TERCATAT</string>
+    <string name="label_transfer_tercatat">TRANSFER TERCATAT</string>
+
+    <!-- Label info baris -->
+    <string name="label_dompet_asal">Dompet Asal</string>
+    <string name="label_dompet_tujuan">Dompet Tujuan</string>
+    <string name="label_dompet">Dompet</string>
+
+    <string name="dialog_pilih_dompet_asal">Pilih Dompet Asal</string>
+    <string name="dialog_pilih_dompet_tujuan">Pilih Dompet Tujuan</string>
+    <string name="error_dompet_sama_tujuan">Tidak boleh sama dengan tujuan</string>
+    <string name="error_dompet_sama_asal">Tidak boleh sama dengan asal</string>
+
+    <!-- Insight Dashboard -->
+    <string name="insight1_title">SELAMAT DATANG!</string>
+    <string name="insight1_desc">Mulai catat pengeluaranmu hari ini agar MoneeGo bisa membantumu.</string>
+    <string name="insight2_title">TIPS MONEEGO</string>
+    <string name="insight2_desc">Menabung di awal bulan bantu kamu lebih disiplin lho.</string>
+
+    <string name="btn_simpan_perubahan">Simpan Perubahan</string>
+    <string name="error_nama_dompet_kosong">Nama dompet tidak boleh kosong</string>
+    <string name="toast_dompet_ditambahkan">Dompet \"%s\" ditambahkan!</string>
+    <string name="toast_dompet_diperbarui">Dompet diperbarui!</string>
+    <string name="toast_dompet_dihapus">Dompet dihapus</string>
+    <string name="menu_edit_dompet">✏️  Edit Dompet</string>
+    <string name="menu_hapus_dompet">🗑️  Hapus Dompet</string>
+    <string name="dialog_hapus_dompet_title">Hapus Dompet</string>
+    <string name="dialog_hapus_dompet_pesan">Yakin ingin menghapus \"%s\"?\nSaldo %s akan hilang.</string>
+
+    <string name="label_tercatat">TERCATAT</string>
+    <string name="dialog_hapus_transaksi_pesan_nama">Yakin ingin menghapus \"%s\"?</string>
+    <string name="format_bulan_tahun">%1$s %2$d</string>
+    <string name="mask_saldo">Rp ***</string>
+    <string name="mask_nominal">***</string>
+    <string name="format_persentase">%1$s %2$d%%</string>
 </resources>

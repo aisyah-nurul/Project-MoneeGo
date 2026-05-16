@@ -10,7 +10,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Tambah Target Tabungan"
+        android:text="@string/title_tambah_tabungan"
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="#1A1A2E"
@@ -20,7 +20,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Nama Target"
+        android:text="@string/label_nama_target"
         android:textSize="14sp"
         android:textStyle="bold"
         android:textColor="#1A1A2E"
@@ -40,7 +40,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Target Nominal"
+        android:text="@string/label_target_nominal"
         android:textSize="14sp"
         android:textStyle="bold"
         android:textColor="#1A1A2E"
@@ -61,7 +61,7 @@
         android:id="@+id/btn_simpan_tabungan"
         android:layout_width="match_parent"
         android:layout_height="52dp"
-        android:text="Simpan"
+        android:text="@string/btn_simpan_tabungan"
         android:textSize="16sp"
         android:textStyle="bold"
         android:backgroundTint="#4A6FA5"

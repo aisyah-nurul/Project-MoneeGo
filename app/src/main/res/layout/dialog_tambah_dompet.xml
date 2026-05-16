@@ -28,7 +28,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tambah Dompet Baru"
+            android:text="@string/title_tambah_dompet"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="#1A2B34"
@@ -39,7 +39,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nama Dompet"
+            android:text="@string/label_nama_dompet"
             android:textSize="13sp"
             android:textColor="#546E7A"
             android:textStyle="bold"
@@ -62,7 +62,7 @@
                 android:id="@+id/etNamaDompet"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Contoh, BCA Tabungan"
+                android:hint="@string/hint_nama_dompet"
                 android:inputType="textCapWords"
                 android:textSize="14sp"
                 android:textColor="#1A2B34"
@@ -73,7 +73,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Jenis Dompet"
+            android:text="@string/label_jenis_dompet"
             android:textSize="13sp"
             android:textColor="#546E7A"
             android:textStyle="bold"
@@ -109,7 +109,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Rekening Bank"
+                    android:text="@string/jenis_rekening_bank"
                     android:textSize="10sp"
                     android:textColor="#1A2B34"
                     android:gravity="center"
@@ -137,7 +137,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Dompet Digital"
+                    android:text="@string/jenis_dompet_digital"
                     android:textSize="10sp"
                     android:textColor="#1A2B34"
                     android:gravity="center"
@@ -165,7 +165,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Uang Tunai"
+                    android:text="@string/jenis_uang_tunai"
                     android:textSize="10sp"
                     android:textColor="#1A2B34"
                     android:gravity="center" />
@@ -192,7 +192,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Investasi"
+                    android:text="@string/jenis_investasi"
                     android:textSize="10sp"
                     android:textColor="#1A2B34"
                     android:gravity="center" />
@@ -219,7 +219,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tabungan"
+                    android:text="@string/jenis_tabungan"
                     android:textSize="10sp"
                     android:textColor="#1A2B34"
                     android:gravity="center" />
@@ -246,7 +246,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Lainnya"
+                    android:text="@string/jenis_lainnya"
                     android:textSize="10sp"
                     android:textColor="#1A2B34"
                     android:gravity="center" />
@@ -258,7 +258,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Saldo Awal"
+            android:text="@string/label_saldo_awal"
             android:textSize="13sp"
             android:textColor="#546E7A"
             android:textStyle="bold"
@@ -294,7 +294,7 @@
             android:id="@+id/btnSimpanDompet"
             android:layout_width="match_parent"
             android:layout_height="52dp"
-            android:text="Simpan"
+            android:text="@string/btn_simpan_dompet"
             android:textSize="15sp"
             android:textStyle="bold"
             android:textColor="@color/white"

@@ -16,7 +16,7 @@
         android:background="#8A9DAD"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:paddingTop="14dp"
+        android:paddingTop="40dp"
         android:paddingBottom="14dp">
 
         <!-- Baris 1: legend kiri + tombol kalender kanan -->
