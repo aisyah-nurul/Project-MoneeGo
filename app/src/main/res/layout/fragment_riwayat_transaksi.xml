@@ -8,7 +8,7 @@
     android:background="#E2E2E2"
     android:weightSum="1">
 
-    <!-- HEADER BIRU — tidak berubah -->
+    <!-- HEADER -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header_riwayat"
         android:layout_width="match_parent"
@@ -19,7 +19,6 @@
         android:paddingTop="40dp"
         android:paddingBottom="14dp">
 
-        <!-- Baris 1: legend kiri + tombol kalender kanan -->
         <LinearLayout
             android:id="@+id/ll_legend"
             android:layout_width="wrap_content"
@@ -133,6 +132,7 @@
                 android:focusable="true"/>
         </LinearLayout>
 
+        <!-- Baris ringkasan: Pemasukan | Pengeluaran | Selisih -->
         <LinearLayout
             android:id="@+id/ll_total_harian"
             android:layout_width="0dp"
@@ -159,8 +159,8 @@
                     android:id="@+id/tv_total_masuk"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Rp 0"
-                    android:textSize="14sp"
+                    android:text="Rp0"
+                    android:textSize="13sp"
                     android:textStyle="bold"
                     android:textColor="#276F29"/>
             </LinearLayout>
@@ -186,14 +186,86 @@
                     android:id="@+id/tv_total_keluar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Rp 0"
-                    android:textSize="14sp"
+                    android:text="Rp0"
+                    android:textSize="13sp"
                     android:textStyle="bold"
                     android:textColor="#F44336"/>
             </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#55FFFFFF"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Selisih"
+                    android:textSize="10sp"
+                    android:textColor="#CCFFFFFF"/>
+                <TextView
+                    android:id="@+id/tv_selisih_harian"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rp0"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="#1A1A2E"/>
+            </LinearLayout>
+
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- TAB FILTER dengan margin di semua sisi agar rapi -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="4dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="2dp"
+        app:cardBackgroundColor="@android:color/white">
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_filter"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:background="@android:color/white"
+            app:tabIndicatorColor="#8A9DAD"
+            app:tabIndicatorHeight="3dp"
+            app:tabRippleColor="@null"
+            app:tabSelectedTextColor="#8A9DAD"
+            app:tabTextColor="#AAAAAA"
+            app:tabMode="fixed"
+            app:tabGravity="fill">
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pengeluaran"/>
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pemasukan"/>
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Transfer"/>
+
+        </com.google.android.material.tabs.TabLayout>
+
+    </androidx.cardview.widget.CardView>
 
     <!-- KALENDER (hidden by default) -->
     <androidx.cardview.widget.CardView
@@ -216,7 +288,6 @@
 
     </androidx.cardview.widget.CardView>
 
-    <!-- ✅ FIX SCROLL: layout_weight="1" + nestedScrollingEnabled="true" -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_transaksi"
         android:layout_width="match_parent"
