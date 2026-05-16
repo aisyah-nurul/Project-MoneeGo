@@ -47,7 +47,7 @@ class TambahTransaksiFragment : Fragment() {
     // ── State umum ─────────────────────────────────────────────────────────────
     private var nominalString    = ""
     private var jenisTransaksi   = "PENGELUARAN"
-    private var selectedKategori = "Makanan"
+    private var selectedKategoriIndex = 0
     private var selectedTanggal: Long = System.currentTimeMillis()
     private var lastSavedTransaksi: Transaksi? = null
     private var isGridKategoriOpen = false
@@ -56,6 +56,17 @@ class TambahTransaksiFragment : Fragment() {
     private var catatanString      = ""   // ← sumber kebenaran catatan, SELALU string murni
     private var isUpperCase        = true
     private var isKeyboardModeTransfer = false
+    private val selectedKategori: String
+        get() {
+            val daftar = if (jenisTransaksi == "PEMASUKAN") kategoriPemasukan else kategoriPengeluaran
+            return daftar.getOrNull(selectedKategoriIndex)?.nama ?: daftar[0].nama
+        }
+
+    private val selectedKategoriIcon: Int
+        get() {
+            val daftar = if (jenisTransaksi == "PEMASUKAN") kategoriPemasukan else kategoriPengeluaran
+            return daftar.getOrNull(selectedKategoriIndex)?.iconRes ?: R.drawable.ic_makanan
+        }
 
     // ── State dompet normal ────────────────────────────────────────────────────
     private var daftarDompet: List<Dompet> = emptyList()
@@ -71,23 +82,23 @@ class TambahTransaksiFragment : Fragment() {
     // ── Data kategori ──────────────────────────────────────────────────────────
     data class KategoriItem(val nama: String, val iconRes: Int)
 
-    private val kategoriPengeluaran = listOf(
-        KategoriItem("Makanan",           R.drawable.ic_makanan),
-        KategoriItem("Fashion",           R.drawable.ic_fashion),
-        KategoriItem("Transportasi",      R.drawable.ic_transportasi),
-        KategoriItem("Pendidikan",        R.drawable.ic_pendidikan),
-        KategoriItem("Sosial",            R.drawable.ic_sosial),
-        KategoriItem("Kesehatan",         R.drawable.ic_kesehatan),
-        KategoriItem("Rumah Tangga",      R.drawable.ic_rumahtangga),
-        KategoriItem("Kebutuhan Pribadi", R.drawable.ic_kebutuhanpribadi)
+    private val kategoriPengeluaran get() = listOf(
+        KategoriItem(getString(R.string.kat_makanan),           R.drawable.ic_makanan),
+        KategoriItem(getString(R.string.kat_fashion),           R.drawable.ic_fashion),
+        KategoriItem(getString(R.string.kat_transportasi),      R.drawable.ic_transportasi),
+        KategoriItem(getString(R.string.kat_pendidikan),        R.drawable.ic_pendidikan),
+        KategoriItem(getString(R.string.kat_sosial),            R.drawable.ic_sosial),
+        KategoriItem(getString(R.string.kat_kesehatan),         R.drawable.ic_kesehatan),
+        KategoriItem(getString(R.string.kat_rumah_tangga),      R.drawable.ic_rumahtangga),
+        KategoriItem(getString(R.string.kat_kebutuhan_pribadi), R.drawable.ic_kebutuhanpribadi)
     )
-    private val kategoriPemasukan = listOf(
-        KategoriItem("Gaji",      R.drawable.ic_gaji),
-        KategoriItem("Bonus",     R.drawable.ic_bonus),
-        KategoriItem("Freelance", R.drawable.ic_freelance),
-        KategoriItem("Investasi", R.drawable.ic_investasi),
-        KategoriItem("Hadiah",    R.drawable.ic_hadiah),
-        KategoriItem("Penjualan", R.drawable.ic_penjualan)
+    private val kategoriPemasukan get() = listOf(
+        KategoriItem(getString(R.string.kat_gaji),      R.drawable.ic_gaji),
+        KategoriItem(getString(R.string.kat_bonus),     R.drawable.ic_bonus),
+        KategoriItem(getString(R.string.kat_freelance), R.drawable.ic_freelance),
+        KategoriItem(getString(R.string.kat_investasi), R.drawable.ic_investasi),
+        KategoriItem(getString(R.string.kat_hadiah),    R.drawable.ic_hadiah),
+        KategoriItem(getString(R.string.kat_penjualan), R.drawable.ic_penjualan)
     )
 
     // ── View references ────────────────────────────────────────────────────────
@@ -214,6 +225,8 @@ class TambahTransaksiFragment : Fragment() {
         updateTanggalDisplay()
         setupGridKategori(kategoriPengeluaran)
         updateTabUI("PENGELUARAN")
+        tvKategori.text = selectedKategori          // ← tambah ini
+        ivKategoriIcon.setImageResource(selectedKategoriIcon)
 
         dompetViewModel.allDompet.observe(viewLifecycleOwner) { dompetList ->
             daftarDompet = dompetList
@@ -229,7 +242,6 @@ class TambahTransaksiFragment : Fragment() {
                 editJenisLama   = args.getString("edit_jenis", "PENGELUARAN")!!
 
                 nominalString    = editNominalLama.toLong().toString()
-                selectedKategori = args.getString("edit_kategori", "Makanan")!!
                 catatanString    = args.getString("edit_catatan",  "")!!
                 selectedTanggal  = args.getLong("edit_tanggal", System.currentTimeMillis())
                 selectedDompetId = args.getInt("edit_dompet_id", 0)
@@ -275,9 +287,10 @@ class TambahTransaksiFragment : Fragment() {
         setupGridKategori(daftar)
         updateTabUI(jenisTransaksi)
 
+        val savedKategori = arguments?.getString("edit_kategori", "") ?: ""
+        selectedKategoriIndex = daftar.indexOfFirst { it.nama == savedKategori }.takeIf { it >= 0 } ?: 0
         tvKategori.text = selectedKategori
-        val iconItem = daftar.find { it.nama == selectedKategori }
-        if (iconItem != null) ivKategoriIcon.setImageResource(iconItem.iconRes)
+        ivKategoriIcon.setImageResource(selectedKategoriIcon)
 
         // FIX: gunakan catatanString langsung, bukan baca dari tvCatatan
         tampilkanCatatan()
@@ -416,9 +429,9 @@ class TambahTransaksiFragment : Fragment() {
             llFormNormal.visibility   = View.VISIBLE
             llFormTransfer.visibility = View.GONE
             val daftar = if (jenis == "PEMASUKAN") kategoriPemasukan else kategoriPengeluaran
-            selectedKategori = daftar[0].nama
-            tvKategori.text  = selectedKategori
-            ivKategoriIcon.setImageResource(daftar[0].iconRes)
+            selectedKategoriIndex = 0
+            tvKategori.text = selectedKategori
+            ivKategoriIcon.setImageResource(selectedKategoriIcon)
             tutupGridKategori()
             setupGridKategori(daftar)
         }
@@ -437,12 +450,12 @@ class TambahTransaksiFragment : Fragment() {
         }
         val namaList = daftarDompet.map { it.nama }.toTypedArray()
         AlertDialog.Builder(requireContext())
-            .setTitle(if (isAsal) "Pilih Dompet Asal" else "Pilih Dompet Tujuan")
+            .setTitle(if (isAsal) getString(R.string.dialog_pilih_dompet_asal) else getString(R.string.dialog_pilih_dompet_tujuan))
             .setItems(namaList) { _, index ->
                 val dompet = daftarDompet[index]
                 if (isAsal) {
                     if (dompet.id == selectedDompetTujuanId) {
-                        Snackbar.make(requireView(), "Tidak boleh sama dengan tujuan",
+                        Snackbar.make(requireView(), getString(R.string.error_dompet_sama_tujuan),
                             Snackbar.LENGTH_SHORT).show(); return@setItems
                     }
                     selectedDompetAsalId   = dompet.id
@@ -451,7 +464,7 @@ class TambahTransaksiFragment : Fragment() {
                     tvDompetAsal.setTextColor(0xFF1A1A2E.toInt())
                 } else {
                     if (dompet.id == selectedDompetAsalId) {
-                        Snackbar.make(requireView(), "Tidak boleh sama dengan asal",
+                        Snackbar.make(requireView(), getString(R.string.error_dompet_sama_asal),
                             Snackbar.LENGTH_SHORT).show(); return@setItems
                     }
                     selectedDompetTujuanId   = dompet.id
@@ -460,15 +473,15 @@ class TambahTransaksiFragment : Fragment() {
                     tvDompetTujuan.setTextColor(0xFF1A1A2E.toInt())
                 }
             }
-            .setNegativeButton("Batal", null).show()
+            .setNegativeButton(getString(R.string.btn_batal), null).show()
     }
 
     private fun resetFormTransfer() {
         selectedDompetAsalId = 0; selectedDompetAsalNama = ""
         selectedDompetTujuanId = 0; selectedDompetTujuanNama = ""
-        tvDompetAsal.text = "Silakan pilih dompet"
+        tvDompetAsal.text = getString(R.string.pilih_dompet)
         tvDompetAsal.setTextColor(0xFF888888.toInt())
-        tvDompetTujuan.text = "Silakan pilih dompet"
+        tvDompetTujuan.text = getString(R.string.pilih_dompet)
         tvDompetTujuan.setTextColor(0xFF888888.toInt())
         catatanString = ""
         tampilkanCatatanTransfer()
@@ -479,10 +492,10 @@ class TambahTransaksiFragment : Fragment() {
         llSumberDanaOptions.removeAllViews()
         if (daftarDompet.isEmpty()) {
             llSumberDanaOptions.addView(TextView(requireContext()).apply {
-                text = "Belum ada dompet."; textSize = 13f
+                text = getString(R.string.label_belum_ada_dompet); textSize = 13f
                 setTextColor(0xFF888888.toInt()); setPadding(48, 24, 48, 24)
             })
-            selectedDompetId = 0; selectedDompetNama = ""; tvSumberDana.text = "Pilih dompet"
+            selectedDompetId = 0; selectedDompetNama = ""; tvSumberDana.text = getString(R.string.label_pilih_dompet)
             return
         }
         if (selectedDompetId == 0) {
@@ -732,12 +745,15 @@ class TambahTransaksiFragment : Fragment() {
             itemView.findViewById<TextView>(R.id.tv_item_kategori_nama).text = item.nama
             updateItemSelectedState(itemView, item.nama == selectedKategori)
             itemView.setOnClickListener {
-                selectedKategori = item.nama; tvKategori.text = item.nama
-                ivKategoriIcon.setImageResource(item.iconRes)
+                selectedKategoriIndex = daftar.indexOf(item)
+                tvKategori.text = selectedKategori
+                ivKategoriIcon.setImageResource(selectedKategoriIcon)
                 for (i in 0 until gridKategori.childCount) {
                     val child = gridKategori.getChildAt(i)
-                    updateItemSelectedState(child,
-                        child.findViewById<TextView>(R.id.tv_item_kategori_nama).text.toString() == selectedKategori)
+                    updateItemSelectedState(
+                        child,
+                        child.findViewById<TextView>(R.id.tv_item_kategori_nama).text.toString() == selectedKategori
+                    )
                 }
                 tutupGridKategori()
             }
@@ -808,14 +824,26 @@ class TambahTransaksiFragment : Fragment() {
         btnNextMonth.setOnClickListener { calendarMonth.add(Calendar.MONTH,  1); renderKalender() }
     }
 
-    private val NAMA_HARI  = listOf("SEN","SEL","RAB","KAM","JUM","SAB","MIN")
-    private val NAMA_BULAN = listOf(
-        "Januari","Februari","Maret","April","Mei","Juni",
-        "Juli","Agustus","September","Oktober","November","Desember")
+    private val namaHari get() = listOf(
+        getString(R.string.hari_sen), getString(R.string.hari_sel),
+        getString(R.string.hari_rab), getString(R.string.hari_kam),
+        getString(R.string.hari_jum), getString(R.string.hari_sab),
+        getString(R.string.hari_min)
+    )
+
+    // Ganti NAMA_BULAN menjadi namaBulan
+    private val namaBulan get() = listOf(
+        getString(R.string.bulan_jan), getString(R.string.bulan_feb),
+        getString(R.string.bulan_mar), getString(R.string.bulan_apr),
+        getString(R.string.bulan_mei), getString(R.string.bulan_jun),
+        getString(R.string.bulan_jul), getString(R.string.bulan_agu),
+        getString(R.string.bulan_sep), getString(R.string.bulan_okt),
+        getString(R.string.bulan_nov), getString(R.string.bulan_des)
+    )
 
     private fun setupNamaHari() {
         gridNamaHari.removeAllViews()
-        NAMA_HARI.forEach { hari ->
+        namaHari.forEach { hari ->
             gridNamaHari.addView(TextView(requireContext()).apply {
                 text = hari; textSize = 10f; setTextColor(0xFF888888.toInt())
                 gravity = android.view.Gravity.CENTER
@@ -831,7 +859,7 @@ class TambahTransaksiFragment : Fragment() {
         gridTanggal.removeAllViews()
         val cal   = calendarMonth.clone() as Calendar
         val bulan = cal.get(Calendar.MONTH); val tahun = cal.get(Calendar.YEAR)
-        tvBulanTahun.text = "${NAMA_BULAN[bulan]} $tahun"
+        tvBulanTahun.text = getString(R.string.format_bulan_tahun, namaBulan[bulan], tahun)
         cal.set(Calendar.DAY_OF_MONTH, 1)
         val dow    = cal.get(Calendar.DAY_OF_WEEK)
         val offset = if (dow == Calendar.SUNDAY) 6 else dow - 2
@@ -894,8 +922,8 @@ class TambahTransaksiFragment : Fragment() {
         val yesterday = today - 86_400_000L
         val selected  = DateUtils.getStartOfDay(selectedTanggal)
         tvTanggal.text = when (selected) {
-            today     -> "Hari ini, ${DateUtils.formatTanggal(selectedTanggal)}"
-            yesterday -> "Kemarin, ${DateUtils.formatTanggal(selectedTanggal)}"
+            today     -> "${getString(R.string.label_hari_ini)}, ${DateUtils.formatTanggal(selectedTanggal)}"
+            yesterday -> "${getString(R.string.label_kemarin)}, ${DateUtils.formatTanggal(selectedTanggal)}"
             else      -> DateUtils.formatTanggal(selectedTanggal)
         }
     }
@@ -906,13 +934,13 @@ class TambahTransaksiFragment : Fragment() {
         btnHapusTransaksi.setOnClickListener {
             lastSavedTransaksi?.let { transaksi ->
                 AlertDialog.Builder(requireContext())
-                    .setTitle("Hapus Transaksi")
-                    .setMessage("Yakin ingin menghapus transaksi ini?")
-                    .setPositiveButton("Hapus") { _, _ ->
+                    .setTitle(getString(R.string.dialog_hapus_transaksi_title))
+                    .setMessage(getString(R.string.dialog_hapus_transaksi_pesan))
+                    .setPositiveButton(getString(R.string.dialog_hapus_transaksi_konfirmasi)) { _, _ ->
                         viewModel.delete(transaksi)
                         showStateInput()
                     }
-                    .setNegativeButton("Batal", null)
+                    .setNegativeButton(getString(R.string.btn_batal), null)
                     .show()
             }
         }
@@ -977,15 +1005,15 @@ class TambahTransaksiFragment : Fragment() {
         llNumpad.visibility        = View.GONE
         llKeyboardHuruf.visibility = View.GONE
         tvLabelTercatat.text = when (jenisTransaksi) {
-            "PEMASUKAN" -> "PEMASUKAN TERCATAT"
-            "TRANSFER"  -> "TRANSFER TERCATAT"
-            else        -> "PENGELUARAN TERCATAT"
+            "PEMASUKAN" -> getString(R.string.label_pemasukan_tercatat)
+            "TRANSFER"  -> getString(R.string.label_transfer_tercatat)
+            else        -> getString(R.string.label_pengeluaran_tercatat)
         }
         tvNominalTercatat.text = CurrencyFormatter.format(nominal)
         if (jenisTransaksi == "TRANSFER") {
-            tvLabelBaris1.text = "Dompet Asal"
-            tvLabelBaris2.text = "Dompet Tujuan"
-            tvLabelBaris3.text = "Tanggal"
+            tvLabelBaris1.text = getString(R.string.label_dompet_asal)
+            tvLabelBaris2.text = getString(R.string.label_dompet_tujuan)
+            tvLabelBaris3.text = getString(R.string.label_tanggal)
             ivIconBaris1.setImageResource(R.drawable.ic_wallet)
             ivIconBaris2.setImageResource(R.drawable.ic_wallet)
             ivIconBaris3.setImageResource(R.drawable.ic_tanggal)
@@ -993,12 +1021,11 @@ class TambahTransaksiFragment : Fragment() {
             tvTanggalTercatat.text  = dompetTujuanOverride
             tvDompetTercatat.text   = DateUtils.formatTanggal(selectedTanggal)
         } else {
-            tvLabelBaris1.text = "Kategori"
-            tvLabelBaris2.text = "Tanggal"
-            tvLabelBaris3.text = "Dompet"
+            tvLabelBaris1.text = getString(R.string.label_kategori)
+            tvLabelBaris2.text = getString(R.string.label_tanggal)
+            tvLabelBaris3.text = getString(R.string.label_dompet)
             val daftar = if (jenisTransaksi == "PEMASUKAN") kategoriPemasukan else kategoriPengeluaran
-            val iconRes = daftar.find { it.nama == selectedKategori }?.iconRes ?: R.drawable.ic_makanan
-            ivIconBaris1.setImageResource(iconRes)
+            ivIconBaris1.setImageResource(selectedKategoriIcon)
             ivIconBaris2.setImageResource(R.drawable.ic_tanggal)
             ivIconBaris3.setImageResource(R.drawable.ic_wallet)
             tvKategoriTercatat.text = selectedKategori

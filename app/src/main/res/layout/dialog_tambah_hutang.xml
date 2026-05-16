@@ -31,7 +31,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Tambah Hutang Baru"
+            android:text="@string/title_tambah_hutang"
             android:textColor="#1A1A2E"
             android:textSize="18sp"
             android:textStyle="bold"/>
@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="36dp"
             android:backgroundTint="#2ECC71"
-            android:text="Simpan"
+            android:text="@string/btn_simpan"
             android:textColor="#FFFFFF"
             android:textSize="13sp"/>
 
@@ -63,7 +63,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:text="Nama/Keterangan"
+                android:text="@string/label_nama_hutang"
                 android:textColor="#333333"
                 android:textSize="13sp"
                 android:textStyle="bold"/>
@@ -78,7 +78,7 @@
                     android:id="@+id/etNama"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Contoh, Pinjam ke Jingga"
+                    android:hint="@string/hint_nama_hutang"
                     android:textSize="14sp"/>
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -88,7 +88,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Jenis Hutang"
+                android:text="@string/label_jenis_hutang"
                 android:textColor="#333333"
                 android:textSize="13sp"
                 android:textStyle="bold"/>
@@ -110,7 +110,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center"
-                    android:text="Kartu Kredit"
+                    android:text="@string/jenis_kartu_kredit"
                     android:textColor="#555555"
                     android:textSize="11sp"/>
 
@@ -125,7 +125,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center"
-                    android:text="Pinjaman Online"
+                    android:text="@string/jenis_pinjol"
                     android:textColor="#555555"
                     android:textSize="11sp"/>
 
@@ -139,7 +139,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center"
-                    android:text="Cicilan"
+                    android:text="@string/jenis_cicilan"
                     android:textColor="#555555"
                     android:textSize="11sp"/>
 
@@ -162,7 +162,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center"
-                    android:text="Pinjaman Bank"
+                    android:text="@string/jenis_pinjaman_bank"
                     android:textColor="#555555"
                     android:textSize="11sp"/>
 
@@ -177,7 +177,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center"
-                    android:text="Pinjam ke Kerabat"
+                    android:text="@string/jenis_pinjam_kerabat"
                     android:textColor="#555555"
                     android:textSize="10sp"/>
 
@@ -191,7 +191,7 @@
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center"
-                    android:text="Lainnya"
+                    android:text="@string/jenis_lainnya"
                     android:textColor="#555555"
                     android:textSize="11sp"/>
 
@@ -202,7 +202,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Jumlah Hutang"
+                android:text="@string/label_jumlah_hutang"
                 android:textColor="#333333"
                 android:textSize="13sp"
                 android:textStyle="bold"/>
@@ -235,7 +235,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="Limit Kartu Kredit"
+                    android:text="@string/label_limit_kredit"
                     android:textColor="#333333"
                     android:textSize="13sp"
                     android:textStyle="bold"/>
@@ -263,7 +263,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Jatuh Tempo (Opsional)"
+                android:text="@string/label_jatuh_tempo"
                 android:textColor="#333333"
                 android:textSize="13sp"
                 android:textStyle="bold"/>

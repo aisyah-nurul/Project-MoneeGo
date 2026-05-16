@@ -90,13 +90,15 @@ class RiwayatTransaksiFragment : Fragment() {
                     },
                     onDeleteClick = { t ->
                         AlertDialog.Builder(requireContext())
-                            .setTitle("Hapus Transaksi")
+                            .setTitle(getString(R.string.dialog_hapus_transaksi_title))
                             .setMessage(
-                                "Yakin ingin menghapus " +
-                                        "\"${t.catatan.ifEmpty { t.kategori }}\"?"
+                                getString(R.string.dialog_hapus_transaksi_pesan_nama,
+                                    t.catatan.ifEmpty { t.kategori })
                             )
-                            .setPositiveButton("Hapus") { _, _ -> viewModel.delete(t) }
-                            .setNegativeButton("Batal", null)
+                            .setPositiveButton(getString(R.string.dialog_hapus_transaksi_konfirmasi)) { _, _ ->
+                                viewModel.delete(t)
+                            }
+                            .setNegativeButton(getString(R.string.btn_batal), null)
                             .show()
                     }
                 )
@@ -137,17 +139,19 @@ class RiwayatTransaksiFragment : Fragment() {
             val total = lastTotalMasuk + lastTotalKeluar
 
             if (total > 0) {
-                val persenMasuk  = ((lastTotalMasuk / total) * 100).toInt()
+                val persenMasuk = ((lastTotalMasuk / total) * 100).toInt()
                 val persenKeluar = 100 - persenMasuk
                 binding.progressRatio.progress = persenMasuk
-                binding.tvPersenMasuk.text      = " Pemasukan $persenMasuk%"
-                binding.tvPersenKeluar.text     = " Pengeluaran $persenKeluar%"
-            } else {
-                binding.progressRatio.progress = 50
-                binding.tvPersenMasuk.text      = " Pemasukan 0%"
-                binding.tvPersenKeluar.text     = " Pengeluaran 0%"
-            }
 
+                // Gunakan getString dengan placeholder
+                binding.tvPersenMasuk.text = getString(R.string.format_persentase, getString(R.string.label_pemasukan), persenMasuk)
+                binding.tvPersenKeluar.text = getString(R.string.format_persentase, getString(R.string.label_pengeluaran), persenKeluar)
+            }
+            else {
+                binding.progressRatio.progress = 50
+                binding.tvPersenMasuk.text      = " ${getString(R.string.label_pemasukan)} 0%"
+                binding.tvPersenKeluar.text     = " ${getString(R.string.label_pengeluaran)} 0%"
+            }
             updateTotalHarian()
         }
     }
@@ -159,8 +163,8 @@ class RiwayatTransaksiFragment : Fragment() {
             binding.tvTotalMasuk.text  = CurrencyFormatter.format(lastTotalMasuk)
             binding.tvTotalKeluar.text = CurrencyFormatter.format(lastTotalKeluar)
         } else {
-            binding.tvTotalMasuk.text  = "Rp ***"
-            binding.tvTotalKeluar.text = "Rp ***"
+            binding.tvTotalMasuk.text  = getString(R.string.mask_saldo)
+            binding.tvTotalKeluar.text = getString(R.string.mask_saldo)
         }
     }
 

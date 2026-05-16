@@ -50,8 +50,11 @@
     <string name="btn_tambah_transfer">Add Transfer</string>
     <string name="btn_hapus_transfer">Delete Transfer</string>
     <string name="btn_selesai">DONE</string>
-    <string name="hint_tulis_catatan">Write a note...</string>
+    <string name="hint_tambah_catatan">Add a note...</string>
     <string name="pilih_dompet">Please select a wallet</string>
+    <string name="kb_spasi">SPACE</string>
+    <string name="kb_selesai">DONE</string>
+    <string name="label_catatan_transfer">Note</string>
 
     <!-- Transaction History -->
     <string name="label_persen_masuk"> Income 0%</string>
@@ -76,7 +79,7 @@
     <string name="title_tabungan">MY SAVINGS</string>
     <string name="label_tercapai">Achieved</string>
     <string name="label_berjalan">Ongoing</string>
-    <string name="label_total_terkumpul">Total Saved from 0 Goals</string>
+    <string name="label_total_terkumpul_impian">Total Saved from %d Goals</string>
     <string name="tab_berjalan">ONGOING</string>
     <string name="tab_selesai">COMPLETED</string>
     <string name="insight_tabungan">Keep saving!</string>
@@ -85,4 +88,149 @@
     <string name="title_hutang">Debt</string>
     <string name="label_hutang_belum_bayar">Unpaid debts!</string>
     <string name="label_selesai">Completed</string>
+    <string name="label_total_hutang">Total debt</string>
+    <string name="label_hutang_berjalan">Ongoing debt</string>
+    <string name="btn_tambah_hutang">+ Add debt</string>
+    <string name="empty_hutang">No debt yet</string>
+
+    <!-- Dialog Detail Transaction -->
+    <string name="label_tanggal_detail">Date</string>
+    <string name="label_dompet_detail">Wallet</string>
+    <string name="label_dari_detail">From</string>
+    <string name="label_ke_detail">To</string>
+    <string name="label_catatan_detail">Note</string>
+
+    <!-- Dialog Add Debt -->
+    <string name="title_tambah_hutang">Add New Debt</string>
+    <string name="btn_simpan_hutang">Save</string>
+    <string name="label_nama_hutang">Name/Description</string>
+    <string name="hint_nama_hutang">Example, Borrowed from Jingga</string>
+    <string name="label_jenis_hutang">Debt Type</string>
+    <string name="jenis_kartu_kredit">Credit Card</string>
+    <string name="jenis_pinjol">Online Loan</string>
+    <string name="jenis_cicilan">Installment</string>
+    <string name="jenis_pinjaman_bank">Bank Loan</string>
+    <string name="jenis_pinjam_kerabat">Borrowed from Family</string>
+    <string name="jenis_lainnya">Others</string>
+    <string name="label_jumlah_hutang">Debt Amount</string>
+    <string name="label_limit_kredit">Credit Card Limit</string>
+    <string name="label_jatuh_tempo">Due Date (Optional)</string>
+
+    <!-- Dialog Add Wallet -->
+    <string name="title_tambah_dompet">Add New Wallet</string>
+    <string name="label_nama_dompet">Wallet Name</string>
+    <string name="hint_nama_dompet">Example, BCA Savings</string>
+    <string name="label_jenis_dompet">Wallet Type</string>
+    <string name="jenis_rekening_bank">Bank Account</string>
+    <string name="jenis_dompet_digital">Digital Wallet</string>
+    <string name="jenis_uang_tunai">Cash</string>
+    <string name="jenis_investasi">Investment</string>
+    <string name="jenis_tabungan">Savings</string>
+    <string name="label_saldo_awal">Initial Balance</string>
+    <string name="btn_simpan_dompet">Save</string>
+
+    <!-- Dialog Add Savings -->
+    <string name="title_tambah_tabungan">Add Savings Target</string>
+    <string name="label_nama_target">Target Name</string>
+    <string name="hint_nama_target">Example: Buy Laptop</string>
+    <string name="label_target_nominal">Target Amount</string>
+    <string name="btn_simpan_tabungan">Save</string>
+
+    <!-- Bottom Sheet Installment -->
+    <string name="title_detail_hutang">Debt Detail</string>
+    <string name="btn_hapus_hutang">Delete</string>
+    <string name="label_sisa_hutang">Remaining debt</string>
+    <string name="label_sudah_dibayar">Already paid</string>
+    <string name="label_progress">Progress</string>
+    <string name="label_riwayat_cicilan">Payment history</string>
+    <string name="label_nominal_cicilan">Payment amount</string>
+    <string name="label_tanggal_bayar">Payment date</string>
+    <string name="label_catatan_opsional">Note (optional)</string>
+    <string name="btn_simpan_cicilan">Save payment</string>
+    <string name="btn_batal">Cancel</string>
+    <string name="label_hutang_lunas">This debt is fully paid!</string>
+
+    <!-- Expense Categories -->
+    <string name="kat_makanan">Food</string>
+    <string name="kat_fashion">Fashion</string>
+    <string name="kat_transportasi">Transportation</string>
+    <string name="kat_pendidikan">Education</string>
+    <string name="kat_sosial">Social</string>
+    <string name="kat_kesehatan">Health</string>
+    <string name="kat_rumah_tangga">Household</string>
+    <string name="kat_kebutuhan_pribadi">Personal Needs</string>
+    <!-- Income Categories -->
+    <string name="kat_gaji">Salary</string>
+    <string name="kat_bonus">Bonus</string>
+    <string name="kat_freelance">Freelance</string>
+    <string name="kat_investasi">Investment</string>
+    <string name="kat_hadiah">Gift</string>
+    <string name="kat_penjualan">Sales</string>
+
+    <string name="hari_sen">MON</string>
+    <string name="hari_sel">TUE</string>
+    <string name="hari_rab">WED</string>
+    <string name="hari_kam">THU</string>
+    <string name="hari_jum">FRI</string>
+    <string name="hari_sab">SAT</string>
+    <string name="hari_min">SUN</string>
+    <string name="bulan_jan">January</string>
+    <string name="bulan_feb">February</string>
+    <string name="bulan_mar">March</string>
+    <string name="bulan_apr">April</string>
+    <string name="bulan_mei">May</string>
+    <string name="bulan_jun">June</string>
+    <string name="bulan_jul">July</string>
+    <string name="bulan_agu">August</string>
+    <string name="bulan_sep">September</string>
+    <string name="bulan_okt">October</string>
+    <string name="bulan_nov">November</string>
+    <string name="bulan_des">December</string>
+    <string name="label_hari_ini">Today</string>
+    <string name="label_kemarin">Yesterday</string>
+    <string name="label_pilih_dompet">Select wallet</string>
+    <string name="label_belum_ada_dompet">No wallet yet.</string>
+
+    <!-- Dialog Delete Transaction -->
+    <string name="dialog_hapus_transaksi_title">Delete Transaction</string>
+    <string name="dialog_hapus_transaksi_pesan">Are you sure you want to delete this transaction?</string>
+    <string name="dialog_hapus_transaksi_konfirmasi">Delete</string>
+
+    <!-- Recorded state labels -->
+    <string name="label_pengeluaran_tercatat">EXPENSE RECORDED</string>
+    <string name="label_pemasukan_tercatat">INCOME RECORDED</string>
+    <string name="label_transfer_tercatat">TRANSFER RECORDED</string>
+
+    <!-- Info row labels -->
+    <string name="label_dompet_asal">Source Wallet</string>
+    <string name="label_dompet_tujuan">Destination Wallet</string>
+    <string name="label_dompet">Wallet</string>
+
+    <string name="dialog_pilih_dompet_asal">Select Source Wallet</string>
+    <string name="dialog_pilih_dompet_tujuan">Select Destination Wallet</string>
+    <string name="error_dompet_sama_tujuan">Cannot be the same as destination</string>
+    <string name="error_dompet_sama_asal">Cannot be the same as source</string>
+
+    <!-- Insight Dashboard -->
+    <string name="insight1_title">WELCOME!</string>
+    <string name="insight1_desc">Start tracking your expenses today so MoneeGo can help you better.</string>
+    <string name="insight2_title">MONEEGO TIPS</string>
+    <string name="insight2_desc">Saving at the start of the month helps you stay more disciplined.</string>
+
+    <string name="btn_simpan_perubahan">Save Changes</string>
+    <string name="error_nama_dompet_kosong">Wallet name cannot be empty</string>
+    <string name="toast_dompet_ditambahkan">Wallet \"%s\" added!</string>
+    <string name="toast_dompet_diperbarui">Wallet updated!</string>
+    <string name="toast_dompet_dihapus">Wallet deleted</string>
+    <string name="menu_edit_dompet">✏️  Edit Wallet</string>
+    <string name="menu_hapus_dompet">🗑️  Delete Wallet</string>
+    <string name="dialog_hapus_dompet_title">Delete Wallet</string>
+    <string name="dialog_hapus_dompet_pesan">Sure you want to delete \"%s\"?\nBalance %s will be lost.</string>
+
+    <string name="label_tercatat">RECORDED</string>
+    <string name="dialog_hapus_transaksi_pesan_nama">Sure you want to delete \"%s\"?</string>
+    <string name="format_bulan_tahun">%1$s %2$d</string>
+    <string name="mask_saldo">Rp ***</string>
+    <string name="mask_nominal">***</string>
+    <string name="format_persentase">%1$s %2$d%%</string>
 </resources>
