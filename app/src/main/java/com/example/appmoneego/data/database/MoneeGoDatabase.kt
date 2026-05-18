@@ -32,13 +32,15 @@ abstract class MoneeGoDatabase : RoomDatabase() {
 
         fun getDatabase(context: Context): MoneeGoDatabase {
             return INSTANCE ?: synchronized(this) {
+
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     MoneeGoDatabase::class.java,
                     "moneego_database"
                 )
-                    .fallbackToDestructiveMigration(true)
+                    .fallbackToDestructiveMigration() // ✅ ini versi yang benar
                     .build()
+
                 INSTANCE = instance
                 instance
             }

@@ -7,10 +7,9 @@ import androidx.room.PrimaryKey
 data class Transaksi(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val nominal: Double,
-    val jenis: String,
+    val jenis: String,        // PEMASUKAN / PENGELUARAN
     val kategori: String,
     val catatan: String,
     val tanggal: Long,
-    val dompetId: Int,
-    val transferId: String? = null
+    val dompetId: Int
 )
