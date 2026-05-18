@@ -74,8 +74,8 @@ class HutangAdapter(
                 dao.getCicilanByHutangId(hutang.id)
             }
             // Pastikan view masih untuk item yang sama (guard against recycling)
-            if (holder.bindingAdapterPosition == RecyclerView.NO_ID.toInt() ||
-                getItem(holder.bindingAdapterPosition).id != hutang.id) return@launch
+            val pos = holder.adapterPosition
+            if (pos == RecyclerView.NO_POSITION || getItem(pos).id != hutang.id) return@launch
 
             if (cicilan.isNotEmpty()) {
                 val terakhir = cicilan.maxByOrNull { it.tanggalBayar } ?: cicilan.last()
