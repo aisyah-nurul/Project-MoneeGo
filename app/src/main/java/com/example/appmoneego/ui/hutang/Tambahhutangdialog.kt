@@ -40,24 +40,24 @@ class TambahHutangDialog(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupJenisHutang()
+        setupJenisHutang(view)
         setupJumlahInput()
         setupDatePicker()
         setupSimpan()
     }
 
-    private fun setupJenisHutang() {
-        // Pakai TextView (sesuai XML) bukan Button
+    private fun setupJenisHutang(view: View) {
+        // Pakai findViewById langsung karena XML pakai TextView bukan Button
         val buttons = mapOf(
-            binding.btnKartuKredit     to "Kartu Kredit",
-            binding.btnPinjol          to "Pinjaman Online",
-            binding.btnCicilan         to "Cicilan",
-            binding.btnPinjamanBank    to "Pinjaman Bank",
-            binding.btnPinjamKeKerabat to "Pinjam ke Kerabat",
-            binding.btnLainnya         to "Lainnya"
+            view.findViewById<TextView>(R.id.btnKartuKredit)     to "Kartu Kredit",
+            view.findViewById<TextView>(R.id.btnPinjol)          to "Pinjaman Online",
+            view.findViewById<TextView>(R.id.btnCicilan)         to "Cicilan",
+            view.findViewById<TextView>(R.id.btnPinjamanBank)    to "Pinjaman Bank",
+            view.findViewById<TextView>(R.id.btnPinjamKeKerabat) to "Pinjam ke Kerabat",
+            view.findViewById<TextView>(R.id.btnLainnya)         to "Lainnya"
         )
 
-        // Default: tidak ada yang dipilih, set semua unselected dulu
+        // Set semua unselected dulu
         buttons.keys.forEach { tv ->
             tv.setBackgroundResource(R.drawable.bg_jenis_unselected)
             tv.setTextColor(Color.parseColor("#555555"))

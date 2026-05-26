@@ -1,46 +1,34 @@
-package com.example.appmoneego.viewmodel
+package com.example.appmoneego.ui.tabungan
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.appmoneego.data.database.MoneeGoDatabase
 import com.example.appmoneego.data.entity.Tabungan
 import com.example.appmoneego.repository.TabunganRepository
 import kotlinx.coroutines.launch
+import android.app.Application
 
 class TabunganViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repo: TabunganRepository
-
-    val allTabungan: LiveData<List<Tabungan>>
-
-    init {
+    private val repository: TabunganRepository by lazy {
         val db = MoneeGoDatabase.getDatabase(application)
-        repo = TabunganRepository(db.tabunganDao())
-        allTabungan = repo.allTabungan
+        TabunganRepository(db.tabunganDao())
     }
 
+    val tabunganList: LiveData<List<Tabungan>> = repository.allTabungan
+
     fun insert(tabungan: Tabungan) = viewModelScope.launch {
-        repo.insert(tabungan)
+        repository.insert(tabungan)
     }
 
     fun update(tabungan: Tabungan) = viewModelScope.launch {
-        repo.update(tabungan)
+        repository.update(tabungan)
     }
 
     fun delete(tabungan: Tabungan) = viewModelScope.launch {
-        repo.delete(tabungan)
+        repository.delete(tabungan)
     }
 
     fun tambahTerkumpul(tabungan: Tabungan, jumlah: Double) = viewModelScope.launch {
-        val updated = tabungan.copy(terkumpul = tabungan.terkumpul + jumlah)
-        repo.update(updated)
-    }
-
-    // hitung persentase progress tabungan
-    fun getProgress(tabungan: Tabungan): Int {
-        if (tabungan.targetNominal == 0.0) return 0
-        return ((tabungan.terkumpul / tabungan.targetNominal) * 100).toInt().coerceIn(0, 100)
+        repository.update(tabungan.copy(terkumpul = tabungan.terkumpul + jumlah))
     }
 }
