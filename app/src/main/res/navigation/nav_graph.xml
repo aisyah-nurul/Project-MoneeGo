@@ -37,7 +37,6 @@
         android:id="@+id/riwayatTransaksiFragment"
         android:name="com.example.appmoneego.ui.riwayattransaksi.RiwayatTransaksiFragment"
         android:label="Riwayat">
-        <!--  Action ke halaman edit transaksi  -->
         <action
             android:id="@+id/action_riwayat_to_tambahTransaksi"
             app:destination="@id/tambahTransaksiFragment"/>
@@ -62,10 +61,17 @@
         android:name="com.example.appmoneego.ui.hutang.HutangFragment"
         android:label="Hutang"/>
 
+    <!-- 🔥 INI YANG DITAMBAH -->
     <fragment
         android:id="@+id/analisisFragment"
         android:name="com.example.appmoneego.ui.analisis.AnalisisFragment"
-        android:label="Analisis"/>
+        android:label="Analisis">
+
+        <action
+            android:id="@+id/action_analisisFragment_to_tambahTransaksiFragment"
+            app:destination="@id/tambahTransaksiFragment"/>
+
+    </fragment>
 
     <fragment
         android:id="@+id/pengaturanFragment"
@@ -76,9 +82,11 @@
         android:id="@+id/tambahTransaksiFragment"
         android:name="com.example.appmoneego.ui.tambahtransaksi.TambahTransaksiFragment"
         android:label="Tambah Transaksi">
+
         <action
             android:id="@+id/action_tambahTransaksi_to_riwayat"
             app:destination="@id/riwayatTransaksiFragment"/>
+
         <action
             android:id="@+id/action_tambahTransaksi_to_dompet"
             app:destination="@id/dompetFragment"/>

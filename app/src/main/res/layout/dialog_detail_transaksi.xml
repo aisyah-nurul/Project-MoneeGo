@@ -128,7 +128,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="Tanggal"
+                android:text="@string/label_tanggal_detail"
                 android:textSize="13sp"
                 android:textColor="#888888"/>
             <TextView
@@ -152,7 +152,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="Dompet"
+                android:text="@string/label_dompet_detail"
                 android:textSize="13sp"
                 android:textColor="#888888"/>
             <TextView
@@ -177,7 +177,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="Dari"
+                android:text="@string/label_dari_detail"
                 android:textSize="13sp"
                 android:textColor="#888888"/>
             <TextView
@@ -202,7 +202,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="Ke"
+                android:text="@string/label_ke_detail"
                 android:textSize="13sp"
                 android:textColor="#888888"/>
             <TextView
@@ -225,7 +225,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="Catatan"
+                android:text="@string/label_catatan_detail"
                 android:textSize="13sp"
                 android:textColor="#888888"/>
             <TextView
