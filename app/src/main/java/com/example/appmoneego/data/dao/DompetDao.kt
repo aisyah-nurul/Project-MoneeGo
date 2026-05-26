@@ -19,6 +19,9 @@ interface DompetDao {
     @Query("SELECT * FROM dompet ORDER BY tanggalDibuat DESC")
     fun getAllDompet(): LiveData<List<Dompet>>
 
+    @Query("SELECT * FROM dompet ORDER BY tanggalDibuat DESC")
+    suspend fun getAllDompetSync(): List<Dompet>
+
     @Query("SELECT * FROM dompet WHERE id = :id")
     suspend fun getDompetById(id: Int): Dompet?
 

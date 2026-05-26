@@ -26,7 +26,8 @@ class MainActivity : AppCompatActivity() {
             when (destination.id) {
                 R.id.splashFragment,
                 R.id.hutangFragment,
-                R.id.dompetFragment -> {
+                R.id.dompetFragment,
+                R.id.tabunganFragment -> {
                     binding.bottomNavigationView.visibility = View.GONE
                 }
                 else -> {
