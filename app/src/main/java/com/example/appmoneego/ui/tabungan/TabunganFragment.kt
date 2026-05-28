@@ -1,60 +1,150 @@
 package com.example.appmoneego.ui.tabungan
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.appmoneego.R
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.appmoneego.adapter.TabunganAdapter
+import com.example.appmoneego.databinding.FragmentTabunganBinding
+import com.example.appmoneego.ui.hutang.HutangViewModel
+import com.example.appmoneego.ui.hutang.sisaHutang
+import com.example.appmoneego.utils.CurrencyFormatter
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [TabunganFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class TabunganFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var _binding: FragmentTabunganBinding? = null
+    private val binding get() = _binding!!
+
+    private lateinit var viewModel: TabunganViewModel
+    private lateinit var hutangViewModel: HutangViewModel
+    private lateinit var adapter: TabunganAdapter
+    private var tabAktif = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_tabungan, container, false)
+    ): View {
+        _binding = FragmentTabunganBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment TabunganFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            TabunganFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel       = ViewModelProvider(this)[TabunganViewModel::class.java]
+        hutangViewModel = ViewModelProvider(this)[HutangViewModel::class.java]
+        setupAdapter()
+        setupObservers()
+        setupHutangBanner()
+        setupClickListeners()
+    }
+
+    private fun setupAdapter() {
+        adapter = TabunganAdapter(
+            onTabungClick = { tabungan ->
+                DetailTabunganBottomSheet(
+                    tabungan  = tabungan,
+                    onUpdated = { viewModel.update(it) },
+                    onDeleted = { viewModel.delete(it) }
+                ).show(parentFragmentManager, "DetailTabungan")
+            },
+            onItemClick = { tabungan ->
+                DetailTabunganBottomSheet(
+                    tabungan  = tabungan,
+                    onUpdated = { viewModel.update(it) },
+                    onDeleted = { viewModel.delete(it) }
+                ).show(parentFragmentManager, "DetailTabungan")
             }
+        )
+        binding.rvTabungan.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvTabungan.adapter = adapter
+    }
+
+    private fun refreshList(list: List<com.example.appmoneego.data.entity.Tabungan>) {
+        val berjalan = list.filter { it.terkumpul < it.targetNominal }
+        val selesai  = list.filter { it.terkumpul >= it.targetNominal }
+        adapter.submitList(if (tabAktif == 0) berjalan else selesai)
+    }
+
+    private fun setupObservers() {
+        viewModel.tabunganList.observe(viewLifecycleOwner) { list ->
+            val totalTerkumpul = list.sumOf { it.terkumpul }
+            val tercapai = list.count { it.terkumpul >= it.targetNominal }
+            val berjalan = list.count { it.terkumpul < it.targetNominal }
+
+            binding.tvTotalTerkumpul.text = CurrencyFormatter.format(totalTerkumpul)
+            binding.tvJumlahImpian.text   = "Total Terkumpul dari ${list.size} Impian"
+            binding.tvTercapai.text       = "${tercapai.toString().padStart(2, '0')} Target"
+            binding.tvBerjalan.text       = "${berjalan.toString().padStart(2, '0')} Target"
+
+            val closest = list
+                .filter { it.terkumpul < it.targetNominal }
+                .minByOrNull { it.targetNominal - it.terkumpul }
+            binding.tvInsightTabungan.text = if (closest != null) {
+                val sisa = closest.targetNominal - closest.terkumpul
+                "Target '${closest.nama}' sisa ${CurrencyFormatter.format(sisa)} lagi! Selesaikan yuk?"
+            } else "Semangat menabung!"
+
+            refreshList(list)
+        }
+    }
+
+    private fun setupHutangBanner() {
+        hutangViewModel.hutangList.observe(viewLifecycleOwner) { list ->
+            val aktif = list.filter { !it.selesai }
+            if (aktif.isEmpty()) {
+                binding.cardInfoHutang.visibility = View.GONE
+            } else {
+                val totalHutang = aktif.sumOf { it.sisaHutang.toDouble() }
+                binding.tvInfoHutang.text =
+                    "${aktif.size} hutang · Total ${CurrencyFormatter.format(totalHutang)}"
+                binding.cardInfoHutang.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    private fun setupClickListeners() {
+        binding.btnBack.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
+        binding.tvLihatHutang.setOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
+
+        binding.btnTabBerjalan.setOnClickListener {
+            tabAktif = 0
+            binding.btnTabBerjalan.backgroundTintList =
+                android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#2C3E6B"))
+            binding.btnTabBerjalan.setTextColor(android.graphics.Color.WHITE)
+            binding.btnTabSelesai.backgroundTintList =
+                android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
+            binding.btnTabSelesai.setTextColor(android.graphics.Color.parseColor("#4A6FA5"))
+            viewModel.tabunganList.value?.let { refreshList(it) }
+        }
+
+        binding.btnTabSelesai.setOnClickListener {
+            tabAktif = 1
+            binding.btnTabSelesai.backgroundTintList =
+                android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#2C3E6B"))
+            binding.btnTabSelesai.setTextColor(android.graphics.Color.WHITE)
+            binding.btnTabBerjalan.backgroundTintList =
+                android.content.res.ColorStateList.valueOf(android.graphics.Color.WHITE)
+            binding.btnTabBerjalan.setTextColor(android.graphics.Color.parseColor("#4A6FA5"))
+            viewModel.tabunganList.value?.let { refreshList(it) }
+        }
+
+        binding.fabTambahTabungan.setOnClickListener {
+            TambahTabunganDialog { tabungan ->
+                viewModel.insert(tabungan)
+            }.show(parentFragmentManager, "TambahTabungan")
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
