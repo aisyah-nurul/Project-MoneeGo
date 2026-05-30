@@ -21,14 +21,6 @@ class TransaksiAdapter(
     var nominalVisible: Boolean = nominalVisibleInit
         set(value) { field = value; notifyDataSetChanged() }
 
-    // Mode filter dari Fragment:
-    // "SEMUA"        → tampilkan semua
-    // "PENGELUARAN"  → hanya pengeluaran
-    // "PEMASUKAN"    → hanya pemasukan
-    // "TRANSFER"     → hanya transfer
-    var filterMode: String = "SEMUA"
-        set(value) { field = value; rebuildDisplayList() }
-
     data class TransferPair(
         val keluarTransaksi: Transaksi,
         val masukTransaksi:  Transaksi,
@@ -38,11 +30,15 @@ class TransaksiAdapter(
         val transferId: String
     )
 
-    // ── Hanya dua tipe item: transaksi biasa & transfer pair ─────────────────
-    // Header dihapus total dari displayList
     sealed class TransaksiItem {
         data class Item(val transaksi: Transaksi)       : TransaksiItem()
         data class TransferItem(val pair: TransferPair) : TransaksiItem()
+
+        // Untuk keperluan sorting, ambil tanggal dari masing-masing tipe
+        fun getTanggal(): Long = when (this) {
+            is Item         -> transaksi.tanggal
+            is TransferItem -> pair.tanggal
+        }
     }
 
     companion object {
@@ -69,8 +65,8 @@ class TransaksiAdapter(
         )
     }
 
-    private var semuaData:    List<Transaksi>      = emptyList()
-    private var daftarDompet: List<Dompet>         = emptyList()
+    private var semuaData:    List<Transaksi>           = emptyList()
+    private var daftarDompet: List<Dompet>              = emptyList()
     private var displayList:  MutableList<TransaksiItem> = mutableListOf()
 
     fun submitDompet(list: List<Dompet>)  { daftarDompet = list; rebuildDisplayList() }
@@ -128,25 +124,23 @@ class TransaksiAdapter(
         val pemasukan   = semuaData.filter { it.jenis == "PEMASUKAN"   && it.kategori != "Transfer" }
         val pengeluaran = semuaData.filter { it.jenis == "PENGELUARAN" && it.kategori != "Transfer" }
 
-        // ── Bangun displayList sesuai filterMode — TANPA header grup ─────────
-        when (filterMode) {
-            "PENGELUARAN" -> pengeluaran.forEach { newList.add(TransaksiItem.Item(it)) }
-            "PEMASUKAN"   -> pemasukan.forEach   { newList.add(TransaksiItem.Item(it)) }
-            "TRANSFER"    -> transferPairs.forEach { newList.add(TransaksiItem.TransferItem(it)) }
-            else -> {
-                transferPairs.forEach { newList.add(TransaksiItem.TransferItem(it)) }
-                pemasukan.forEach     { newList.add(TransaksiItem.Item(it)) }
-                pengeluaran.forEach   { newList.add(TransaksiItem.Item(it)) }
-            }
-        }
+        // ── Gabung semua jenis transaksi ──────────────────────────────────────
+        transferPairs.forEach { newList.add(TransaksiItem.TransferItem(it)) }
+        pemasukan.forEach     { newList.add(TransaksiItem.Item(it)) }
+        pengeluaran.forEach   { newList.add(TransaksiItem.Item(it)) }
+
+        // ── Sort descending berdasarkan tanggal (terbaru di atas) ─────────────
+        newList.sortByDescending { it.getTanggal() }
 
         val diff = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
             override fun getOldListSize() = displayList.size
             override fun getNewListSize() = newList.size
             override fun areItemsTheSame(oldPos: Int, newPos: Int): Boolean {
                 val old = displayList[oldPos]; val new = newList[newPos]
-                if (old is TransaksiItem.Item         && new is TransaksiItem.Item)         return old.transaksi.id == new.transaksi.id
-                if (old is TransaksiItem.TransferItem && new is TransaksiItem.TransferItem) return old.pair.transferId == new.pair.transferId
+                if (old is TransaksiItem.Item         && new is TransaksiItem.Item)
+                    return old.transaksi.id == new.transaksi.id
+                if (old is TransaksiItem.TransferItem && new is TransaksiItem.TransferItem)
+                    return old.pair.transferId == new.pair.transferId
                 return false
             }
             override fun areContentsTheSame(oldPos: Int, newPos: Int) =
@@ -167,7 +161,7 @@ class TransaksiAdapter(
 
             val namaAsal   = daftarDompet.find { it.id == pair.keluarTransaksi.dompetId }?.nama ?: "?"
             val namaTujuan = daftarDompet.find { it.id == pair.masukTransaksi.dompetId  }?.nama ?: "?"
-            binding.tvCatatan.text    = if (namaAsal == namaTujuan)
+            binding.tvCatatan.text = if (namaAsal == namaTujuan)
                 pair.catatan.ifEmpty { "Transfer" }
             else "$namaAsal → $namaTujuan"
             binding.tvSumberDana.text = ""
@@ -176,7 +170,6 @@ class TransaksiAdapter(
                 CurrencyFormatter.format(pair.nominal) else "Rp ***"
             binding.tvNominal.setTextColor(0xFF1A2B34.toInt())
 
-            // Sembunyikan toggle collapse — tidak ada header grup lagi
             binding.clHeaderInteraktif.visibility = View.GONE
             binding.cardDetail.visibility         = View.VISIBLE
 
@@ -207,7 +200,6 @@ class TransaksiAdapter(
             binding.tvSumberDana.text =
                 daftarDompet.find { it.id == transaksi.dompetId }?.nama ?: "-"
 
-            // Sembunyikan toggle collapse — tidak ada header grup lagi
             binding.clHeaderInteraktif.visibility = View.GONE
             binding.cardDetail.visibility         = View.VISIBLE
 

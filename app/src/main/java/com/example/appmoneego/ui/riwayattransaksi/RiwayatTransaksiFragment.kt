@@ -11,14 +11,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.appmoneego.R
 import com.example.appmoneego.adapter.TransaksiAdapter
-import com.example.appmoneego.data.entity.Transaksi
 import com.example.appmoneego.databinding.FragmentRiwayatTransaksiBinding
 import com.example.appmoneego.utils.CurrencyFormatter
 import com.example.appmoneego.utils.DateUtils
 import com.example.appmoneego.utils.VisibilityPrefs
 import com.example.appmoneego.viewmodel.DompetViewModel
 import com.example.appmoneego.viewmodel.TransaksiViewModel
-import com.google.android.material.tabs.TabLayout
 import java.util.*
 
 class RiwayatTransaksiFragment : Fragment() {
@@ -35,12 +33,8 @@ class RiwayatTransaksiFragment : Fragment() {
     private var kalenderVisible = false
     private var nominalVisible: Boolean = true
 
-    // Total keseluruhan untuk ringkasan — tidak terpengaruh tab
     private var lastTotalMasuk  = 0.0
     private var lastTotalKeluar = 0.0
-
-    // Tab index: 0=Pengeluaran, 1=Pemasukan, 2=Transfer
-    private var tabAktif = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,13 +50,16 @@ class RiwayatTransaksiFragment : Fragment() {
         nominalVisible = VisibilityPrefs.isNominalVisible(requireContext())
 
         setupAdapter()
-        setupTabFilter()
         setupKalender()
         setupNavigasiTanggal()
         setupTombolMata()
         observeDompet()
-        loadTransaksiByTanggal(selectedDateMillis)
         syncIkonMata()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadTransaksiByTanggal(selectedDateMillis)
     }
 
     // ── Adapter ───────────────────────────────────────────────────────────────
@@ -86,6 +83,7 @@ class RiwayatTransaksiFragment : Fragment() {
                             putLong("edit_tanggal",        t.tanggal)
                             putInt("edit_dompet_id",       t.dompetId)
                             putBoolean("edit_is_transfer", isTransfer)
+                            putString("edit_transfer_id",  t.transferId)
                         }
                         findNavController()
                             .navigate(R.id.action_riwayat_to_tambahTransaksi, bundle)
@@ -94,12 +92,14 @@ class RiwayatTransaksiFragment : Fragment() {
                         AlertDialog.Builder(requireContext())
                             .setTitle(getString(R.string.dialog_hapus_transaksi_title))
                             .setMessage(
-                                getString(R.string.dialog_hapus_transaksi_pesan_nama,
-                                    t.catatan.ifEmpty { t.kategori })
+                                getString(
+                                    R.string.dialog_hapus_transaksi_pesan_nama,
+                                    t.catatan.ifEmpty { t.kategori }
+                                )
                             )
-                            .setPositiveButton(getString(R.string.dialog_hapus_transaksi_konfirmasi)) { _, _ ->
-                                viewModel.delete(t)
-                            }
+                            .setPositiveButton(
+                                getString(R.string.dialog_hapus_transaksi_konfirmasi)
+                            ) { _, _ -> viewModel.delete(t) }
                             .setNegativeButton(getString(R.string.btn_batal), null)
                             .show()
                     }
@@ -121,29 +121,11 @@ class RiwayatTransaksiFragment : Fragment() {
         }
     }
 
-    // ── Tab Filter ────────────────────────────────────────────────────────────
-
-    private fun setupTabFilter() {
-        // Reset ke Pengeluaran setiap fragment dibuka
-        tabAktif = 0
-        adapter.filterMode = tabIndexKeMode(tabAktif)
-        binding.tabFilter.getTabAt(0)?.select()
-
-        binding.tabFilter.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                tabAktif           = tab?.position ?: 0
-                adapter.filterMode = tabIndexKeMode(tabAktif)
-            }
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
-        })
-    }
-
-    private fun tabIndexKeMode(index: Int): String = when (index) {
-        0    -> "PENGELUARAN"
-        1    -> "PEMASUKAN"
-        2    -> "TRANSFER"
-        else -> "SEMUA"
+    // ── EMPTY STATE helper ────────────────────────────────────────────────────
+    // Style identik HutangFragment — hanya beda view id dan teks
+    private fun updateEmptyState(isEmpty: Boolean) {
+        binding.rvTransaksi.visibility          = if (isEmpty) View.GONE    else View.VISIBLE
+        binding.layoutEmptyTransaksi.visibility = if (isEmpty) View.VISIBLE else View.GONE
     }
 
     // ── Load transaksi ────────────────────────────────────────────────────────
@@ -154,20 +136,27 @@ class RiwayatTransaksiFragment : Fragment() {
 
         binding.tvTanggalHeader.text = DateUtils.formatTanggal(timeMillis)
 
+        viewModel.getByDateRange(start, end).removeObservers(viewLifecycleOwner)
+
         viewModel.getByDateRange(start, end).observe(viewLifecycleOwner) { list ->
-            // Kirim SEMUA data ke adapter — adapter sendiri yang filter sesuai filterMode
             adapter.submitList(list)
 
-            // Hitung total dari SEMUA data untuk ringkasan header
-            lastTotalMasuk  = list.filter { it.jenis == "PEMASUKAN"   && it.kategori != "Transfer" }.sumOf { it.nominal }
-            lastTotalKeluar = list.filter { it.jenis == "PENGELUARAN" && it.kategori != "Transfer" }.sumOf { it.nominal }
+            // ── UPDATE EMPTY STATE ────────────────────────────────────────────
+            updateEmptyState(list.isEmpty())
+
+            lastTotalMasuk  = list.filter {
+                it.jenis == "PEMASUKAN" && it.kategori != "Transfer"
+            }.sumOf { it.nominal }
+            lastTotalKeluar = list.filter {
+                it.jenis == "PENGELUARAN" && it.kategori != "Transfer"
+            }.sumOf { it.nominal }
 
             val total = lastTotalMasuk + lastTotalKeluar
             if (total > 0) {
                 val persenMasuk  = ((lastTotalMasuk / total) * 100).toInt()
                 val persenKeluar = 100 - persenMasuk
                 binding.progressRatio.progress = persenMasuk
-                binding.tvPersenMasuk.text  = getString(
+                binding.tvPersenMasuk.text = getString(
                     R.string.format_persentase,
                     getString(R.string.label_pemasukan),
                     persenMasuk

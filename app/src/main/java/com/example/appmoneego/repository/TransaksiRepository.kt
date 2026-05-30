@@ -10,6 +10,10 @@ class TransaksiRepository(private val dao: TransaksiDao) {
     val totalPemasukan: LiveData<Double?> = dao.getTotalPemasukan()
     val totalPengeluaran: LiveData<Double?> = dao.getTotalPengeluaran()
 
+    // ── Total jumlah transaksi & tanggal terakhir — untuk insight ─────────────
+    val totalJumlahTransaksi: LiveData<Int>     = dao.getTotalJumlahTransaksi()
+    val tanggalTransaksiTerakhir: LiveData<Long?> = dao.getTanggalTransaksiTerakhir()
+
     suspend fun insert(transaksi: Transaksi) = dao.insert(transaksi)
     suspend fun update(transaksi: Transaksi) = dao.update(transaksi)
     suspend fun delete(transaksi: Transaksi) = dao.delete(transaksi)
@@ -35,4 +39,21 @@ class TransaksiRepository(private val dao: TransaksiDao) {
 
     fun getByDompetAndBulan(dompetId: Int, start: Long, end: Long): LiveData<List<Transaksi>> =
         dao.getByDompetAndBulan(dompetId, start, end)
+
+    // ── Insight ───────────────────────────────────────────────────────────────
+
+    fun getPengeluaranNonTransferBulanIni(
+        start: Long,
+        end: Long
+    ): LiveData<List<Transaksi>> =
+        dao.getPengeluaranNonTransferBulanIni(start, end)
+
+    fun getPengeluaranNonTransferBulanLalu(
+        start: Long,
+        end: Long
+    ): LiveData<List<Transaksi>> =
+        dao.getPengeluaranNonTransferBulanLalu(start, end)
+
+    fun getJumlahTransaksiBulanIni(start: Long, end: Long): LiveData<Int> =
+        dao.getJumlahTransaksiBulanIni(start, end)
 }

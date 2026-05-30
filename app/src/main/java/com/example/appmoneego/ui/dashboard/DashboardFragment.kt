@@ -1,5 +1,6 @@
 package com.example.appmoneego.ui.dashboard
 
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -20,6 +22,7 @@ class DashboardFragment : Fragment() {
 
     private lateinit var dashboardViewModel: DashboardViewModel
 
+    // ── View saldo & bulan ────────────────────────────────────────────────────
     private lateinit var tvSaldo:       TextView
     private lateinit var tvPemasukan:   TextView
     private lateinit var tvPengeluaran: TextView
@@ -29,24 +32,28 @@ class DashboardFragment : Fragment() {
     private lateinit var btnPrevBulan:  TextView
     private lateinit var btnNextBulan:  TextView
 
-    // State mata — dibaca dari SharedPreferences agar persisten lintas fragment
+    // ── View insight ──────────────────────────────────────────────────────────
+    private lateinit var tvInsightRingkasan:    TextView
+    private lateinit var tvInsightTips:         TextView
+    private lateinit var cardRingkasan:         CardView
+    private lateinit var viewIndikatorRingkasan: View
+
+    // ── State mata ────────────────────────────────────────────────────────────
     private var isSaldoVisible = true
 
-    // Nilai mentah string untuk keperluan toggle mata
+    // Nilai mentah untuk keperluan toggle mata
     private var nilaiSaldo       = "Rp 0"
     private var nilaiPemasukan   = "Rp 0"
     private var nilaiPengeluaran = "Rp 0"
     private var nilaiSelisih     = "Rp 0"
 
-    // Nilai double mentah untuk hitung selisih dan warna
+    // Nilai double untuk hitung selisih dan warna
     private var rawPemasukan   = 0.0
     private var rawPengeluaran = 0.0
 
-    // Calendar yang merepresentasikan bulan yang sedang ditampilkan
+    // Calendar bulan yang sedang ditampilkan
     private val calBulanAktif: Calendar = Calendar.getInstance()
 
-    // Nama bulan dalam Bahasa Indonesia
-    // Catatan: bisa dipindah ke strings.xml untuk lokalisasi penuh
     private val NAMA_BULAN = listOf(
         "Januari", "Februari", "Maret", "April", "Mei", "Juni",
         "Juli", "Agustus", "September", "Oktober", "November", "Desember"
@@ -62,7 +69,6 @@ class DashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Baca state mata dari SharedPreferences agar konsisten lintas fragment
         isSaldoVisible = VisibilityPrefs.isNominalVisible(requireContext())
 
         initViews(view)
@@ -77,14 +83,18 @@ class DashboardFragment : Fragment() {
     // ── Init Views ────────────────────────────────────────────────────────────
 
     private fun initViews(view: View) {
-        tvSaldo       = view.findViewById(R.id.tv_saldo)
-        tvPemasukan   = view.findViewById(R.id.tv_pemasukan)
-        tvPengeluaran = view.findViewById(R.id.tv_pengeluaran)
-        tvSelisih     = view.findViewById(R.id.tv_selisih)
-        ivToggleSaldo = view.findViewById(R.id.iv_toggle_saldo)
-        tvBulan       = view.findViewById(R.id.tv_bulan)
-        btnPrevBulan  = view.findViewById(R.id.btn_prev_bulan)
-        btnNextBulan  = view.findViewById(R.id.btn_next_bulan)
+        tvSaldo              = view.findViewById(R.id.tv_saldo)
+        tvPemasukan          = view.findViewById(R.id.tv_pemasukan)
+        tvPengeluaran        = view.findViewById(R.id.tv_pengeluaran)
+        tvSelisih            = view.findViewById(R.id.tv_selisih)
+        ivToggleSaldo        = view.findViewById(R.id.iv_toggle_saldo)
+        tvBulan              = view.findViewById(R.id.tv_bulan)
+        btnPrevBulan         = view.findViewById(R.id.btn_prev_bulan)
+        btnNextBulan         = view.findViewById(R.id.btn_next_bulan)
+        tvInsightRingkasan    = view.findViewById(R.id.tv_insight_ringkasan)
+        tvInsightTips         = view.findViewById(R.id.tv_insight_tips)
+        cardRingkasan         = view.findViewById(R.id.card_ringkasan)
+        viewIndikatorRingkasan = view.findViewById(R.id.view_indikator_ringkasan)
     }
 
     // ── ViewModel ─────────────────────────────────────────────────────────────
@@ -92,7 +102,7 @@ class DashboardFragment : Fragment() {
     private fun setupViewModel() {
         dashboardViewModel = ViewModelProvider(this)[DashboardViewModel::class.java]
 
-        // Saldo total semua dompet — tidak berubah saat ganti bulan
+        // Saldo total semua dompet
         dashboardViewModel.totalSaldo.observe(viewLifecycleOwner) { total ->
             nilaiSaldo   = CurrencyFormatter.format(total ?: 0.0)
             tvSaldo.text = if (isSaldoVisible) nilaiSaldo else "Rp ***"
@@ -113,6 +123,47 @@ class DashboardFragment : Fragment() {
             tvPengeluaran.text = if (isSaldoVisible) nilaiPengeluaran else "***"
             hitungDanTampilkanSelisih()
         }
+
+        // ── Insight Ringkasan ─────────────────────────────────────────────────
+        dashboardViewModel.insightRingkasan.observe(viewLifecycleOwner) { insight ->
+            tvInsightRingkasan.text = insight.pesan
+
+            // Ubah warna kartu dan indikator berdasarkan tipe insight
+            when (insight.tipe) {
+                "WARNING" -> {
+                    // Merah — pengeluaran tinggi atau tidak aktif mencatat
+                    cardRingkasan.setCardBackgroundColor(0xFFFFCDD2.toInt())
+                    setIndikatorWarna(viewIndikatorRingkasan, 0xFFF44336.toInt())
+                }
+                "SUCCESS" -> {
+                    // Hijau — pengeluaran turun
+                    cardRingkasan.setCardBackgroundColor(0xFFC8E6C9.toInt())
+                    setIndikatorWarna(viewIndikatorRingkasan, 0xFF4CAF50.toInt())
+                }
+                else -> {
+                    // INFO — default merah muda
+                    cardRingkasan.setCardBackgroundColor(0xFFFFCDD2.toInt())
+                    setIndikatorWarna(viewIndikatorRingkasan, 0xFFF44336.toInt())
+                }
+            }
+        }
+
+        // ── Tips MoneeGo ──────────────────────────────────────────────────────
+        dashboardViewModel.insightTips.observe(viewLifecycleOwner) { tips ->
+            tvInsightTips.text = tips.pesan
+        }
+    }
+
+    /**
+     * Ubah warna lingkaran indikator secara programatik.
+     * Drawable bg_circle_indikator_merah dan bg_circle_indikator_kuning
+     * dipakai sebagai template; warnanya di-override di sini.
+     */
+    private fun setIndikatorWarna(v: View, warna: Int) {
+        val drawable = GradientDrawable()
+        drawable.shape = GradientDrawable.OVAL
+        drawable.setColor(warna)
+        v.background = drawable
     }
 
     // ── Hitung & Tampilkan Selisih ────────────────────────────────────────────
@@ -127,9 +178,9 @@ class DashboardFragment : Fragment() {
         }
 
         val warnaSelisih = when {
-            selisih > 0  -> 0xFF4CAF50.toInt()  // hijau — surplus
-            selisih < 0  -> 0xFFF44336.toInt()  // merah — defisit
-            else         -> 0xFF1A1A2E.toInt()  // netral
+            selisih > 0  -> 0xFF4CAF50.toInt()
+            selisih < 0  -> 0xFFF44336.toInt()
+            else         -> 0xFF1A1A2E.toInt()
         }
 
         tvSelisih.text = if (isSaldoVisible) nilaiSelisih else "***"
@@ -162,7 +213,6 @@ class DashboardFragment : Fragment() {
     private fun setupToggleSaldo() {
         ivToggleSaldo.setOnClickListener {
             isSaldoVisible = !isSaldoVisible
-            // Simpan ke SharedPreferences agar persisten saat pindah halaman
             VisibilityPrefs.setNominalVisible(requireContext(), isSaldoVisible)
             syncIkonMata()
             refreshTampilan()
@@ -187,7 +237,6 @@ class DashboardFragment : Fragment() {
             tvPengeluaran.text = "***"
             tvSelisih.text     = "***"
         }
-        // Warna selisih tetap diupdate meski nilai tersembunyi
         hitungDanTampilkanSelisih()
     }
 

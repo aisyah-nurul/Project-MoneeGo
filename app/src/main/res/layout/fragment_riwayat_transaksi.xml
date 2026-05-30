@@ -19,6 +19,7 @@
         android:paddingTop="40dp"
         android:paddingBottom="14dp">
 
+        <!-- Legend: lingkaran + teks pemasukan | lingkaran + teks pengeluaran -->
         <LinearLayout
             android:id="@+id/ll_legend"
             android:layout_width="wrap_content"
@@ -28,10 +29,12 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
+            <!-- Lingkaran hijau -->
             <View
                 android:layout_width="10dp"
                 android:layout_height="10dp"
-                android:background="#276F29"/>
+                android:background="@drawable/ic_circle_green"/>
+
             <TextView
                 android:id="@+id/tv_persen_masuk"
                 android:layout_width="wrap_content"
@@ -39,20 +42,27 @@
                 android:text="@string/label_persen_masuk"
                 android:textSize="11sp"
                 android:textColor="@android:color/white"
-                android:layout_marginEnd="8dp"/>
+                android:layout_marginStart="6dp"
+                android:layout_marginEnd="12dp"/>
+
+            <!-- Lingkaran merah -->
             <View
                 android:layout_width="10dp"
                 android:layout_height="10dp"
-                android:background="#F44336"/>
+                android:background="@drawable/ic_circle_red"/>
+
             <TextView
                 android:id="@+id/tv_persen_keluar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/label_persen_keluar"
                 android:textSize="11sp"
-                android:textColor="@android:color/white"/>
+                android:textColor="@android:color/white"
+                android:layout_marginStart="6dp"/>
+
         </LinearLayout>
 
+        <!-- Tombol kalender -->
         <ImageView
             android:id="@+id/btn_toggle_kalender"
             android:layout_width="24dp"
@@ -62,6 +72,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
+        <!-- Tombol mata -->
         <ImageView
             android:id="@+id/btn_toggle_mata"
             android:layout_width="24dp"
@@ -72,6 +83,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toStartOf="@id/btn_toggle_kalender"/>
 
+        <!-- Progress bar rasio -->
         <ProgressBar
             android:id="@+id/progress_ratio"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
@@ -85,6 +97,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
+        <!-- Navigasi tanggal -->
         <LinearLayout
             android:id="@+id/ll_nav_tanggal"
             android:layout_width="0dp"
@@ -132,7 +145,7 @@
                 android:focusable="true"/>
         </LinearLayout>
 
-        <!-- Baris ringkasan: Pemasukan | Pengeluaran | Selisih -->
+        <!-- Ringkasan: Pemasukan | Pengeluaran | Selisih -->
         <LinearLayout
             android:id="@+id/ll_total_harian"
             android:layout_width="0dp"
@@ -223,50 +236,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- TAB FILTER dengan margin di semua sisi agar rapi -->
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="4dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="2dp"
-        app:cardBackgroundColor="@android:color/white">
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tab_filter"
-            android:layout_width="match_parent"
-            android:layout_height="44dp"
-            android:background="@android:color/white"
-            app:tabIndicatorColor="#8A9DAD"
-            app:tabIndicatorHeight="3dp"
-            app:tabRippleColor="@null"
-            app:tabSelectedTextColor="#8A9DAD"
-            app:tabTextColor="#AAAAAA"
-            app:tabMode="fixed"
-            app:tabGravity="fill">
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Pengeluaran"/>
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Pemasukan"/>
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Transfer"/>
-
-        </com.google.android.material.tabs.TabLayout>
-
-    </androidx.cardview.widget.CardView>
-
     <!-- KALENDER (hidden by default) -->
     <androidx.cardview.widget.CardView
         android:id="@+id/card_kalender"
@@ -288,16 +257,49 @@
 
     </androidx.cardview.widget.CardView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_transaksi"
+    <!-- AREA KONTEN: RV + Empty State dalam FrameLayout -->
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:paddingTop="8dp"
-        android:paddingBottom="80dp"
-        android:clipToPadding="false"
-        android:nestedScrollingEnabled="true"
-        android:scrollbars="vertical"
-        android:overScrollMode="always"/>
+        android:layout_weight="1">
+
+        <!-- RecyclerView transaksi -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_transaksi"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="8dp"
+            android:paddingBottom="80dp"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="true"
+            android:scrollbars="vertical"
+            android:overScrollMode="always"/>
+
+        <!-- Empty State — style identik dengan HutangFragment -->
+        <LinearLayout
+            android:id="@+id/layout_empty_transaksi"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_hutang"
+                android:alpha="0.35"
+                android:contentDescription="Belum ada transaksi"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Belum ada transaksi"
+                android:textColor="@color/teks_muted"
+                android:textSize="13sp"
+                android:layout_marginTop="8dp"/>
+        </LinearLayout>
+
+    </FrameLayout>
 
 </LinearLayout>
