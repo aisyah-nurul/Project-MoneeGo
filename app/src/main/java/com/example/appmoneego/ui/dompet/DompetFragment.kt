@@ -114,6 +114,7 @@ class DompetFragment : Fragment() {
 
         dompetViewModel.allDompet.observe(viewLifecycleOwner) { list ->
             adapter.submitList(list)
+            // ── EMPTY STATE ───────────────────────────────────────────────────
             updateEmptyState(list.isEmpty())
         }
     }
@@ -131,7 +132,8 @@ class DompetFragment : Fragment() {
                 cardInfoHutang.visibility = View.GONE
             } else {
                 val totalHutang = aktif.sumOf { it.sisaHutang.toDouble() }
-                tvInfoHutang.text = "${aktif.size} hutang · Total ${CurrencyFormatter.format(totalHutang)}"
+                tvInfoHutang.text =
+                    "${aktif.size} hutang · Total ${CurrencyFormatter.format(totalHutang)}"
                 cardInfoHutang.visibility = View.VISIBLE
             }
         }
@@ -175,6 +177,14 @@ class DompetFragment : Fragment() {
         }
     }
 
+    // ── EMPTY STATE helper ────────────────────────────────────────────────────
+    // Style identik dengan HutangFragment.refreshList():
+    //   VISIBLE → layoutEmpty, GONE → rvHutang dan sebaliknya
+    private fun updateEmptyState(isEmpty: Boolean) {
+        rvDompet.visibility          = if (isEmpty) View.GONE    else View.VISIBLE
+        layoutEmptyDompet.visibility = if (isEmpty) View.VISIBLE else View.GONE
+    }
+
     private fun showTambahDompetDialog(dompetEdit: Dompet? = null) {
         val dialog = BottomSheetDialog(requireContext())
         val v = layoutInflater.inflate(R.layout.dialog_tambah_dompet, null)
@@ -189,7 +199,6 @@ class DompetFragment : Fragment() {
         val tilNama   = v.findViewById<TextInputLayout>(R.id.tilNamaDompet)
         val btnSimpan = v.findViewById<Button>(R.id.btnSimpanDompet)
 
-        // Tanggal otomatis pakai waktu sekarang, tidak perlu input user
         var tanggalDipilih: Long = System.currentTimeMillis()
 
         dompetEdit?.let {
@@ -262,7 +271,11 @@ class DompetFragment : Fragment() {
                         }
                     }
                 }
-                Toast.makeText(requireContext(), getString(R.string.toast_dompet_ditambahkan, nama), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.toast_dompet_ditambahkan, nama),
+                    Toast.LENGTH_SHORT
+                ).show()
             } else {
                 dompetViewModel.update(
                     dompetEdit.copy(
@@ -273,7 +286,11 @@ class DompetFragment : Fragment() {
                         tanggalDibuat = tanggalDipilih
                     )
                 )
-                Toast.makeText(requireContext(), getString(R.string.toast_dompet_diperbarui), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.toast_dompet_diperbarui),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
             dialog.dismiss()
         }
@@ -283,7 +300,12 @@ class DompetFragment : Fragment() {
     private fun showEditDeleteDialog(dompet: Dompet) {
         AlertDialog.Builder(requireContext())
             .setTitle(dompet.nama)
-            .setItems(arrayOf(getString(R.string.menu_edit_dompet), getString(R.string.menu_hapus_dompet))) { _, which ->
+            .setItems(
+                arrayOf(
+                    getString(R.string.menu_edit_dompet),
+                    getString(R.string.menu_hapus_dompet)
+                )
+            ) { _, which ->
                 when (which) {
                     0 -> showTambahDompetDialog(dompetEdit = dompet)
                     1 -> konfirmasiHapus(dompet)
@@ -294,18 +316,23 @@ class DompetFragment : Fragment() {
     private fun konfirmasiHapus(dompet: Dompet) {
         AlertDialog.Builder(requireContext())
             .setTitle(getString(R.string.dialog_hapus_dompet_title))
-            .setMessage(getString(R.string.dialog_hapus_dompet_pesan, dompet.nama, CurrencyFormatter.format(dompet.saldo)))
+            .setMessage(
+                getString(
+                    R.string.dialog_hapus_dompet_pesan,
+                    dompet.nama,
+                    CurrencyFormatter.format(dompet.saldo)
+                )
+            )
             .setPositiveButton(getString(R.string.dialog_hapus_transaksi_konfirmasi)) { _, _ ->
                 dompetViewModel.delete(dompet)
-                Toast.makeText(requireContext(), getString(R.string.toast_dompet_dihapus), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.toast_dompet_dihapus),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
             .setNegativeButton(getString(R.string.btn_batal), null)
             .show()
-    }
-
-    private fun updateEmptyState(isEmpty: Boolean) {
-        rvDompet.visibility          = if (isEmpty) View.GONE  else View.VISIBLE
-        layoutEmptyDompet.visibility = if (isEmpty) View.VISIBLE else View.GONE
     }
 
     private fun getIkonByJenis(jenis: String): String = when (jenis) {

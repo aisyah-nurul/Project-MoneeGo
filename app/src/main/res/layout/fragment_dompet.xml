@@ -74,7 +74,6 @@
                         android:textColor="#888888"
                         android:textSize="12sp"/>
 
-                    <!-- Tombol mata dompet -->
                     <ImageView
                         android:id="@+id/iv_toggle_saldo_dompet"
                         android:layout_width="20dp"
@@ -269,52 +268,48 @@
             android:paddingEnd="16dp"/>
     </LinearLayout>
 
-    <!-- ===== DAFTAR DOMPET ===== -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_dompet"
+    <!-- ===== AREA KONTEN: RV + EMPTY STATE dalam FrameLayout ===== -->
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:clipToPadding="false"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="4dp"
-        android:paddingBottom="88dp"/>
+        android:layout_weight="1">
 
-    <!-- ===== EMPTY STATE ===== -->
-    <LinearLayout
-        android:id="@+id/layout_empty_dompet"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:visibility="gone"
-        android:paddingBottom="80dp">
+        <!-- RecyclerView dompet -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_dompet"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="88dp"/>
 
-        <ImageView
-            android:layout_width="72dp"
-            android:layout_height="72dp"
-            android:src="@drawable/ic_wallet"
-            android:alpha="0.3"
-            android:contentDescription="Belum ada dompet"/>
+        <!-- Empty State — style identik dengan HutangFragment -->
+        <LinearLayout
+            android:id="@+id/layout_empty_dompet"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/empty_dompet"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#546E7A"
-            android:layout_marginTop="12dp"/>
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_wallet"
+                android:alpha="0.35"
+                android:contentDescription="Belum ada dompet"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/empty_dompet_desc"
-            android:textSize="13sp"
-            android:textColor="#90A4AE"
-            android:layout_marginTop="4dp"/>
-    </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Belum ada dompet"
+                android:textColor="@color/teks_muted"
+                android:textSize="13sp"
+                android:layout_marginTop="8dp"/>
+        </LinearLayout>
+
+    </FrameLayout>
 
 </LinearLayout>

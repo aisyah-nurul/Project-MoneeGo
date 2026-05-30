@@ -1,32 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<!-- Header label disembunyikan total — height=0dp, visibility=gone
+     ViewHolder-nya tetap ada di adapter agar tidak crash,
+     tapi tidak mengambil ruang sama sekali di layar. -->
+<View
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:gravity="center_vertical"
-    android:paddingHorizontal="16dp"
-    android:paddingTop="20dp"
-    android:paddingBottom="8dp"
-    android:background="?attr/selectableItemBackground"
-    android:clickable="true"
-    android:focusable="true">
-
-    <TextView
-        android:id="@+id/tv_header_label"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Pemasukan"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="#1A1A2E"/>
-
-    <ImageView
-        android:id="@+id/iv_collapse"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/ic_chevron_down"
-        android:layout_marginStart="8dp"/>
-
-</LinearLayout>
+    android:layout_height="0dp"
+    android:visibility="gone"/>

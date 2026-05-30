@@ -6,137 +6,165 @@
     android:orientation="vertical"
     android:background="#E2E2E2">
 
+    <!-- ===== HEADER BACKGROUND ===== -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="#78909C"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
         android:paddingTop="30dp"
-        android:paddingBottom="16dp">
+        android:paddingBottom="24dp">
 
-        <!-- Baris back + judul -->
-        <LinearLayout
+        <!-- AppBar: tombol Back + Judul HUTANGKU di tengah -->
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="14dp">
+            android:layout_marginBottom="16dp">
 
             <ImageButton
                 android:id="@+id/ibBack"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentStart="true"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_arrow_left"
                 app:tint="@android:color/white"
                 android:contentDescription="Kembali" />
 
             <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_hutang"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginStart="8dp" />
-        </LinearLayout>
-
-        <!-- Label "Total hutang" + icon eye di sebelah kanannya -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="2dp">
-
-            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/label_total_hutang"
-                android:textColor="#CCFFFFFF"
-                android:textSize="11sp" />
+                android:layout_centerInParent="true"
+                android:text="HUTANGKU"
+                android:textColor="@android:color/white"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.1" />
+        </RelativeLayout>
 
-            <ImageView
-                android:id="@+id/ivEye"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:src="@drawable/ic_eye"
-                app:tint="@android:color/white"
-                android:padding="1dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:layout_marginStart="6dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Sembunyikan nominal" />
-        </LinearLayout>
-
-        <!-- Nominal total hutang (tanpa icon eye) -->
-        <TextView
-            android:id="@+id/tvTotalHutang"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Rp0"
-            android:textColor="@android:color/white"
-            android:textSize="26sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="14dp" />
-
-        <!-- Stat berjalan & lunas -->
-        <LinearLayout
+        <!-- ===== CARD RINGKASAN HUTANG ===== -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            app:cardBackgroundColor="#EDEBEB"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp">
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:orientation="vertical"
-                android:gravity="center">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/label_hutang_berjalan"
-                    android:textColor="#AAFFFFFF"
-                    android:textSize="10sp" />
-                <TextView
-                    android:id="@+id/tvStatBerjalan"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textColor="@android:color/white"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
+                android:padding="18dp">
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center">
+                <!-- Baris: label "Total Hutang" + icon mata -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/label_total_hutang"
+                        android:textColor="#888888"
+                        android:textSize="12sp" />
+
+                    <ImageView
+                        android:id="@+id/ivEye"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_eye"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Sembunyikan nominal" />
+                </LinearLayout>
+
+                <!-- Nominal total hutang -->
                 <TextView
-                    android:id="@+id/tvLabelLunasBulan"
+                    android:id="@+id/tvTotalHutang"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/label_hutang_lunas"
-                    android:textColor="#AAFFFFFF"
-                    android:textSize="10sp" />
-                <TextView
-                    android:id="@+id/tvStatLunas"
-                    android:layout_width="wrap_content"
+                    android:text="Rp0"
+                    android:textColor="#2C3E50"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="2dp" />
+
+                <!-- Divider -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#EEEEEE"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- Stats Row: Hutang Berjalan + Hutang Lunas -->
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="0"
-                    android:textColor="#4CDE9A"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/label_hutang_berjalan"
+                            android:textColor="#888888"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            android:id="@+id/tvStatBerjalan"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="#2C3E50"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="end">
+
+                        <TextView
+                            android:id="@+id/tvLabelLunasBulan"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Hutang Lunas"
+                            android:textColor="#888888"
+                            android:textSize="11sp" />
+
+                        <TextView
+                            android:id="@+id/tvStatLunas"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="#4CAF50"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+
             </LinearLayout>
-        </LinearLayout>
+        </androidx.cardview.widget.CardView>
     </LinearLayout>
 
+    <!-- ===== TAB BERJALAN / SELESAI ===== -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayoutHutang"
         android:layout_width="match_parent"
@@ -162,6 +190,7 @@
             android:text="@string/tab_selesai" />
     </com.google.android.material.tabs.TabLayout>
 
+    <!-- ===== TOMBOL TAMBAH HUTANG ===== -->
     <Button
         android:id="@+id/btnTambahHutang"
         android:layout_width="match_parent"
@@ -175,6 +204,7 @@
         android:textSize="13sp"
         app:cornerRadius="10dp" />
 
+    <!-- ===== AREA KONTEN: RV + EMPTY STATE ===== -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"

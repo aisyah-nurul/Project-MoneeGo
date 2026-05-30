@@ -31,7 +31,6 @@ class RiwayatTransaksiFragment : Fragment() {
 
     private var selectedDateMillis: Long = System.currentTimeMillis()
     private var kalenderVisible = false
-
     private var nominalVisible: Boolean = true
 
     private var lastTotalMasuk  = 0.0
@@ -55,9 +54,12 @@ class RiwayatTransaksiFragment : Fragment() {
         setupNavigasiTanggal()
         setupTombolMata()
         observeDompet()
-        loadTransaksiByTanggal(selectedDateMillis)
-
         syncIkonMata()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadTransaksiByTanggal(selectedDateMillis)
     }
 
     // ── Adapter ───────────────────────────────────────────────────────────────
@@ -65,8 +67,6 @@ class RiwayatTransaksiFragment : Fragment() {
     private fun setupAdapter() {
         adapter = TransaksiAdapter(
             nominalVisibleInit = nominalVisible,
-
-            // ✅ BARU: tap card → buka popup detail
             onItemClick = { transaksi ->
                 val dialog = DetailTransaksiDialog(
                     transaksi    = transaksi,
@@ -74,7 +74,6 @@ class RiwayatTransaksiFragment : Fragment() {
                     onEditClick  = { t ->
                         val isTransfer = t.kategori == "Transfer"
                         val jenisEdit  = if (isTransfer) "TRANSFER" else t.jenis
-
                         val bundle = Bundle().apply {
                             putInt("edit_id",              t.id)
                             putDouble("edit_nominal",      t.nominal)
@@ -84,6 +83,7 @@ class RiwayatTransaksiFragment : Fragment() {
                             putLong("edit_tanggal",        t.tanggal)
                             putInt("edit_dompet_id",       t.dompetId)
                             putBoolean("edit_is_transfer", isTransfer)
+                            putString("edit_transfer_id",  t.transferId)
                         }
                         findNavController()
                             .navigate(R.id.action_riwayat_to_tambahTransaksi, bundle)
@@ -92,22 +92,20 @@ class RiwayatTransaksiFragment : Fragment() {
                         AlertDialog.Builder(requireContext())
                             .setTitle(getString(R.string.dialog_hapus_transaksi_title))
                             .setMessage(
-                                getString(R.string.dialog_hapus_transaksi_pesan_nama,
-                                    t.catatan.ifEmpty { t.kategori })
+                                getString(
+                                    R.string.dialog_hapus_transaksi_pesan_nama,
+                                    t.catatan.ifEmpty { t.kategori }
+                                )
                             )
-                            .setPositiveButton(getString(R.string.dialog_hapus_transaksi_konfirmasi)) { _, _ ->
-                                viewModel.delete(t)
-                            }
+                            .setPositiveButton(
+                                getString(R.string.dialog_hapus_transaksi_konfirmasi)
+                            ) { _, _ -> viewModel.delete(t) }
                             .setNegativeButton(getString(R.string.btn_batal), null)
                             .show()
                     }
                 )
                 dialog.show(parentFragmentManager, DetailTransaksiDialog.TAG)
             },
-
-            // onEditClick & onDeleteClick di sini tidak dipakai lagi
-            // (sudah dipindah ke dalam DetailTransaksiDialog),
-            // tapi tetap ada agar signature tidak berubah
             onEditClick   = {},
             onDeleteClick = {}
         )
@@ -123,6 +121,13 @@ class RiwayatTransaksiFragment : Fragment() {
         }
     }
 
+    // ── EMPTY STATE helper ────────────────────────────────────────────────────
+    // Style identik HutangFragment — hanya beda view id dan teks
+    private fun updateEmptyState(isEmpty: Boolean) {
+        binding.rvTransaksi.visibility          = if (isEmpty) View.GONE    else View.VISIBLE
+        binding.layoutEmptyTransaksi.visibility = if (isEmpty) View.VISIBLE else View.GONE
+    }
+
     // ── Load transaksi ────────────────────────────────────────────────────────
 
     private fun loadTransaksiByTanggal(timeMillis: Long) {
@@ -131,32 +136,47 @@ class RiwayatTransaksiFragment : Fragment() {
 
         binding.tvTanggalHeader.text = DateUtils.formatTanggal(timeMillis)
 
+        viewModel.getByDateRange(start, end).removeObservers(viewLifecycleOwner)
+
         viewModel.getByDateRange(start, end).observe(viewLifecycleOwner) { list ->
             adapter.submitList(list)
 
-            lastTotalMasuk  = list.filter { it.jenis == "PEMASUKAN"   }.sumOf { it.nominal }
-            lastTotalKeluar = list.filter { it.jenis == "PENGELUARAN" }.sumOf { it.nominal }
-            val total = lastTotalMasuk + lastTotalKeluar
+            // ── UPDATE EMPTY STATE ────────────────────────────────────────────
+            updateEmptyState(list.isEmpty())
 
+            lastTotalMasuk  = list.filter {
+                it.jenis == "PEMASUKAN" && it.kategori != "Transfer"
+            }.sumOf { it.nominal }
+            lastTotalKeluar = list.filter {
+                it.jenis == "PENGELUARAN" && it.kategori != "Transfer"
+            }.sumOf { it.nominal }
+
+            val total = lastTotalMasuk + lastTotalKeluar
             if (total > 0) {
-                val persenMasuk = ((lastTotalMasuk / total) * 100).toInt()
+                val persenMasuk  = ((lastTotalMasuk / total) * 100).toInt()
                 val persenKeluar = 100 - persenMasuk
                 binding.progressRatio.progress = persenMasuk
-
-                // Gunakan getString dengan placeholder
-                binding.tvPersenMasuk.text = getString(R.string.format_persentase, getString(R.string.label_pemasukan), persenMasuk)
-                binding.tvPersenKeluar.text = getString(R.string.format_persentase, getString(R.string.label_pengeluaran), persenKeluar)
-            }
-            else {
+                binding.tvPersenMasuk.text = getString(
+                    R.string.format_persentase,
+                    getString(R.string.label_pemasukan),
+                    persenMasuk
+                )
+                binding.tvPersenKeluar.text = getString(
+                    R.string.format_persentase,
+                    getString(R.string.label_pengeluaran),
+                    persenKeluar
+                )
+            } else {
                 binding.progressRatio.progress = 50
-                binding.tvPersenMasuk.text      = " ${getString(R.string.label_pemasukan)} 0%"
-                binding.tvPersenKeluar.text     = " ${getString(R.string.label_pengeluaran)} 0%"
+                binding.tvPersenMasuk.text  = " ${getString(R.string.label_pemasukan)} 0%"
+                binding.tvPersenKeluar.text = " ${getString(R.string.label_pengeluaran)} 0%"
             }
+
             updateTotalHarian()
         }
     }
 
-    // ── Total harian ──────────────────────────────────────────────────────────
+    // ── Total & Selisih Harian ────────────────────────────────────────────────
 
     private fun updateTotalHarian() {
         if (nominalVisible) {
@@ -166,6 +186,27 @@ class RiwayatTransaksiFragment : Fragment() {
             binding.tvTotalMasuk.text  = getString(R.string.mask_saldo)
             binding.tvTotalKeluar.text = getString(R.string.mask_saldo)
         }
+        hitungDanTampilkanSelisih()
+    }
+
+    private fun hitungDanTampilkanSelisih() {
+        val selisih = lastTotalMasuk - lastTotalKeluar
+
+        val teksSelisih = when {
+            selisih > 0  -> CurrencyFormatter.format(selisih)
+            selisih < 0  -> "-${CurrencyFormatter.format(-selisih)}"
+            else         -> CurrencyFormatter.format(0.0)
+        }
+
+        val warnaSelisih = when {
+            selisih > 0  -> 0xFF4CAF50.toInt()
+            selisih < 0  -> 0xFFF44336.toInt()
+            else         -> 0xFF1A1A2E.toInt()
+        }
+
+        binding.tvSelisihHarian.text = if (nominalVisible)
+            teksSelisih else getString(R.string.mask_saldo)
+        binding.tvSelisihHarian.setTextColor(warnaSelisih)
     }
 
     // ── Tombol Mata ───────────────────────────────────────────────────────────
@@ -181,8 +222,9 @@ class RiwayatTransaksiFragment : Fragment() {
     }
 
     private fun syncIkonMata() {
-        val iconRes = if (nominalVisible) R.drawable.ic_eye else R.drawable.ic_eye_off
-        binding.btnToggleMata.setImageResource(iconRes)
+        binding.btnToggleMata.setImageResource(
+            if (nominalVisible) R.drawable.ic_eye else R.drawable.ic_eye_off
+        )
     }
 
     // ── Navigasi tanggal ──────────────────────────────────────────────────────

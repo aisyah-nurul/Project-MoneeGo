@@ -11,5 +11,6 @@ data class Transaksi(
     val kategori: String,
     val catatan: String,
     val tanggal: Long,
-    val dompetId: Int
+    val dompetId: Int,
+    val transferId: String? = null
 )
