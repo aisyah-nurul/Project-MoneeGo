@@ -10,11 +10,13 @@ class TransaksiRepository(private val dao: TransaksiDao) {
     val totalPemasukan: LiveData<Double?> = dao.getTotalPemasukan()
     val totalPengeluaran: LiveData<Double?> = dao.getTotalPengeluaran()
 
+    // ── Total jumlah transaksi & tanggal terakhir — untuk insight ─────────────
+    val totalJumlahTransaksi: LiveData<Int>     = dao.getTotalJumlahTransaksi()
+    val tanggalTransaksiTerakhir: LiveData<Long?> = dao.getTanggalTransaksiTerakhir()
+
     suspend fun insert(transaksi: Transaksi) = dao.insert(transaksi)
     suspend fun update(transaksi: Transaksi) = dao.update(transaksi)
     suspend fun delete(transaksi: Transaksi) = dao.delete(transaksi)
-
-    // Hapus semua transaksi milik dompet tertentu
     suspend fun deleteByDompetId(dompetId: Int) = dao.deleteByDompetId(dompetId)
 
     fun getByDateRange(start: Long, end: Long) = dao.getByDateRange(start, end)
@@ -25,4 +27,33 @@ class TransaksiRepository(private val dao: TransaksiDao) {
 
     fun getPengeluaranBulanIni(start: Long, end: Long): LiveData<Double?> =
         dao.getPengeluaranBulanIni(start, end)
+
+    fun getByJenisAndBulan(jenis: String, start: Long, end: Long): LiveData<List<Transaksi>> =
+        dao.getByJenisAndBulan(jenis, start, end)
+
+    fun getRecentByBulan(start: Long, end: Long, limit: Int = 5): LiveData<List<Transaksi>> =
+        dao.getRecentByBulan(start, end, limit)
+
+    fun getByKategoriAndBulan(kategori: String, start: Long, end: Long): LiveData<List<Transaksi>> =
+        dao.getByKategoriAndBulan(kategori, start, end)
+
+    fun getByDompetAndBulan(dompetId: Int, start: Long, end: Long): LiveData<List<Transaksi>> =
+        dao.getByDompetAndBulan(dompetId, start, end)
+
+    // ── Insight ───────────────────────────────────────────────────────────────
+
+    fun getPengeluaranNonTransferBulanIni(
+        start: Long,
+        end: Long
+    ): LiveData<List<Transaksi>> =
+        dao.getPengeluaranNonTransferBulanIni(start, end)
+
+    fun getPengeluaranNonTransferBulanLalu(
+        start: Long,
+        end: Long
+    ): LiveData<List<Transaksi>> =
+        dao.getPengeluaranNonTransferBulanLalu(start, end)
+
+    fun getJumlahTransaksiBulanIni(start: Long, end: Long): LiveData<Int> =
+        dao.getJumlahTransaksiBulanIni(start, end)
 }

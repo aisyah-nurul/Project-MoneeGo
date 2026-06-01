@@ -6,105 +6,148 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:layout_marginHorizontal="16dp"
-    android:layout_marginBottom="8dp">
+    android:layout_marginHorizontal="14dp"
+    android:layout_marginBottom="10dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_header_interaktif"
+    <!--
+        CARD PEMBUNGKUS — rounded corners + shadow
+        Seluruh item (atas terang + bawah abu-biru) dibungkus dalam satu CardView
+        agar corner radius dan elevation terlihat bersih.
+    -->
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/bg_header"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="8dp"
-        android:clickable="true"
-        android:focusable="true">
+        app:cardCornerRadius="14dp"
+        app:cardElevation="3dp"
+        app:cardBackgroundColor="@android:color/white">
 
-        <ImageView
-            android:id="@+id/iv_arrow_collapse"
-            android:layout_width="10dp"
-            android:layout_height="10dp"
-            android:rotation="0"
-            android:src="@drawable/ic_chevron_down"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/text_white" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_card_utama"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/card_saldo_bg"
-        android:padding="16dp">
-
-        <ImageView
-            android:id="@+id/iv_kategori_icon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:src="@drawable/ic_wallet_cash"/>
-
-        <TextView
-            android:id="@+id/tv_kategori"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary"
-            android:layout_marginStart="12dp"
-            app:layout_constraintStart_toEndOf="@id/iv_kategori_icon"
-            app:layout_constraintEnd_toStartOf="@id/tv_nominal"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="Kategori"/>
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_nominal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_primary"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="Rp 0.000"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <!-- ── BAGIAN ATAS: kategori + nominal (latar putih / abu muda) ── -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_card_utama"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#F7F7F7"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:clickable="true"
+                android:focusable="true">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/card_detail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/bg_header"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="12dp"
-        android:visibility="visible">
+                <!-- Ikon kategori -->
+                <ImageView
+                    android:id="@+id/iv_kategori_icon"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:src="@drawable/ic_wallet"/>
 
-        <TextView
-            android:id="@+id/tv_catatan"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:textColor="@color/text_primary"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/tv_sumber_dana"
-            tools:text="Catatan..."/>
+                <!-- Nama kategori -->
+                <TextView
+                    android:id="@+id/tv_kategori"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#1A1A2E"
+                    android:layout_marginStart="12dp"
+                    app:layout_constraintStart_toEndOf="@id/iv_kategori_icon"
+                    app:layout_constraintEnd_toStartOf="@id/tv_nominal"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:text="Gajian"/>
 
-        <TextView
-            android:id="@+id/tv_sumber_dana"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="11sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_secondary"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Sumber"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                <!-- Nominal -->
+                <TextView
+                    android:id="@+id/tv_nominal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:text="+ Rp 4.000.000"
+                    tools:textColor="#276F29"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- ── HEADER INTERAKTIF (toggle expand/collapse detail) ──
+                 Tipis, tidak terlihat secara visual — hanya area klik tersembunyi.
+                 Diletakkan antara bagian atas dan bawah.
+                 Karena logika adapter memakai cl_header_interaktif untuk toggle,
+                 kita tetap pertahankan view ini tapi height-nya 0dp agar tidak
+                 memakan ruang dan tidak terlihat pengguna.
+            -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_header_interaktif"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:id="@+id/iv_arrow_collapse"
+                    android:layout_width="1dp"
+                    android:layout_height="1dp"
+                    android:src="@drawable/ic_chevron_down"
+                    android:visibility="invisible"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- ── BAGIAN BAWAH: catatan + sumber dana (latar abu-biru) ── -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/card_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#8598A2"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:visibility="visible">
+
+                <!-- Teks catatan di kiri -->
+                <TextView
+                    android:id="@+id/tv_catatan"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:textColor="#FFFFFF"
+                    android:lineSpacingMultiplier="1.2"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/tv_sumber_dana"
+                    android:layout_marginEnd="8dp"
+                    tools:text="Allhamdulillah Bisa Naik Haji, Buat kontrakan, Konser BTS, Konser Cortis"/>
+
+                <!-- Nama dompet di kanan bawah -->
+                <TextView
+                    android:id="@+id/tv_sumber_dana"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:gravity="end"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:text="Bank"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
 </LinearLayout>

@@ -12,6 +12,7 @@ import com.example.appmoneego.R
 import com.example.appmoneego.databinding.FragmentHutangBinding
 import com.example.appmoneego.utils.CurrencyFormatter
 import com.example.appmoneego.utils.VisibilityPrefs
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.tabs.TabLayout
 
 class HutangFragment : Fragment() {
@@ -36,6 +37,10 @@ class HutangFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Sembunyikan bottom nav
+        requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+            ?.visibility = View.GONE
+
         isNominalVisible = VisibilityPrefs.isNominalVisible(requireContext())
 
         viewModel = ViewModelProvider(this)[HutangViewModel::class.java]
@@ -50,6 +55,14 @@ class HutangFragment : Fragment() {
         isNominalVisible = VisibilityPrefs.isNominalVisible(requireContext())
         syncIkonMata()
         refreshTampilan()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        // Tampilkan kembali bottom nav saat keluar
+        requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+            ?.visibility = View.VISIBLE
+        _binding = null
     }
 
     private fun setupRecyclerView() {
@@ -138,10 +151,5 @@ class HutangFragment : Fragment() {
         } else {
             binding.tvTotalHutang.text = "Rp ***"
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

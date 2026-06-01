@@ -8,7 +8,7 @@
     android:background="#E2E2E2"
     android:weightSum="1">
 
-    <!-- HEADER BIRU — tidak berubah -->
+    <!-- HEADER -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header_riwayat"
         android:layout_width="match_parent"
@@ -19,7 +19,7 @@
         android:paddingTop="40dp"
         android:paddingBottom="14dp">
 
-        <!-- Baris 1: legend kiri + tombol kalender kanan -->
+        <!-- Legend: lingkaran + teks pemasukan | lingkaran + teks pengeluaran -->
         <LinearLayout
             android:id="@+id/ll_legend"
             android:layout_width="wrap_content"
@@ -29,10 +29,12 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
+            <!-- Lingkaran hijau -->
             <View
                 android:layout_width="10dp"
                 android:layout_height="10dp"
-                android:background="#276F29"/>
+                android:background="@drawable/ic_circle_green"/>
+
             <TextView
                 android:id="@+id/tv_persen_masuk"
                 android:layout_width="wrap_content"
@@ -40,20 +42,27 @@
                 android:text="@string/label_persen_masuk"
                 android:textSize="11sp"
                 android:textColor="@android:color/white"
-                android:layout_marginEnd="8dp"/>
+                android:layout_marginStart="6dp"
+                android:layout_marginEnd="12dp"/>
+
+            <!-- Lingkaran merah -->
             <View
                 android:layout_width="10dp"
                 android:layout_height="10dp"
-                android:background="#F44336"/>
+                android:background="@drawable/ic_circle_red"/>
+
             <TextView
                 android:id="@+id/tv_persen_keluar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/label_persen_keluar"
                 android:textSize="11sp"
-                android:textColor="@android:color/white"/>
+                android:textColor="@android:color/white"
+                android:layout_marginStart="6dp"/>
+
         </LinearLayout>
 
+        <!-- Tombol kalender -->
         <ImageView
             android:id="@+id/btn_toggle_kalender"
             android:layout_width="24dp"
@@ -63,6 +72,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
+        <!-- Tombol mata -->
         <ImageView
             android:id="@+id/btn_toggle_mata"
             android:layout_width="24dp"
@@ -73,6 +83,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toStartOf="@id/btn_toggle_kalender"/>
 
+        <!-- Progress bar rasio -->
         <ProgressBar
             android:id="@+id/progress_ratio"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
@@ -86,6 +97,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
+        <!-- Navigasi tanggal -->
         <LinearLayout
             android:id="@+id/ll_nav_tanggal"
             android:layout_width="0dp"
@@ -133,6 +145,7 @@
                 android:focusable="true"/>
         </LinearLayout>
 
+        <!-- Ringkasan: Pemasukan | Pengeluaran | Selisih -->
         <LinearLayout
             android:id="@+id/ll_total_harian"
             android:layout_width="0dp"
@@ -159,8 +172,8 @@
                     android:id="@+id/tv_total_masuk"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Rp 0"
-                    android:textSize="14sp"
+                    android:text="Rp0"
+                    android:textSize="13sp"
                     android:textStyle="bold"
                     android:textColor="#276F29"/>
             </LinearLayout>
@@ -186,11 +199,39 @@
                     android:id="@+id/tv_total_keluar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Rp 0"
-                    android:textSize="14sp"
+                    android:text="Rp0"
+                    android:textSize="13sp"
                     android:textStyle="bold"
                     android:textColor="#F44336"/>
             </LinearLayout>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="#55FFFFFF"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Selisih"
+                    android:textSize="10sp"
+                    android:textColor="#CCFFFFFF"/>
+                <TextView
+                    android:id="@+id/tv_selisih_harian"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rp0"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="#1A1A2E"/>
+            </LinearLayout>
+
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -216,17 +257,49 @@
 
     </androidx.cardview.widget.CardView>
 
-    <!-- ✅ FIX SCROLL: layout_weight="1" + nestedScrollingEnabled="true" -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_transaksi"
+    <!-- AREA KONTEN: RV + Empty State dalam FrameLayout -->
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:paddingTop="8dp"
-        android:paddingBottom="80dp"
-        android:clipToPadding="false"
-        android:nestedScrollingEnabled="true"
-        android:scrollbars="vertical"
-        android:overScrollMode="always"/>
+        android:layout_weight="1">
+
+        <!-- RecyclerView transaksi -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_transaksi"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="8dp"
+            android:paddingBottom="80dp"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="true"
+            android:scrollbars="vertical"
+            android:overScrollMode="always"/>
+
+        <!-- Empty State — style identik dengan HutangFragment -->
+        <LinearLayout
+            android:id="@+id/layout_empty_transaksi"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_hutang"
+                android:alpha="0.35"
+                android:contentDescription="Belum ada transaksi"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Belum ada transaksi"
+                android:textColor="@color/teks_muted"
+                android:textSize="13sp"
+                android:layout_marginTop="8dp"/>
+        </LinearLayout>
+
+    </FrameLayout>
 
 </LinearLayout>
