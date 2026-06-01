@@ -6,7 +6,7 @@
     android:layout_marginBottom="10dp"
     app:cardCornerRadius="10dp"
     app:cardElevation="2dp"
-    app:cardBackgroundColor="@android:color/white"
+    app:cardBackgroundColor="@color/bg_card"
     android:foreground="?attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true">
@@ -17,7 +17,7 @@
         android:orientation="vertical"
         android:padding="14dp">
 
-        <!-- Baris atas: nama + badge tanggal -->
+        <!-- Baris atas: nama + badge -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Nama hutang"
-                android:textColor="@color/teks_utama"
+                android:textColor="@color/text_primary"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -48,7 +48,7 @@
                 android:background="@drawable/bg_badge_hijau" />
         </LinearLayout>
 
-        <!-- Baris nominal: total / dibayar / sisa -->
+        <!-- Baris nominal -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -64,14 +64,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Total hutang"
-                    android:textColor="@color/teks_muted"
+                    android:textColor="@color/text_secondary"
                     android:textSize="10sp" />
                 <TextView
                     android:id="@+id/tvTotalHutang"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Rp0"
-                    android:textColor="@color/teks_utama"
+                    android:textColor="@color/text_primary"
                     android:textSize="12sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -86,14 +86,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Sudah dibayar"
-                    android:textColor="@color/teks_muted"
+                    android:textColor="@color/text_secondary"
                     android:textSize="10sp" />
                 <TextView
                     android:id="@+id/tvSudahDibayar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Rp0"
-                    android:textColor="#3B6D11"
+                    android:textColor="@color/income_green"
                     android:textSize="12sp"
                     android:textStyle="bold" />
             </LinearLayout>
@@ -108,20 +108,20 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Sisa hutang"
-                    android:textColor="@color/teks_muted"
+                    android:textColor="@color/text_secondary"
                     android:textSize="10sp" />
                 <TextView
                     android:id="@+id/tvSisaHutang"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Rp0"
-                    android:textColor="#A32D2D"
+                    android:textColor="@color/expense_red"
                     android:textSize="12sp"
                     android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Progress bar + persentase -->
+        <!-- Progress bar -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -151,7 +151,7 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
-        <!-- Cicilan terakhir (visible hanya jika ada cicilan) -->
+        <!-- Cicilan terakhir -->
         <LinearLayout
             android:id="@+id/layoutCicilanTerakhir"
             android:layout_width="match_parent"
@@ -171,7 +171,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Cicilan terakhir: "
-                android:textColor="@color/teks_muted"
+                android:textColor="@color/text_secondary"
                 android:textSize="10sp" />
 
             <TextView
@@ -180,7 +180,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Rp0"
-                android:textColor="#3B6D11"
+                android:textColor="@color/income_green"
                 android:textSize="10sp"
                 android:textStyle="bold" />
 
@@ -189,7 +189,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="dd/mm/yyyy"
-                android:textColor="@color/teks_muted"
+                android:textColor="@color/text_secondary"
                 android:textSize="10sp" />
         </LinearLayout>
 
@@ -197,11 +197,11 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="0.5dp"
-            android:background="@color/bg_progress"
+            android:background="@color/divider"
             android:layout_marginTop="6dp"
             android:layout_marginBottom="6dp" />
 
-        <!-- Footer: jenis hutang + tap hint -->
+        <!-- Footer -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -214,7 +214,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Belum ada cicilan • 0% lunas"
-                android:textColor="@color/teks_muted"
+                android:textColor="@color/text_secondary"
                 android:textSize="10sp" />
 
             <TextView

@@ -233,4 +233,14 @@
     <string name="mask_saldo">Rp ***</string>
     <string name="mask_nominal">***</string>
     <string name="format_persentase">%1$s %2$d%%</string>
+
+    <string name="tagline_splash">Manage your finances with ease</string>
+    <!-- Notification Reminder -->
+    <string name="notif_diaktifkan">Reminder set daily at %s</string>
+    <string name="notif_dimatikan">Reminder turned off</string>
+    <string name="notif_permission_ditolak">Notification permission is required</string>
+
+    <string name="notif_label_waktu">Daily Reminder Time</string>
+    <string name="notif_ubah_waktu">Change</string>
+    <string name="pilih_waktu_notifikasi">Select Notification Time</string>
 </resources>

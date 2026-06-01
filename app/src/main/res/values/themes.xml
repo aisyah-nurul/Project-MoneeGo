@@ -1,8 +1,40 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
+
     <style name="Base.Theme.AppMoneeGo" parent="Theme.Material3.DayNight.NoActionBar">
     </style>
 
     <style name="Theme.AppMoneeGo" parent="Base.Theme.AppMoneeGo">
+        <item name="colorPrimary">#4A6FA5</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSecondary">#6B8FA3</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="colorSurface">#FFFFFF</item>
+        <item name="colorOnSurface">#1A2B34</item>
+        <item name="colorOnSurfaceVariant">#546E7A</item>
+        <item name="android:colorBackground">#E8E4DC</item>
+        <item name="colorOnBackground">#1A2B34</item>
         <item name="colorControlActivated">@color/income_green</item>
+        <item name="android:windowBackground">@color/bg_main</item>
+
+        <!-- Bottom Nav -->
+        <item name="bottomNavigationStyle">@style/MoneeGoBottomNav</item>
     </style>
+
+    <!-- Bottom Navigation Light -->
+    <style name="MoneeGoBottomNav" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="android:background">@color/bg_bottom_nav</item>
+        <item name="itemIconTint">#4A6FA5</item>
+        <item name="itemTextColor">#4A6FA5</item>
+    </style>
+
+    <!-- Time Picker Light -->
+    <style name="MoneeGoTimePicker" parent="ThemeOverlay.MaterialComponents.TimePicker">
+        <item name="colorPrimary">#4A6FA5</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSurface">#F7F9FB</item>
+        <item name="colorOnSurface">#1A2B34</item>
+        <item name="colorOnSurfaceVariant">#6B8FA3</item>
+        <item name="colorSecondaryContainer">#E8EEF5</item>
+    </style>
+
 </resources>

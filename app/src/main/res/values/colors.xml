@@ -10,18 +10,26 @@
     <color name="primary_slate">#6B8FA3</color>
     <color name="primary_light_slate">#9CB4C5</color>
 
-    <!-- Background -->
+    <!-- Background (Light) -->
     <color name="bg_main">#E8E4DC</color>
     <color name="bg_card">#FFFFFF</color>
     <color name="bg_header">#6B8FA3</color>
     <color name="bg_header_dark">#4A6E85</color>
+    <color name="bg_numpad">#E2E2E2</color>
+    <color name="bg_form_card">#98ACB6</color>
+    <color name="bg_bottom_nav">#FFFFFF</color>
 
-    <!-- Text -->
+    <!-- Text (Light) -->
     <color name="text_primary">#1A2B34</color>
     <color name="text_secondary">#546E7A</color>
     <color name="text_hint">#90A4AE</color>
     <color name="text_white">#FFFFFF</color>
     <color name="text_label">#78909C</color>
+
+    <!-- Card colors (Light) -->
+    <color name="card_saldo_bg">#B0BEC5</color>
+    <color name="card_shortcut_bg">#FFFFFF</color>
+    <color name="card_form_inner">#F7F9FB</color>
 
     <!-- Semantic -->
     <color name="income_green">#2E7D32</color>
@@ -33,7 +41,7 @@
     <color name="saving_teal">#00695C</color>
     <color name="saving_teal_light">#E0F2F1</color>
 
-    <!-- Dompet Jenis Warna (icon tint) -->
+    <!-- Dompet Jenis Warna -->
     <color name="wallet_bank">#1565C0</color>
     <color name="wallet_bank_bg">#E3F2FD</color>
     <color name="wallet_digital">#6A1B9A</color>
@@ -47,7 +55,7 @@
     <color name="wallet_lainnya">#37474F</color>
     <color name="wallet_lainnya_bg">#ECEFF1</color>
 
-    <!-- Hutang (debt tab) -->
+    <!-- Hutang -->
     <color name="hutang_badge">#FF5722</color>
     <color name="hutang_badge_bg">#FBE9E7</color>
     <color name="hutang_overdue">#B71C1C</color>
@@ -61,15 +69,16 @@
     <!-- Divider -->
     <color name="divider">#ECEFF1</color>
 
-    <!-- Shadow / Elevation hint -->
+    <!-- Shadow -->
     <color name="shadow_light">#1A000000</color>
 
-    <!-- Tab active/inactive -->
+    <!-- Tab -->
     <color name="tab_active_bg">#2C3E6B</color>
     <color name="tab_active_text">#FFFFFF</color>
     <color name="tab_inactive_bg">#D6D0C8</color>
     <color name="tab_inactive_text">#546E7A</color>
 
+    <!-- Hutang chip/badge -->
     <color name="ungu_primer">#6B828D</color>
     <color name="ungu_gelap">#26215C</color>
     <color name="ungu_muted">#7F77DD</color>
@@ -77,4 +86,8 @@
     <color name="teks_muted">#888888</color>
     <color name="bg_halaman">#F0EFF5</color>
     <color name="bg_progress">#EEEEEE</color>
+
+    <!-- ── Color Attributes (untuk ?attr/) ── -->
+    <!-- Dipakai di layout dengan ?attr/colorBackground dll -->
+    <!-- Ini di-override oleh values-night/colors.xml saat dark mode -->
 </resources>

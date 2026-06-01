@@ -1,7 +1,40 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+
     <style name="Base.Theme.AppMoneeGo" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
     </style>
+
+    <style name="Theme.AppMoneeGo" parent="Base.Theme.AppMoneeGo">
+        <item name="colorPrimary">#5B80B6</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSecondary">#7A9DB5</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="colorSurface">#252D3D</item>
+        <item name="colorOnSurface">#E8EEF5</item>
+        <item name="colorOnSurfaceVariant">#9CB4C5</item>
+        <item name="android:colorBackground">#1A1F2E</item>
+        <item name="colorOnBackground">#E8EEF5</item>
+        <item name="colorControlActivated">@color/income_green</item>
+        <item name="android:windowBackground">@color/bg_main</item>
+
+        <!-- Bottom Nav Dark -->
+        <item name="bottomNavigationStyle">@style/MoneeGoBottomNav</item>
+    </style>
+
+    <!-- Bottom Navigation Dark -->
+    <style name="MoneeGoBottomNav" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="android:background">@color/bg_bottom_nav</item>
+        <item name="itemIconTint">#7A9DB5</item>
+        <item name="itemTextColor">#7A9DB5</item>
+    </style>
+
+    <!-- Time Picker Dark -->
+    <style name="MoneeGoTimePicker" parent="ThemeOverlay.MaterialComponents.TimePicker">
+        <item name="colorPrimary">#5B80B6</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSurface">#1E2A35</item>
+        <item name="colorOnSurface">#E8EEF5</item>
+        <item name="colorOnSurfaceVariant">#9CB4C5</item>
+        <item name="colorSecondaryContainer">#2C3E50</item>
+    </style>
+
 </resources>
