@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
@@ -36,7 +35,6 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
     private var onSaved: ((Hutang) -> Unit)? = null
     private var onDeleted: ((Hutang) -> Unit)? = null
 
-    // State dompet terpilih
     private var daftarDompet: List<Dompet> = emptyList()
     private var selectedDompetId   = 0
     private var selectedDompetNama = ""
@@ -92,7 +90,6 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
         val dompetDao  = db.dompetDao()
         val sdf        = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
-        // ── Load daftar dompet ────────────────────────────────────────────────
         fun renderOpsiDompet() {
             llOpsiDompet.removeAllViews()
             if (daftarDompet.isEmpty()) {
@@ -117,7 +114,6 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
                         selectedDompetNama = dompet.nama
                         tvSumberDana.text  = dompet.nama
                         tvSumberDana.setTextColor(0xFF1A1A2E.toInt())
-                        // Tutup dropdown
                         isSumberDanaOpen = false
                         llOpsiDompet.visibility = View.GONE
                         ivChevron.rotation = 0f
@@ -137,8 +133,6 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
                         android.graphics.Color.parseColor("#534AB7"))
                 })
                 llOpsiDompet.addView(row)
-
-                // Divider antar item
                 if (dompet != daftarDompet.last()) {
                     llOpsiDompet.addView(View(requireContext()).apply {
                         layoutParams = LinearLayout.LayoutParams(
@@ -150,12 +144,10 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
             }
         }
 
-        // Load dompet dari DB
         lifecycleScope.launch {
             daftarDompet = withContext(Dispatchers.IO) {
                 dompetDao.getAllDompetSync()
             }
-            // Set default ke dompet pertama
             if (daftarDompet.isNotEmpty() && selectedDompetId == 0) {
                 selectedDompetId   = daftarDompet[0].id
                 selectedDompetNama = daftarDompet[0].nama
@@ -165,7 +157,6 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
             renderOpsiDompet()
         }
 
-        // Toggle dropdown sumber dana
         llSumberDanaHeader?.setOnClickListener {
             isSumberDanaOpen = !isSumberDanaOpen
             llOpsiDompet.visibility = if (isSumberDanaOpen) View.VISIBLE else View.GONE
@@ -173,7 +164,6 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
                 .setDuration(200).start()
         }
 
-        // ── Info hutang ───────────────────────────────────────────────────────
         fun refreshInfo(current: Hutang) {
             val sisa   = (current.totalHutang - current.sudahDibayar).coerceAtLeast(0L)
             val persen = if (current.totalHutang > 0)
@@ -195,7 +185,6 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
             layoutLunas?.visibility = View.GONE
         }
 
-        // ── Tanggal ───────────────────────────────────────────────────────────
         etTanggal?.setText(sdf.format(Date()))
         etTanggal?.setOnClickListener {
             val cal = Calendar.getInstance()
@@ -211,7 +200,6 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
             ).show()
         }
 
-        // ── Riwayat cicilan ───────────────────────────────────────────────────
         fun loadRiwayat() {
             lifecycleScope.launch {
                 val riwayat = withContext(Dispatchers.IO) {
@@ -219,9 +207,9 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
                 }
                 rvRiwayat?.layoutManager = LinearLayoutManager(requireContext())
                 rvRiwayat?.adapter = RiwayatCicilanAdapter(
-                    list    = riwayat,
+                    list         = riwayat,
                     daftarDompet = daftarDompet,
-                    onHapus = { cicilan ->
+                    onHapus      = { cicilan ->
                         AlertDialog.Builder(requireContext())
                             .setTitle("Hapus Cicilan?")
                             .setMessage(
@@ -241,7 +229,6 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
                                             sudahDibayar = newSudahDibayar,
                                             selesai = newSudahDibayar >= currentHutang.totalHutang
                                         )
-                                        // Kembalikan saldo dompet
                                         if (cicilan.dompetId != 0) {
                                             val dompet = dompetDao.getDompetById(cicilan.dompetId)
                                             dompet?.let {
@@ -269,13 +256,11 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
 
         loadRiwayat()
 
-        // ── Hapus hutang ──────────────────────────────────────────────────────
         btnHapus?.setOnClickListener {
             AlertDialog.Builder(requireContext())
                 .setTitle("Hapus Hutang?")
                 .setMessage(
-                    "Hutang \"${h.nama}\" dan semua riwayat cicilannya " +
-                            "akan dihapus permanen."
+                    "Hutang \"${h.nama}\" dan semua riwayat cicilannya akan dihapus permanen."
                 )
                 .setPositiveButton("Hapus") { _, _ ->
                     lifecycleScope.launch {
@@ -296,7 +281,6 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
                 .show()
         }
 
-        // ── Simpan cicilan ────────────────────────────────────────────────────
         btnSimpan?.setOnClickListener {
             val nominalStr = etNominal?.text.toString().replace("[^0-9]".toRegex(), "")
             val nominal    = nominalStr.toLongOrNull() ?: 0L
@@ -320,16 +304,13 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
                         nominal      = nominal,
                         tanggalBayar = tanggal,
                         catatan      = catatan,
-                        dompetId     = selectedDompetId  // ← simpan dompet terpilih
+                        dompetId     = selectedDompetId
                     )
                     cicilanDao.insertCicilan(cicilanBaru)
-
-                    // Kurangi saldo dompet yang dipakai bayar
                     val dompet = dompetDao.getDompetById(selectedDompetId)
                     dompet?.let {
                         dompetDao.update(it.copy(saldo = it.saldo - nominal))
                     }
-
                     val newSudahDibayar =
                         (h.sudahDibayar + nominal).coerceAtMost(h.totalHutang)
                     val updated = h.copy(
@@ -339,9 +320,7 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
                     hutangDao.updateHutang(updated)
                     updated
                 }
-
                 onSaved?.invoke(updatedHutang)
-
                 if (updatedHutang.selesai) {
                     Toast.makeText(
                         requireContext(),
@@ -361,48 +340,4 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
 
     private fun formatRupiah(value: Long): String =
         "Rp${String.format("%,d", value).replace(",", ".")}"
-}
-
-
-// ── RiwayatCicilanAdapter ────────────────────────────────────────────────────
-
-class RiwayatCicilanAdapter(
-    private val list: List<CicilanEntity>,
-    private val daftarDompet: List<Dompet>,
-    private val onHapus: (CicilanEntity) -> Unit
-) : RecyclerView.Adapter<RiwayatCicilanAdapter.VH>() {
-
-    inner class VH(v: View) : RecyclerView.ViewHolder(v) {
-        val tvNominal : TextView    = v.findViewById(R.id.tvRiwayatNominal)
-        val tvTanggal : TextView    = v.findViewById(R.id.tvRiwayatTanggal)
-        val tvCatatan : TextView    = v.findViewById(R.id.tvRiwayatCatatan)
-        val btnHapus  : ImageButton = v.findViewById(R.id.btnHapusCicilan)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-        val v = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_riwayat_cicilan, parent, false)
-        return VH(v)
-    }
-
-    override fun onBindViewHolder(holder: VH, position: Int) {
-        val c            = list[position]
-        val nomorCicilan = position + 1
-        val namaDompet   = daftarDompet.find { it.id == c.dompetId }?.nama ?: ""
-
-        holder.tvNominal.text = "+Rp${String.format("%,d", c.nominal).replace(",", ".")}"
-        holder.tvTanggal.text = "Cicilan ke-$nomorCicilan • ${c.tanggalBayar}"
-
-        // Tampilkan nama dompet di kolom catatan kalau ada, fallback ke catatan
-        holder.tvCatatan.text = when {
-            namaDompet.isNotEmpty() && c.catatan.isNotEmpty() -> "$namaDompet • ${c.catatan}"
-            namaDompet.isNotEmpty()                           -> namaDompet
-            c.catatan.isNotEmpty()                            -> c.catatan
-            else                                              -> "-"
-        }
-
-        holder.btnHapus.setOnClickListener { onHapus(c) }
-    }
-
-    override fun getItemCount() = list.size
 }
