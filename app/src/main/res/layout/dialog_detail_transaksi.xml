@@ -6,16 +6,17 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@android:color/white"
+    android:background="#E2E2E2"
     android:paddingBottom="20dp">
 
-    <!-- ── Toolbar: X  |  [spacer]  |  Delete  Edit ── -->
+    <!-- ── Toolbar: [X]  |  [spacer]  |  [Edit]  [Hapus] ── -->
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:paddingHorizontal="12dp">
+        android:layout_height="52dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="20dp">
 
-        <!-- Tombol X (tutup) -->
+        <!-- Tombol X (tutup) — tetap di kiri -->
         <ImageView
             android:id="@+id/btn_close"
             android:layout_width="36dp"
@@ -29,34 +30,40 @@
             android:layout_alignParentStart="true"
             app:tint="#888888"/>
 
-        <!-- Tombol Edit -->
-        <ImageView
-            android:id="@+id/btn_edit"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:src="@drawable/ic_edit"
-            android:padding="6dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true"
-            android:layout_centerVertical="true"
-            android:layout_alignParentEnd="true"
-            app:tint="#4A6FA5"/>
-
-        <!-- Tombol Hapus -->
-        <ImageView
+        <!-- Tombol Hapus — pill merah, pojok kanan -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_delete"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:src="@drawable/ic_delete"
-            android:padding="6dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:clickable="true"
-            android:focusable="true"
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:text="Hapus"
+            android:textSize="12sp"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#C62828"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            app:cornerRadius="20dp"
+            app:strokeWidth="0dp"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_toStartOf="@id/btn_edit"
-            android:layout_marginEnd="4dp"
-            app:tint="#C62828"/>
+            style="@style/Widget.MaterialComponents.Button"/>
+
+        <!-- Tombol Edit — pill biru, di kiri Hapus -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:text="Edit"
+            android:textSize="12sp"
+            android:textColor="@android:color/white"
+            android:backgroundTint="#4A6FA5"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            app:cornerRadius="20dp"
+            app:strokeWidth="0dp"
+            android:layout_toStartOf="@id/btn_delete"
+            android:layout_marginEnd="6dp"
+            android:layout_centerVertical="true"
+            style="@style/Widget.MaterialComponents.Button"/>
 
     </RelativeLayout>
 

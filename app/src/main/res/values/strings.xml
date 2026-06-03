@@ -32,7 +32,7 @@
     <string name="banner_title">Ayo Mulai Menabung!</string>
     <string name="banner_desc">Belum ada target tabungan. Buat target pertama kamu dan raih barang impian!</string>
     <string name="btn_buat_target">+ BUAT TARGET BARU</string>
-    <string name="label_insight">Insight</string>
+    <string name="label_insight">INSIGHT ANDA</string>
 
     <!-- Tambah Transaksi -->
     <string name="title_tambah_transaksi">TAMBAH TRANSAKSI</string>
