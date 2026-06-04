@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -24,15 +25,16 @@
         android:paddingTop="8dp"
         android:paddingBottom="8dp">
 
+        <!-- FIX 1 & 2: android:tint → app:tint, hardcoded "Tutup" → @string/tutup -->
         <ImageButton
             android:id="@+id/btnTutupDetail"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_close"
-            android:tint="#888888"
+            app:tint="#888888"
             android:layout_gravity="end|center_vertical"
-            android:contentDescription="Tutup"/>
+            android:contentDescription="@string/tutup"/>
     </FrameLayout>
 
     <!-- Info tabungan -->
@@ -49,7 +51,7 @@
         <View
             android:layout_width="52dp"
             android:layout_height="52dp"
-            android:background="@drawable/bg_circle_pink"
+            android:background="@drawable/bg_circle_blue"
             android:layout_marginEnd="14dp"/>
 
         <LinearLayout
@@ -76,27 +78,28 @@
                 android:textColor="#888888"/>
         </LinearLayout>
 
-        <!-- Edit + Hapus -->
+        <!-- FIX 3: android:tint → app:tint, hardcoded "Edit" → @string/edit -->
         <ImageButton
             android:id="@+id/btnEditTabungan"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:background="@drawable/bg_circle_blue_light"
             android:src="@drawable/ic_edit"
-            android:tint="#4A6FA5"
+            app:tint="#4A6FA5"
             android:padding="8dp"
             android:layout_marginEnd="8dp"
-            android:contentDescription="Edit"/>
+            android:contentDescription="@string/edit"/>
 
+        <!-- FIX 4: android:tint → app:tint, hardcoded "Hapus" → @string/hapus -->
         <ImageButton
             android:id="@+id/btnHapusTabungan"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:background="@drawable/bg_circle_red_light"
             android:src="@drawable/ic_delete"
-            android:tint="#E53935"
+            app:tint="#E53935"
             android:padding="8dp"
-            android:contentDescription="Hapus"/>
+            android:contentDescription="@string/hapus"/>
     </LinearLayout>
 
     <!-- Terkumpul -->

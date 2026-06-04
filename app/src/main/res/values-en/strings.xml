@@ -233,4 +233,9 @@
     <string name="mask_saldo">Rp ***</string>
     <string name="mask_nominal">***</string>
     <string name="format_persentase">%1$s %2$d%%</string>
+
+    <string name="tutup">Close</string>
+    <string name="edit">Edit</string>
+    <string name="hapus">Delete</string>
+    <string name="icon_tabungan">Savings icon</string>
 </resources>

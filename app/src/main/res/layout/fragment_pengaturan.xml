@@ -90,7 +90,7 @@
                 <LinearLayout
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:background="@drawable/bg_circle_pink"
+                    android:background="@drawable/bg_circle_blue"
                     android:gravity="center"
                     android:layout_marginEnd="14dp">
                     <ImageView
@@ -364,7 +364,7 @@
                     <LinearLayout
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:background="@drawable/bg_circle_pink"
+                        android:background="@drawable/bg_circle_blue"
                         android:gravity="center"
                         android:layout_marginEnd="14dp">
                         <ImageView
