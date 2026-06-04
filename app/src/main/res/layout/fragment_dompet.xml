@@ -110,18 +110,20 @@
                     android:layout_marginBottom="12dp"
                     android:background="#EEEEEE"/>
 
-                <!-- Stats Row: Terbesar + Dompet Aktif -->
+                <!-- Stats Row: Terbesar | Dompet Aktif — konsisten dengan Tabungan & Hutang -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:weightSum="2">
 
+                    <!-- Terbesar — tengah -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:gravity="center">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -140,12 +142,13 @@
                             android:textStyle="bold"/>
                     </LinearLayout>
 
+                    <!-- Dompet Aktif — tengah -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical"
-                        android:gravity="end">
+                        android:gravity="center">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -274,7 +277,6 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <!-- RecyclerView dompet -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_dompet"
             android:layout_width="match_parent"
@@ -285,7 +287,6 @@
             android:paddingTop="4dp"
             android:paddingBottom="88dp"/>
 
-        <!-- Empty State — style identik dengan HutangFragment -->
         <LinearLayout
             android:id="@+id/layout_empty_dompet"
             android:layout_width="match_parent"

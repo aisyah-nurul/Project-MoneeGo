@@ -355,18 +355,19 @@
                         android:focusable="true"/>
                 </LinearLayout>
 
-                <!-- Nama target -->
+                <!-- FIX: Nama target — center horizontal -->
                 <TextView
                     android:id="@+id/tv_nama_prioritas"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Belum ada target"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:textColor="#1A1A2E"
+                    android:gravity="center"
                     android:layout_marginBottom="10dp"/>
 
-                <!-- Progress bar -->
+                <!-- Progress bar — tetap full width -->
                 <ProgressBar
                     android:id="@+id/progress_prioritas"
                     style="@style/Widget.AppCompat.ProgressBar.Horizontal"
@@ -377,7 +378,7 @@
                     android:progressBackgroundTint="#D0D0D0"
                     android:layout_marginBottom="6dp"/>
 
-                <!-- Row: Progress % + Sisa -->
+                <!-- Row: Progress % + Sisa — tetap rata kiri/kanan -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -402,11 +403,12 @@
                         android:textStyle="bold"/>
                 </LinearLayout>
 
-                <!-- State kosong: tombol buat target (sembunyikan jika ada target) -->
+                <!-- FIX: Tombol buat target — center horizontal -->
                 <Button
                     android:id="@+id/btn_buat_target"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
+                    android:layout_gravity="center_horizontal"
                     android:layout_marginTop="12dp"
                     android:backgroundTint="#4A6FA5"
                     android:text="+ BUAT TARGET BARU"
