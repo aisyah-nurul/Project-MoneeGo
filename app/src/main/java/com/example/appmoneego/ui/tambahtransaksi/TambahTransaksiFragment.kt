@@ -24,6 +24,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.appmoneego.R
+import com.example.appmoneego.data.database.MoneeGoDatabase
 import com.example.appmoneego.data.entity.Dompet
 import com.example.appmoneego.data.entity.Transaksi
 import com.example.appmoneego.utils.CurrencyFormatter
@@ -32,6 +33,11 @@ import com.example.appmoneego.viewmodel.DompetViewModel
 import com.example.appmoneego.viewmodel.TransaksiViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Calendar
 import java.util.UUID
 
@@ -40,10 +46,11 @@ class TambahTransaksiFragment : Fragment() {
     private lateinit var viewModel:       TransaksiViewModel
     private lateinit var dompetViewModel: DompetViewModel
 
-    private var isEditMode      = false
-    private var editId          = 0
-    private var editNominalLama = 0.0
-    private var editJenisLama   = "PENGELUARAN"
+    private var isEditMode       = false
+    private var editId           = 0
+    private var editNominalLama  = 0.0
+    private var editJenisLama    = "PENGELUARAN"
+    private var editDompetIdLama = 0
     private var editTransferId: String? = null
 
     private var nominalString    = ""
@@ -202,26 +209,25 @@ class TambahTransaksiFragment : Fragment() {
         setupKeyboardListener(view)
         setupTabListener()
 
-        // ── Cek mode edit SEBELUM setupNumpad ─────────────────────────────
         arguments?.let { args ->
             if (args.containsKey("edit_id")) {
-                isEditMode      = true
-                editId          = args.getInt("edit_id")
-                editNominalLama = args.getDouble("edit_nominal")
-                editJenisLama   = args.getString("edit_jenis", "PENGELUARAN")!!
-                editTransferId  = args.getString("edit_transfer_id", null)
-
+                isEditMode       = true
+                editId           = args.getInt("edit_id")
+                editNominalLama  = args.getDouble("edit_nominal")
+                editJenisLama    = args.getString("edit_jenis", "PENGELUARAN")!!
+                editTransferId   = args.getString("edit_transfer_id", null)
+                editDompetIdLama = args.getInt("edit_dompet_id", 0)
                 nominalString    = editNominalLama.toLong().toString()
                 selectedKategori = args.getString("edit_kategori", "Makanan")!!
                 catatanString    = args.getString("edit_catatan",  "")!!
                 selectedTanggal  = args.getLong("edit_tanggal", System.currentTimeMillis())
-                selectedDompetId = args.getInt("edit_dompet_id", 0)
+                selectedDompetId = editDompetIdLama
                 jenisTransaksi   = editJenisLama
 
-                Log.d("EditTransaksi",
-                    "MODE EDIT — editId=$editId nominal=$editNominalLama " +
-                            "jenis=$editJenisLama kategori=$selectedKategori " +
-                            "dompetId=$selectedDompetId transferId=$editTransferId")
+                Log.d("EditTransaksi", "selectedTanggal dari args = $selectedTanggal")
+                Log.d("EditTransaksi", "tanggal readable = ${java.util.Date(selectedTanggal)}")
+                Log.d("EditTransaksi", "edit_tanggal key ada? = ${args.containsKey("edit_tanggal")}")
+                Log.d("EditTransaksi", "raw edit_tanggal = ${args.getLong("edit_tanggal", -1L)}")
 
                 view.findViewById<TextView>(R.id.tv_title)?.text = "EDIT TRANSAKSI"
                 view.findViewById<LinearLayout>(R.id.ll_tab_jenis)?.visibility = View.GONE
@@ -230,7 +236,6 @@ class TambahTransaksiFragment : Fragment() {
             }
         }
 
-        // setupNumpad dipanggil SETELAH isEditMode di-set
         setupNumpad(view)
         setupKeyboardHuruf(view)
         setupFormFields(view)
@@ -269,6 +274,8 @@ class TambahTransaksiFragment : Fragment() {
     }
 
     private fun prefillEditForm() {
+        if (selectedDompetId == 0) selectedDompetId = editDompetIdLama
+
         updateNominalDisplay()
         updateTanggalDisplay()
 
@@ -286,15 +293,21 @@ class TambahTransaksiFragment : Fragment() {
         if (dompetDipilih != null) {
             selectedDompetNama = dompetDipilih.nama
             tvSumberDana.text  = dompetDipilih.nama
+        } else if (daftarDompet.isNotEmpty()) {
+            selectedDompetId   = daftarDompet[0].id
+            selectedDompetNama = daftarDompet[0].nama
+            tvSumberDana.text  = daftarDompet[0].nama
         }
+
         renderOpsiSumberDana()
     }
 
-    // ── Simpan mode edit ──────────────────────────────────────────────────────
+    // ── SIMPAN EDIT — pakai GlobalScope agar tidak cancel saat fragment destroyed ──
     private fun simpanEditTransaksi(view: View) {
         Log.d("EditTransaksi",
             "simpanEditTransaksi — editId=$editId nominal=$nominalString " +
-                    "jenis=$jenisTransaksi kategori=$selectedKategori dompetId=$selectedDompetId")
+                    "jenis=$jenisTransaksi kategori=$selectedKategori " +
+                    "dompetId=$selectedDompetId dompetIdLama=$editDompetIdLama")
 
         val nominal = nominalString.toDoubleOrNull() ?: 0.0
         if (nominal <= 0.0) {
@@ -323,9 +336,87 @@ class TambahTransaksiFragment : Fragment() {
         )
 
         Log.d("EditTransaksi", "update object: $updated")
-        viewModel.update(updated, editNominalLama, editJenisLama)
-        Snackbar.make(view, "Transaksi berhasil diperbarui", Snackbar.LENGTH_SHORT).show()
-        requireActivity().onBackPressedDispatcher.onBackPressed()
+
+        // Nonaktifkan tombol agar tidak dobel klik
+        btnSimpan.isEnabled = false
+        btnEnter.isEnabled  = false
+
+        // Simpan referensi context sebelum fragment destroyed
+        val appContext = requireContext().applicationContext
+
+        // GlobalScope agar coroutine tidak ikut cancel saat fragment di-destroy
+        @Suppress("OPT_IN_USAGE")
+        GlobalScope.launch(Dispatchers.Main) {
+            try {
+                withContext(Dispatchers.IO) {
+                    val db           = MoneeGoDatabase.getDatabase(appContext)
+                    val transaksiDao = db.transaksiDao()
+                    val dompetDao    = db.dompetDao()
+
+                    // ── Koreksi saldo dompet ──────────────────────────────
+                    if (editDompetIdLama != updated.dompetId) {
+                        // Dompet berubah
+                        Log.d("EditTransaksi", "Dompet berubah: $editDompetIdLama → ${updated.dompetId}")
+                        val dompetLama = dompetDao.getDompetById(editDompetIdLama)
+                        dompetLama?.let {
+                            val saldo = if (editJenisLama == "PEMASUKAN")
+                                it.saldo - editNominalLama
+                            else
+                                it.saldo + editNominalLama
+                            dompetDao.update(it.copy(saldo = saldo))
+                            Log.d("EditTransaksi", "saldo lama dikembalikan: ${it.saldo} → $saldo")
+                        }
+                        val dompetBaru = dompetDao.getDompetById(updated.dompetId)
+                        dompetBaru?.let {
+                            val saldo = if (updated.jenis == "PEMASUKAN")
+                                it.saldo + updated.nominal
+                            else
+                                it.saldo - updated.nominal
+                            dompetDao.update(it.copy(saldo = saldo))
+                            Log.d("EditTransaksi", "saldo baru diupdate: ${it.saldo} → $saldo")
+                        }
+                    } else {
+                        // Dompet sama
+                        Log.d("EditTransaksi", "Dompet sama: $editDompetIdLama")
+                        val dompet = dompetDao.getDompetById(updated.dompetId)
+                        Log.d("EditTransaksi", "dompet = $dompet")
+                        dompet?.let {
+                            val saldoKembalikan = if (editJenisLama == "PEMASUKAN")
+                                it.saldo - editNominalLama
+                            else
+                                it.saldo + editNominalLama
+                            val saldoBaru = if (updated.jenis == "PEMASUKAN")
+                                saldoKembalikan + updated.nominal
+                            else
+                                saldoKembalikan - updated.nominal
+                            dompetDao.update(it.copy(saldo = saldoBaru))
+                            Log.d("EditTransaksi", "saldo: ${it.saldo} → $saldoBaru")
+                        }
+                    }
+
+                    // ── Update transaksi ──────────────────────────────────
+                    transaksiDao.update(updated)
+                    Log.d("EditTransaksi", "transaksiDao.update() SELESAI ✓ id=${updated.id}")
+                }
+
+                // Berhasil — kembali ke riwayat
+                if (isAdded) {
+                    Snackbar.make(requireView(), "Transaksi berhasil diperbarui",
+                        Snackbar.LENGTH_SHORT).show()
+                    delay(600)
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
+                }
+
+            } catch (e: Exception) {
+                Log.e("EditTransaksi", "ERROR: ${e.message}", e)
+                if (isAdded) {
+                    btnSimpan.isEnabled = true
+                    btnEnter.isEnabled  = true
+                    Snackbar.make(requireView(), "Gagal menyimpan: ${e.message}",
+                        Snackbar.LENGTH_LONG).show()
+                }
+            }
+        }
     }
 
     private fun bindViews(view: View) {
@@ -504,7 +595,6 @@ class TambahTransaksiFragment : Fragment() {
             tvSumberDana.text  = getString(R.string.label_pilih_dompet)
             return
         }
-        // Hanya set default ke dompet[0] kalau bukan mode edit dan belum ada pilihan
         if (selectedDompetId == 0 && !isEditMode) {
             selectedDompetId   = daftarDompet[0].id
             selectedDompetNama = daftarDompet[0].nama
@@ -728,7 +818,6 @@ class TambahTransaksiFragment : Fragment() {
         }
         view.findViewById<Button>(R.id.btn_bintang).setOnClickListener { bukaKeyboardHuruf() }
 
-        // Tentukan fungsi simpan berdasarkan isEditMode yang sudah di-set sebelumnya
         val aksiSimpan: (View) -> Unit = if (isEditMode) {
             { v -> simpanEditTransaksi(v) }
         } else {
