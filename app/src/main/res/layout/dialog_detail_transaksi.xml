@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@android:color/white"
+    android:background="@color/bg_card"
     android:paddingBottom="20dp">
 
     <!-- ── Toolbar: X  |  [spacer]  |  Delete  Edit ── -->
@@ -27,7 +27,7 @@
             android:focusable="true"
             android:layout_centerVertical="true"
             android:layout_alignParentStart="true"
-            app:tint="#888888"/>
+            app:tint="@color/text_secondary"/>
 
         <!-- Tombol Edit -->
         <ImageView
@@ -116,7 +116,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#E0E0E0"
+            android:background="@color/divider"
             android:layout_marginBottom="14dp"/>
 
         <!-- Tanggal -->
@@ -130,7 +130,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/label_tanggal_detail"
                 android:textSize="13sp"
-                android:textColor="#888888"/>
+                android:textColor="@color/text_secondary"/>
             <TextView
                 android:id="@+id/tv_dialog_tanggal"
                 android:layout_width="0dp"
@@ -154,7 +154,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/label_dompet_detail"
                 android:textSize="13sp"
-                android:textColor="#888888"/>
+                android:textColor="@color/text_secondary"/>
             <TextView
                 android:id="@+id/tv_dialog_dompet"
                 android:layout_width="0dp"
@@ -179,7 +179,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/label_dari_detail"
                 android:textSize="13sp"
-                android:textColor="#888888"/>
+                android:textColor="@color/text_secondary"/>
             <TextView
                 android:id="@+id/tv_dialog_dari_dompet"
                 android:layout_width="0dp"
@@ -204,7 +204,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/label_ke_detail"
                 android:textSize="13sp"
-                android:textColor="#888888"/>
+                android:textColor="@color/text_secondary"/>
             <TextView
                 android:id="@+id/tv_dialog_ke_dompet"
                 android:layout_width="0dp"
@@ -227,7 +227,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/label_catatan_detail"
                 android:textSize="13sp"
-                android:textColor="#888888"/>
+                android:textColor="@color/text_secondary"/>
             <TextView
                 android:id="@+id/tv_dialog_catatan"
                 android:layout_width="0dp"

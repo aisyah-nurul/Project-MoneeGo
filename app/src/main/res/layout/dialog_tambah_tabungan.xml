@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:fillViewport="true"
-    android:background="@color/white">
+    android:background="@color/bg_card">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -31,7 +31,7 @@
             android:text="Tambah Target Tabungan"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#1A2B34"
+            android:textColor="@color/text_primary"
             android:gravity="center"
             android:layout_marginBottom="24dp"/>
 
@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:text="Nama Target"
             android:textSize="13sp"
-            android:textColor="#546E7A"
+            android:textColor="@color/text_secondary"
             android:textStyle="bold"
             android:layout_marginBottom="6dp"/>
 
@@ -65,8 +65,8 @@
                 android:hint="Contoh, Beli Laptop"
                 android:inputType="textCapWords"
                 android:textSize="14sp"
-                android:textColor="#1A2B34"
-                android:textColorHint="#90A4AE"/>
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Ikon Target -->
@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:text="Kategori"
             android:textSize="13sp"
-            android:textColor="#546E7A"
+            android:textColor="@color/text_secondary"
             android:textStyle="bold"
             android:layout_marginBottom="10dp"/>
 
@@ -109,7 +109,7 @@
                     android:layout_height="wrap_content"
                     android:text="Elektronik"
                     android:textSize="10sp"
-                    android:textColor="#1A2B34"
+                    android:textColor="@color/text_primary"
                     android:gravity="center"/>
             </LinearLayout>
 
@@ -136,7 +136,7 @@
                     android:layout_height="wrap_content"
                     android:text="Kendaraan"
                     android:textSize="10sp"
-                    android:textColor="#1A2B34"
+                    android:textColor="@color/text_primary"
                     android:gravity="center"/>
             </LinearLayout>
 
@@ -163,7 +163,7 @@
                     android:layout_height="wrap_content"
                     android:text="Liburan"
                     android:textSize="10sp"
-                    android:textColor="#1A2B34"
+                    android:textColor="@color/text_primary"
                     android:gravity="center"/>
             </LinearLayout>
 
@@ -190,7 +190,7 @@
                     android:layout_height="wrap_content"
                     android:text="Rumah"
                     android:textSize="10sp"
-                    android:textColor="#1A2B34"
+                    android:textColor="@color/text_primary"
                     android:gravity="center"/>
             </LinearLayout>
 
@@ -217,7 +217,7 @@
                     android:layout_height="wrap_content"
                     android:text="Pendidikan"
                     android:textSize="10sp"
-                    android:textColor="#1A2B34"
+                    android:textColor="@color/text_primary"
                     android:gravity="center"/>
             </LinearLayout>
 
@@ -244,7 +244,7 @@
                     android:layout_height="wrap_content"
                     android:text="Lainnya"
                     android:textSize="10sp"
-                    android:textColor="#1A2B34"
+                    android:textColor="@color/text_primary"
                     android:gravity="center"/>
             </LinearLayout>
 
@@ -256,7 +256,7 @@
             android:layout_height="wrap_content"
             android:text="Target Nominal"
             android:textSize="13sp"
-            android:textColor="#546E7A"
+            android:textColor="@color/text_secondary"
             android:textStyle="bold"
             android:layout_marginBottom="6dp"/>
 
@@ -275,14 +275,14 @@
             app:hintEnabled="false">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etTargetNominal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="0"
-                android:inputType="numberDecimal"
-                android:textSize="14sp"
-                android:textColor="#1A2B34"
-                android:textColorHint="#90A4AE"/>
+            android:id="@+id/etTargetNominal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="0"
+            android:inputType="numberDecimal"
+            android:textSize="14sp"
+            android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Deadline -->
@@ -291,7 +291,7 @@
             android:layout_height="wrap_content"
             android:text="Deadline (Opsional)"
             android:textSize="13sp"
-            android:textColor="#546E7A"
+            android:textColor="@color/text_secondary"
             android:textStyle="bold"
             android:layout_marginBottom="6dp"/>
 
@@ -318,8 +318,8 @@
                 android:focusable="false"
                 android:clickable="true"
                 android:textSize="14sp"
-                android:textColor="#1A2B34"
-                android:textColorHint="#90A4AE"/>
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Tombol Simpan -->

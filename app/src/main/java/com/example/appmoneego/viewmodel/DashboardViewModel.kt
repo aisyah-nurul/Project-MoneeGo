@@ -79,7 +79,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
         loadBulan(Calendar.getInstance())
 
         // Tips random — di-generate sekali saat ViewModel pertama dibuat
-        _insightTips.value = InsightGenerator.getTipsRandom()
+        _insightTips.value = InsightGenerator.getTipsRandom(getApplication())
 
         // Setup sumber-sumber data untuk insight
         setupInsightSources()
@@ -145,6 +145,7 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
 
     private fun recalculateInsight() {
         _insightRingkasan.value = InsightGenerator.hitungInsight(
+            context                  = getApplication(),
             totalJumlahTransaksi     = cacheTotalJumlah,
             tanggalTerakhir          = cacheTanggalTerakhir,
             pengeluaranBulanIni      = cachePengeluaranIni,

@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E2E2E2"
+    android:background="@color/bg_main"
     android:scrollbars="none">
 
     <LinearLayout
@@ -62,7 +62,7 @@
             android:text="@string/section_ekspor"
             android:textSize="11sp"
             android:textStyle="bold"
-            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textColor="@color/text_primary"
             android:letterSpacing="0.1"
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="16dp"
@@ -113,7 +113,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/ekspor_desc"
                         android:textSize="11sp"
-                        android:textColor="?attr/colorOnSurfaceVariant"/>
+                        android:textColor="@color/text_primary"/>
                 </LinearLayout>
 
                 <ImageView
@@ -132,7 +132,7 @@
             android:text="@string/section_tampilan"
             android:textSize="11sp"
             android:textStyle="bold"
-            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textColor="@color/text_primary"
             android:letterSpacing="0.1"
             android:layout_marginHorizontal="20dp"
             android:layout_marginBottom="4dp"/>
@@ -182,7 +182,7 @@
                             android:text="@string/bahasa_label"
                             android:textSize="14sp"
                             android:textStyle="bold"
-                            android:textColor="?attr/colorOnSurfaceVariant"/>
+                            android:textColor="@color/text_primary"/>
                         <TextView
                             android:id="@+id/tv_bahasa_value"
                             android:layout_width="wrap_content"
@@ -203,7 +203,8 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginHorizontal="16dp"/>
+                    android:layout_marginHorizontal="16dp"
+                    android:background="@color/divider"/>
 
                 <!-- DARK MODE -->
                 <LinearLayout
@@ -237,7 +238,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/dark_mode_desc"
                             android:textSize="11sp"
-                            android:textColor="?attr/colorOnSurfaceVariant"/>
+                            android:textColor="@color/text_primary"/>
                     </LinearLayout>
 
                     <Switch
@@ -251,7 +252,8 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginHorizontal="16dp"/>
+                    android:layout_marginHorizontal="16dp"
+                    android:background="@color/divider"/>/>
 
                 <!-- NOTIFIKASI -->
                 <LinearLayout
@@ -285,7 +287,7 @@
                             android:layout_height="wrap_content"
                             android:text="@string/notifikasi_desc"
                             android:textSize="11sp"
-                            android:textColor="?attr/colorOnSurfaceVariant"/>
+                            android:textColor="@color/text_primary"/>
                     </LinearLayout>
 
                     <Switch
@@ -299,7 +301,8 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginHorizontal="16dp"/>
+                    android:layout_marginHorizontal="16dp"
+                    android:background="@color/divider"/>
 
                 <!-- WAKTU NOTIFIKASI -->
                 <LinearLayout
@@ -366,7 +369,7 @@
             android:text="@string/section_tentang"
             android:textSize="11sp"
             android:textStyle="bold"
-            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textColor="@color/text_primary"
             android:letterSpacing="0.1"
             android:layout_marginHorizontal="20dp"
             android:layout_marginBottom="4dp"/>
@@ -410,7 +413,7 @@
                             android:text="@string/versi_label"
                             android:textSize="14sp"
                             android:textStyle="bold"
-                            android:textColor="?attr/colorOnSurfaceVariant"/>
+                            android:textColor="@color/text_primary"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -424,7 +427,8 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginHorizontal="16dp"/>
+                    android:layout_marginHorizontal="16dp"
+                    android:background="@color/divider"/>/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -451,7 +455,7 @@
                             android:text="@string/pengembang_label"
                             android:textSize="14sp"
                             android:textStyle="bold"
-                            android:textColor="?attr/colorOnSurfaceVariant"/>
+                            android:textColor="@color/text_primary"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

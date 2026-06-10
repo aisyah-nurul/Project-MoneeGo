@@ -23,32 +23,32 @@ class DashboardFragment : Fragment() {
     private lateinit var dashboardViewModel: DashboardViewModel
 
     // ── View saldo & bulan ────────────────────────────────────────────────────
-    private lateinit var tvSaldo:       TextView
-    private lateinit var tvPemasukan:   TextView
+    private lateinit var tvSaldo: TextView
+    private lateinit var tvPemasukan: TextView
     private lateinit var tvPengeluaran: TextView
-    private lateinit var tvSelisih:     TextView
+    private lateinit var tvSelisih: TextView
     private lateinit var ivToggleSaldo: ImageView
-    private lateinit var tvBulan:       TextView
-    private lateinit var btnPrevBulan:  TextView
-    private lateinit var btnNextBulan:  TextView
+    private lateinit var tvBulan: TextView
+    private lateinit var btnPrevBulan: TextView
+    private lateinit var btnNextBulan: TextView
 
     // ── View insight ──────────────────────────────────────────────────────────
-    private lateinit var tvInsightRingkasan:    TextView
-    private lateinit var tvInsightTips:         TextView
-    private lateinit var cardRingkasan:         CardView
+    private lateinit var tvInsightRingkasan: TextView
+    private lateinit var tvInsightTips: TextView
+    private lateinit var cardRingkasan: CardView
     private lateinit var viewIndikatorRingkasan: View
 
     // ── State mata ────────────────────────────────────────────────────────────
     private var isSaldoVisible = true
 
     // Nilai mentah untuk keperluan toggle mata
-    private var nilaiSaldo       = "Rp 0"
-    private var nilaiPemasukan   = "Rp 0"
+    private var nilaiSaldo = "Rp 0"
+    private var nilaiPemasukan = "Rp 0"
     private var nilaiPengeluaran = "Rp 0"
-    private var nilaiSelisih     = "Rp 0"
+    private var nilaiSelisih = "Rp 0"
 
     // Nilai double untuk hitung selisih dan warna
-    private var rawPemasukan   = 0.0
+    private var rawPemasukan = 0.0
     private var rawPengeluaran = 0.0
 
     // Calendar bulan yang sedang ditampilkan
@@ -83,17 +83,17 @@ class DashboardFragment : Fragment() {
     // ── Init Views ────────────────────────────────────────────────────────────
 
     private fun initViews(view: View) {
-        tvSaldo              = view.findViewById(R.id.tv_saldo)
-        tvPemasukan          = view.findViewById(R.id.tv_pemasukan)
-        tvPengeluaran        = view.findViewById(R.id.tv_pengeluaran)
-        tvSelisih            = view.findViewById(R.id.tv_selisih)
-        ivToggleSaldo        = view.findViewById(R.id.iv_toggle_saldo)
-        tvBulan              = view.findViewById(R.id.tv_bulan)
-        btnPrevBulan         = view.findViewById(R.id.btn_prev_bulan)
-        btnNextBulan         = view.findViewById(R.id.btn_next_bulan)
-        tvInsightRingkasan    = view.findViewById(R.id.tv_insight_ringkasan)
-        tvInsightTips         = view.findViewById(R.id.tv_insight_tips)
-        cardRingkasan         = view.findViewById(R.id.card_ringkasan)
+        tvSaldo = view.findViewById(R.id.tv_saldo)
+        tvPemasukan = view.findViewById(R.id.tv_pemasukan)
+        tvPengeluaran = view.findViewById(R.id.tv_pengeluaran)
+        tvSelisih = view.findViewById(R.id.tv_selisih)
+        ivToggleSaldo = view.findViewById(R.id.iv_toggle_saldo)
+        tvBulan = view.findViewById(R.id.tv_bulan)
+        btnPrevBulan = view.findViewById(R.id.btn_prev_bulan)
+        btnNextBulan = view.findViewById(R.id.btn_next_bulan)
+        tvInsightRingkasan = view.findViewById(R.id.tv_insight_ringkasan)
+        tvInsightTips = view.findViewById(R.id.tv_insight_tips)
+        cardRingkasan = view.findViewById(R.id.card_ringkasan)
         viewIndikatorRingkasan = view.findViewById(R.id.view_indikator_ringkasan)
     }
 
@@ -104,22 +104,22 @@ class DashboardFragment : Fragment() {
 
         // Saldo total semua dompet
         dashboardViewModel.totalSaldo.observe(viewLifecycleOwner) { total ->
-            nilaiSaldo   = CurrencyFormatter.format(total ?: 0.0)
+            nilaiSaldo = CurrencyFormatter.format(total ?: 0.0)
             tvSaldo.text = if (isSaldoVisible) nilaiSaldo else "Rp ***"
         }
 
         // Pemasukan bulan aktif
         dashboardViewModel.totalPemasukan.observe(viewLifecycleOwner) { pemasukan ->
-            rawPemasukan     = pemasukan ?: 0.0
-            nilaiPemasukan   = CurrencyFormatter.format(rawPemasukan)
+            rawPemasukan = pemasukan ?: 0.0
+            nilaiPemasukan = CurrencyFormatter.format(rawPemasukan)
             tvPemasukan.text = if (isSaldoVisible) nilaiPemasukan else "***"
             hitungDanTampilkanSelisih()
         }
 
         // Pengeluaran bulan aktif
         dashboardViewModel.totalPengeluaran.observe(viewLifecycleOwner) { pengeluaran ->
-            rawPengeluaran     = pengeluaran ?: 0.0
-            nilaiPengeluaran   = CurrencyFormatter.format(rawPengeluaran)
+            rawPengeluaran = pengeluaran ?: 0.0
+            nilaiPengeluaran = CurrencyFormatter.format(rawPengeluaran)
             tvPengeluaran.text = if (isSaldoVisible) nilaiPengeluaran else "***"
             hitungDanTampilkanSelisih()
         }
@@ -131,18 +131,23 @@ class DashboardFragment : Fragment() {
             // Ubah warna kartu dan indikator berdasarkan tipe insight
             when (insight.tipe) {
                 "WARNING" -> {
-                    // Merah — pengeluaran tinggi atau tidak aktif mencatat
-                    cardRingkasan.setCardBackgroundColor(0xFFFFCDD2.toInt())
+                    cardRingkasan.setCardBackgroundColor(
+                        requireContext().getColor(R.color.card_saldo_bg)
+                    )
                     setIndikatorWarna(viewIndikatorRingkasan, 0xFFF44336.toInt())
                 }
+
                 "SUCCESS" -> {
-                    // Hijau — pengeluaran turun
-                    cardRingkasan.setCardBackgroundColor(0xFFC8E6C9.toInt())
+                    cardRingkasan.setCardBackgroundColor(
+                        requireContext().getColor(R.color.card_saldo_bg)
+                    )
                     setIndikatorWarna(viewIndikatorRingkasan, 0xFF4CAF50.toInt())
                 }
+
                 else -> {
-                    // INFO — default merah muda
-                    cardRingkasan.setCardBackgroundColor(0xFFFFCDD2.toInt())
+                    cardRingkasan.setCardBackgroundColor(
+                        requireContext().getColor(R.color.card_saldo_bg)
+                    )
                     setIndikatorWarna(viewIndikatorRingkasan, 0xFFF44336.toInt())
                 }
             }
@@ -172,15 +177,15 @@ class DashboardFragment : Fragment() {
         val selisih = rawPemasukan - rawPengeluaran
 
         nilaiSelisih = when {
-            selisih > 0  -> CurrencyFormatter.format(selisih)
-            selisih < 0  -> "-${CurrencyFormatter.format(-selisih)}"
-            else         -> CurrencyFormatter.format(0.0)
+            selisih > 0 -> CurrencyFormatter.format(selisih)
+            selisih < 0 -> "-${CurrencyFormatter.format(-selisih)}"
+            else -> CurrencyFormatter.format(0.0)
         }
 
         val warnaSelisih = when {
-            selisih > 0  -> 0xFF4CAF50.toInt()
-            selisih < 0  -> 0xFFF44336.toInt()
-            else         -> 0xFF1A1A2E.toInt()
+            selisih > 0 -> 0xFF4CAF50.toInt()
+            selisih < 0 -> 0xFFF44336.toInt()
+            else -> 0xFF1A1A2E.toInt()
         }
 
         tvSelisih.text = if (isSaldoVisible) nilaiSelisih else "***"
@@ -227,15 +232,15 @@ class DashboardFragment : Fragment() {
 
     private fun refreshTampilan() {
         if (isSaldoVisible) {
-            tvSaldo.text       = nilaiSaldo
-            tvPemasukan.text   = nilaiPemasukan
+            tvSaldo.text = nilaiSaldo
+            tvPemasukan.text = nilaiPemasukan
             tvPengeluaran.text = nilaiPengeluaran
-            tvSelisih.text     = nilaiSelisih
+            tvSelisih.text = nilaiSelisih
         } else {
-            tvSaldo.text       = "Rp ***"
-            tvPemasukan.text   = "***"
+            tvSaldo.text = "Rp ***"
+            tvPemasukan.text = "***"
             tvPengeluaran.text = "***"
-            tvSelisih.text     = "***"
+            tvSelisih.text = "***"
         }
         hitungDanTampilkanSelisih()
     }

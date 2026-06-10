@@ -221,7 +221,7 @@ class DompetFragment : Fragment() {
         fun highlight(selected: LinearLayout) {
             jenisMap.keys.forEach { btn ->
                 btn.isSelected = (btn == selected)
-                btn.alpha = if (btn == selected) 1f else 0.6f
+                btn.alpha = if (btn == selected) 1f else 0.9f
             }
         }
 

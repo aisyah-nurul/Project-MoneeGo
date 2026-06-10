@@ -168,7 +168,9 @@ class TransaksiAdapter(
 
             binding.tvNominal.text = if (nominalVisible)
                 CurrencyFormatter.format(pair.nominal) else "Rp ***"
-            binding.tvNominal.setTextColor(0xFF1A2B34.toInt())
+            binding.tvNominal.setTextColor(
+                binding.root.context.getColor(R.color.text_primary)
+            )
 
             binding.clHeaderInteraktif.visibility = View.GONE
             binding.cardDetail.visibility         = View.VISIBLE
@@ -189,7 +191,7 @@ class TransaksiAdapter(
             binding.tvCatatan.text  = transaksi.catatan.ifEmpty { "-" }
 
             val isIncome = transaksi.jenis == "PEMASUKAN"
-            val warna    = if (isIncome) 0xFF276F29.toInt() else 0xFFF44336.toInt()
+            val warna    = if (isIncome) 0xFF4CAF50.toInt() else 0xFFEF5350.toInt()
             val prefix   = if (isIncome) "+ " else "- "
 
             binding.tvNominal.text = if (nominalVisible)

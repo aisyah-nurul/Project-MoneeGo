@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -30,7 +32,7 @@
             android:layout_height="32dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_close"
-            android:tint="#888888"
+            app:tint="#888888"
             android:layout_gravity="end|center_vertical"
             android:contentDescription="Tutup"/>
     </FrameLayout>
@@ -65,7 +67,7 @@
                 android:text="Nama Target"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="#1A1A2E"/>
+                android:textColor="@color/text_primary"/>
 
             <TextView
                 android:id="@+id/tvDetailHariIni"
@@ -83,7 +85,7 @@
             android:layout_height="36dp"
             android:background="@drawable/bg_circle_blue_light"
             android:src="@drawable/ic_edit"
-            android:tint="#4A6FA5"
+            app:tint="#4A6FA5"
             android:padding="8dp"
             android:layout_marginEnd="8dp"
             android:contentDescription="Edit"/>
@@ -94,7 +96,7 @@
             android:layout_height="36dp"
             android:background="@drawable/bg_circle_red_light"
             android:src="@drawable/ic_delete"
-            android:tint="#E53935"
+            app:tint="#E53935"
             android:padding="8dp"
             android:contentDescription="Hapus"/>
     </LinearLayout>
@@ -123,7 +125,7 @@
             android:text="Rp0"
             android:textSize="26sp"
             android:textStyle="bold"
-            android:textColor="#1A1A2E"/>
+            android:textColor="@color/text_primary"/>
     </LinearLayout>
 
     <!-- Input nominal -->
@@ -155,7 +157,7 @@
             android:text="Rp"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:textColor="#1A1A2E"
+            android:textColor="@color/text_primary"
             android:layout_marginEnd="8dp"/>
 
         <EditText
@@ -167,7 +169,7 @@
             android:inputType="number"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:textColor="#1A1A2E"
+            android:textColor="@color/text_primary"
             android:background="@null"
             android:gravity="center"/>
     </LinearLayout>
@@ -188,7 +190,7 @@
             android:layout_weight="1"
             android:text="PILIH DOMPET"
             android:backgroundTint="#FFB6C1"
-            android:textColor="#1A1A2E"
+            android:textColor="@color/text_primary"
             android:textSize="12sp"
             android:layout_marginEnd="8dp"/>
 

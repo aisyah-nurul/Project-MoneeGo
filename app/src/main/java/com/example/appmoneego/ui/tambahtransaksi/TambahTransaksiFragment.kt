@@ -165,7 +165,7 @@ class TambahTransaksiFragment : Fragment() {
     private fun buatBgTabNonAktif(): GradientDrawable = GradientDrawable().apply {
         shape        = GradientDrawable.RECTANGLE
         cornerRadius = 10f * resources.displayMetrics.density
-        setColor(Color.parseColor("#E8E3D8"))
+        setColor(requireContext().getColor(R.color.primary_navy))
     }
 
     private fun updateTabUI(aktif: String) {
@@ -464,7 +464,9 @@ class TambahTransaksiFragment : Fragment() {
                     selectedDompetAsalId   = dompet.id
                     selectedDompetAsalNama = dompet.nama
                     tvDompetAsal.text      = dompet.nama
-                    tvDompetAsal.setTextColor(0xFF1A1A2E.toInt())
+                    tvDompetAsal.setTextColor(
+                        requireContext().getColor(R.color.text_primary)
+                    )
                 } else {
                     if (dompet.id == selectedDompetAsalId) {
                         Snackbar.make(requireView(),
@@ -475,7 +477,9 @@ class TambahTransaksiFragment : Fragment() {
                     selectedDompetTujuanId   = dompet.id
                     selectedDompetTujuanNama = dompet.nama
                     tvDompetTujuan.text      = dompet.nama
-                    tvDompetTujuan.setTextColor(0xFF1A1A2E.toInt())
+                    tvDompetTujuan.setTextColor(
+                        requireContext().getColor(R.color.text_primary)
+                    )
                 }
             }
             .setNegativeButton(getString(R.string.btn_batal), null).show()
@@ -485,9 +489,13 @@ class TambahTransaksiFragment : Fragment() {
         selectedDompetAsalId     = 0; selectedDompetAsalNama   = ""
         selectedDompetTujuanId   = 0; selectedDompetTujuanNama = ""
         tvDompetAsal.text        = getString(R.string.pilih_dompet)
-        tvDompetAsal.setTextColor(0xFF888888.toInt())
+        tvDompetAsal.setTextColor(
+            requireContext().getColor(R.color.text_secondary)
+        )
         tvDompetTujuan.text      = getString(R.string.pilih_dompet)
-        tvDompetTujuan.setTextColor(0xFF888888.toInt())
+        tvDompetTujuan.setTextColor(
+            requireContext().getColor(R.color.text_secondary)
+        )
         catatanString = ""
         tampilkanCatatanTransfer()
     }
@@ -523,7 +531,9 @@ class TambahTransaksiFragment : Fragment() {
             }
             row.addView(TextView(requireContext()).apply {
                 text = dompet.nama; textSize = 14f
-                setTextColor(0xFF1A1A2E.toInt())
+                setTextColor(
+                    requireContext().getColor(R.color.text_primary)
+                )
                 layoutParams = LinearLayout.LayoutParams(
                     0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
             })
@@ -556,20 +566,20 @@ class TambahTransaksiFragment : Fragment() {
     private fun tampilkanCatatan() {
         if (catatanString.isEmpty()) {
             tvCatatan.text = getString(R.string.hint_catatan)
-            tvCatatan.setTextColor(0xFFB0BEC5.toInt())
+            requireContext().getColor(R.color.text_secondary)
         } else {
             tvCatatan.text = catatanString
-            tvCatatan.setTextColor(0xFF1A1A2E.toInt())
+            requireContext().getColor(R.color.text_primary)
         }
     }
 
     private fun tampilkanCatatanTransfer() {
         if (catatanString.isEmpty()) {
             tvCatatanTransfer.text = getString(R.string.hint_tambah_catatan)
-            tvCatatanTransfer.setTextColor(0xFFB0BEC5.toInt())
+            requireContext().getColor(R.color.text_secondary)
         } else {
             tvCatatanTransfer.text = catatanString
-            tvCatatanTransfer.setTextColor(0xFF1A1A2E.toInt())
+            requireContext().getColor(R.color.text_primary)
         }
     }
 
@@ -785,8 +795,10 @@ class TambahTransaksiFragment : Fragment() {
         itemView.findViewById<LinearLayout>(R.id.ll_item_kategori_bg).setBackgroundResource(
             if (isSelected) R.drawable.bg_kategori_selected else android.R.color.transparent)
         itemView.findViewById<TextView>(R.id.tv_item_kategori_nama).setTextColor(
-            if (isSelected) requireContext().getColor(android.R.color.black)
-            else 0xFF555555.toInt())
+            if (isSelected)
+                requireContext().getColor(R.color.text_primary)
+            else
+                requireContext().getColor(R.color.text_secondary))
     }
 
     private fun toggleGridKategori() {
@@ -875,7 +887,9 @@ class TambahTransaksiFragment : Fragment() {
         gridNamaHari.removeAllViews()
         namaHari.forEach { hari ->
             gridNamaHari.addView(TextView(requireContext()).apply {
-                text = hari; textSize = 10f; setTextColor(0xFF888888.toInt())
+                text = hari; textSize = 10f; setTextColor(
+                requireContext().getColor(R.color.text_secondary)
+            )
                 gravity = android.view.Gravity.CENTER
                 layoutParams = GridLayout.LayoutParams(
                     GridLayout.spec(GridLayout.UNDEFINED, 1f),
@@ -916,7 +930,9 @@ class TambahTransaksiFragment : Fragment() {
                         setTextColor(0xFF4A6FA5.toInt())
                         setTypeface(typeface, android.graphics.Typeface.BOLD)
                     }
-                    else       -> setTextColor(0xFF1A1A2E.toInt())
+                    else -> setTextColor(
+                        requireContext().getColor(R.color.text_primary)
+                    )
                 }
                 layoutParams = GridLayout.LayoutParams(
                     GridLayout.spec(GridLayout.UNDEFINED, 1f),

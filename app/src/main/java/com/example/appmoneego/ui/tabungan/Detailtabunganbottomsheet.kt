@@ -53,7 +53,7 @@ class DetailTabunganBottomSheet(
         tvTerkumpul.text = CurrencyFormatter.format(tabungan.terkumpul)
 
         val sdf = SimpleDateFormat("dd MMM yyyy", Locale("id"))
-        tvHariIni.text = "Hari ini: ${sdf.format(Date())}"
+        tvHariIni.text = "${getString(R.string.label_hari_ini)}: ${sdf.format(Date())}"
 
         // Format input nominal
         etNominal.addTextChangedListener(object : TextWatcher {
@@ -77,12 +77,12 @@ class DetailTabunganBottomSheet(
         btnTutup.setOnClickListener { dismiss() }
 
         btnPilihDompet.setOnClickListener {
-            Toast.makeText(requireContext(), "Pilih dompet (coming soon)", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.pilih_dompet), Toast.LENGTH_SHORT).show()
         }
 
         btnKonfirmasi.setOnClickListener {
             if (jumlahAngka <= 0) {
-                etNominal.error = "Masukkan jumlah tabungan"
+                etNominal.error = getString(R.string.error_nominal_tabungan)
                 return@setOnClickListener
             }
             val updated = tabungan.copy(
@@ -107,14 +107,14 @@ class DetailTabunganBottomSheet(
 
         btnHapus.setOnClickListener {
             AlertDialog.Builder(requireContext())
-                .setTitle("Hapus Target")
-                .setMessage("Yakin ingin menghapus target '${tabungan.nama}'?")
-                .setPositiveButton("Hapus") { _, _ ->
+                .setTitle(getString(R.string.dialog_hapus_target_title))
+                .setMessage(getString(R.string.dialog_hapus_target_pesan, tabungan.nama))
+                .setPositiveButton(getString(R.string.dialog_hapus_transaksi_konfirmasi)) { _, _ ->
                     onDeleted(tabungan)
                     Toast.makeText(requireContext(), "Target dihapus", Toast.LENGTH_SHORT).show()
                     dismiss()
                 }
-                .setNegativeButton("Batal", null)
+                .setNegativeButton(getString(R.string.btn_batal), null)
                 .show()
         }
 

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:fillViewport="true"
-    android:background="@color/white">
+    android:background="@color/bg_card">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -31,7 +31,7 @@
             android:text="@string/title_tambah_dompet"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#1A2B34"
+            android:textColor="@color/text_primary"
             android:gravity="center"
             android:layout_marginBottom="24dp" />
 
@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:text="@string/label_nama_dompet"
             android:textSize="13sp"
-            android:textColor="#546E7A"
+            android:textColor="@color/text_primary"
             android:textStyle="bold"
             android:layout_marginBottom="6dp" />
 
@@ -65,8 +65,8 @@
                 android:hint="@string/hint_nama_dompet"
                 android:inputType="textCapWords"
                 android:textSize="14sp"
-                android:textColor="#1A2B34"
-                android:textColorHint="#90A4AE" />
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Label Jenis -->
@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:text="@string/label_jenis_dompet"
             android:textSize="13sp"
-            android:textColor="#546E7A"
+            android:textColor="@color/text_primary"
             android:textStyle="bold"
             android:layout_marginBottom="10dp" />
 
@@ -111,7 +111,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/jenis_rekening_bank"
                     android:textSize="10sp"
-                    android:textColor="#1A2B34"
+                    android:textColor="@color/text_primary"
                     android:gravity="center"
                     android:maxLines="2" />
             </LinearLayout>
@@ -139,7 +139,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/jenis_dompet_digital"
                     android:textSize="10sp"
-                    android:textColor="#1A2B34"
+                    android:textColor="@color/text_primary"
                     android:gravity="center"
                     android:maxLines="2" />
             </LinearLayout>
@@ -167,7 +167,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/jenis_uang_tunai"
                     android:textSize="10sp"
-                    android:textColor="#1A2B34"
+                    android:textColor="@color/text_primary"
                     android:gravity="center" />
             </LinearLayout>
 
@@ -194,7 +194,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/jenis_investasi"
                     android:textSize="10sp"
-                    android:textColor="#1A2B34"
+                    android:textColor="@color/text_primary"
                     android:gravity="center" />
             </LinearLayout>
 
@@ -221,7 +221,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/jenis_tabungan"
                     android:textSize="10sp"
-                    android:textColor="#1A2B34"
+                    android:textColor="@color/text_primary"
                     android:gravity="center" />
             </LinearLayout>
 
@@ -248,7 +248,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/jenis_lainnya"
                     android:textSize="10sp"
-                    android:textColor="#1A2B34"
+                    android:textColor="@color/text_primary"
                     android:gravity="center" />
             </LinearLayout>
 
@@ -260,7 +260,7 @@
             android:layout_height="wrap_content"
             android:text="@string/label_saldo_awal"
             android:textSize="13sp"
-            android:textColor="#546E7A"
+            android:textColor="@color/text_primary"
             android:textStyle="bold"
             android:layout_marginBottom="6dp" />
 
@@ -285,8 +285,8 @@
                 android:hint="0"
                 android:inputType="numberDecimal"
                 android:textSize="14sp"
-                android:textColor="#1A2B34"
-                android:textColorHint="#90A4AE" />
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Tombol Simpan -->

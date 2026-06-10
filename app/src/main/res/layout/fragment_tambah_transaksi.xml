@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E2E2E2">
+    android:background="@color/bg_main">
 
     <!-- ═══════════════════════════════════════════════════════════════
          HEADER — soft slate blue, flat modern
@@ -15,7 +15,7 @@
         android:layout_height="84dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:background="#6B8FA3"
+        android:background="@color/bg_header"
         android:elevation="4dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -63,7 +63,7 @@
         android:orientation="horizontal"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="14dp"
-        android:background="#E2E2E2"
+        android:background="@color/bg_numpad"
         android:padding="4dp"
         app:layout_constraintTop_toBottomOf="@id/header_container"
         app:layout_constraintStart_toStartOf="parent"
@@ -121,7 +121,7 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="12dp"
         app:cardCornerRadius="24dp"
-        app:cardBackgroundColor="#98ACB6"
+        app:cardBackgroundColor="@color/bg_form_card"
         app:cardElevation="2dp"
         app:layout_constraintTop_toBottomOf="@id/ll_tab_jenis"
         app:layout_constraintBottom_toTopOf="@id/ll_bottom_area"
@@ -186,7 +186,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="10dp"
                             app:cardCornerRadius="16dp"
-                            app:cardBackgroundColor="#F7F9FB"
+                            app:cardBackgroundColor="@color/card_form_inner"
                             app:cardElevation="0dp">
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -220,7 +220,7 @@
                                             android:layout_height="wrap_content"
                                             android:text="@string/label_kategori"
                                             android:textSize="10sp"
-                                            android:textColor="#78909C"
+                                            android:textColor="@color/text_secondary"
                                             android:letterSpacing="0.04"/>
                                         <TextView
                                             android:id="@+id/tv_kategori"
@@ -228,7 +228,7 @@
                                             android:layout_height="wrap_content"
                                             android:text="Makanan"
                                             android:textSize="14sp"
-                                            android:textColor="#1A2B34"
+                                            android:textColor="@color/text_primary"
                                             android:textStyle="bold"/>
                                     </LinearLayout>
                                     <ImageView
@@ -242,7 +242,7 @@
                                     android:id="@+id/divider_kategori"
                                     android:layout_width="match_parent"
                                     android:layout_height="1dp"
-                                    android:background="#EEF2F6"
+                                    android:background="@color/bg_numpad"
                                     android:visibility="gone"/>
                                 <GridLayout
                                     android:id="@+id/grid_kategori"
@@ -263,7 +263,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="10dp"
                             app:cardCornerRadius="16dp"
-                            app:cardBackgroundColor="#F7F9FB"
+                            app:cardBackgroundColor="@color/card_form_inner"
                             app:cardElevation="0dp">
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -295,7 +295,7 @@
                                             android:layout_height="wrap_content"
                                             android:text="@string/label_tanggal"
                                             android:textSize="10sp"
-                                            android:textColor="#78909C"
+                                            android:textColor="@color/text_secondary"
                                             android:letterSpacing="0.04"/>
                                         <TextView
                                             android:id="@+id/tv_tanggal"
@@ -303,7 +303,7 @@
                                             android:layout_height="wrap_content"
                                             android:text="Hari ini"
                                             android:textSize="14sp"
-                                            android:textColor="#1A2B34"
+                                            android:textColor="@color/text_primary"
                                             android:textStyle="bold"/>
                                     </LinearLayout>
                                     <ImageView
@@ -317,7 +317,7 @@
                                     android:id="@+id/divider_tanggal"
                                     android:layout_width="match_parent"
                                     android:layout_height="1dp"
-                                    android:background="#EEF2F6"
+                                    android:background="@color/bg_numpad"
                                     android:visibility="gone"/>
                                 <LinearLayout
                                     android:id="@+id/ll_custom_calendar"
@@ -342,7 +342,7 @@
                                             android:text="April 2026"
                                             android:textSize="14sp"
                                             android:textStyle="bold"
-                                            android:textColor="#1A2B34"/>
+                                            android:textColor="@color/text_primary"/>
                                         <ImageButton
                                             android:id="@+id/btn_prev_month"
                                             android:layout_width="36dp"
@@ -387,7 +387,7 @@
                             android:layout_height="58dp"
                             android:layout_marginBottom="10dp"
                             app:cardCornerRadius="16dp"
-                            app:cardBackgroundColor="#F7F9FB"
+                            app:cardBackgroundColor="@color/card_form_inner"
                             app:cardElevation="0dp">
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -413,7 +413,7 @@
                                         android:layout_height="wrap_content"
                                         android:text="@string/label_catatan"
                                         android:textSize="10sp"
-                                        android:textColor="#78909C"
+                                        android:textColor="@color/text_secondary"
                                         android:letterSpacing="0.04"/>
                                     <TextView
                                         android:id="@+id/tv_catatan"
@@ -421,7 +421,7 @@
                                         android:layout_height="wrap_content"
                                         android:text="@string/hint_catatan"
                                         android:textSize="14sp"
-                                        android:textColor="#B0BEC5"/>
+                                        android:textColor="@color/text_hint"/>
                                 </LinearLayout>
                             </LinearLayout>
                         </androidx.cardview.widget.CardView>
@@ -432,7 +432,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             app:cardCornerRadius="16dp"
-                            app:cardBackgroundColor="#F7F9FB"
+                            app:cardBackgroundColor="@color/card_form_inner"
                             app:cardElevation="0dp">
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -464,7 +464,7 @@
                                             android:layout_height="wrap_content"
                                             android:text="@string/label_sumber_dana"
                                             android:textSize="10sp"
-                                            android:textColor="#78909C"
+                                            android:textColor="@color/text_secondary"
                                             android:letterSpacing="0.04"/>
                                         <TextView
                                             android:id="@+id/tv_sumber_dana"
@@ -472,7 +472,7 @@
                                             android:layout_height="wrap_content"
                                             android:text="Tunai"
                                             android:textSize="14sp"
-                                            android:textColor="#1A2B34"
+                                            android:textColor="@color/text_primary"
                                             android:textStyle="bold"/>
                                     </LinearLayout>
                                     <ImageView
@@ -486,7 +486,7 @@
                                     android:id="@+id/divider_sumber_dana"
                                     android:layout_width="match_parent"
                                     android:layout_height="1dp"
-                                    android:background="#EEF2F6"
+                                    android:background="@color/bg_numpad"
                                     android:visibility="gone"/>
                                 <LinearLayout
                                     android:id="@+id/ll_sumber_dana_options"
@@ -520,7 +520,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 app:cardCornerRadius="16dp"
-                                app:cardBackgroundColor="#F7F9FB"
+                                app:cardBackgroundColor="@color/card_form_inner"
                                 app:cardElevation="0dp"
                                 android:foreground="?attr/selectableItemBackground"
                                 android:clickable="true"
@@ -563,7 +563,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 app:cardCornerRadius="16dp"
-                                app:cardBackgroundColor="#F7F9FB"
+                                app:cardBackgroundColor="@color/card_form_inner"
                                 app:cardElevation="0dp"
                                 android:foreground="?attr/selectableItemBackground"
                                 android:clickable="true"
@@ -599,7 +599,7 @@
                             android:layout_height="58dp"
                             android:layout_marginBottom="12dp"
                             app:cardCornerRadius="16dp"
-                            app:cardBackgroundColor="#F7F9FB"
+                            app:cardBackgroundColor="@color/card_form_inner"
                             app:cardElevation="0dp"
                             android:clickable="true"
                             android:focusable="true">
@@ -626,7 +626,7 @@
                                         android:layout_height="wrap_content"
                                         android:text="@string/label_catatan_transfer"
                                         android:textSize="10sp"
-                                        android:textColor="#78909C"
+                                        android:textColor="@color/text_secondary"
                                         android:letterSpacing="0.04"/>
                                     <TextView
                                         android:id="@+id/tv_catatan_transfer"
@@ -634,7 +634,7 @@
                                         android:layout_height="wrap_content"
                                         android:text="@string/hint_tambah_catatan"
                                         android:textSize="14sp"
-                                        android:textColor="#B0BEC5"/>
+                                        android:textColor="@color/text_hint"/>
                                 </LinearLayout>
                             </LinearLayout>
                         </androidx.cardview.widget.CardView>
@@ -908,7 +908,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="#EEF2F6"
+        android:background="@color/bg_numpad"
         app:layout_constraintTop_toBottomOf="@id/card_form"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -920,7 +920,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:columnCount="4"
-            android:background="#E2E2E2"
+            android:background="@color/bg_numpad"
             android:paddingHorizontal="8dp"
             android:paddingTop="6dp"
             android:paddingBottom="4dp"
@@ -1040,7 +1040,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="#EEF2F6"
+            android:background="@color/bg_numpad"
             android:paddingTop="4dp"
             android:paddingBottom="4dp"
             android:visibility="gone">

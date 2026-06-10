@@ -39,6 +39,8 @@
                 android:id="@+id/tvBadgeTempo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="#D7E3EE"
+                android:textStyle="bold"
                 android:text="Berjalan"
                 android:textSize="10sp"
                 android:paddingStart="8dp"
@@ -137,8 +139,8 @@
                 android:layout_height="6dp"
                 android:max="100"
                 android:progress="0"
-                android:progressTint="@color/ungu_primer"
-                android:progressBackgroundTint="@color/bg_progress"
+                android:progressTint="#4A6FA5"
+                android:progressBackgroundTint="#42566B"
                 android:layout_marginEnd="8dp" />
 
             <TextView
@@ -146,7 +148,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0%"
-                android:textColor="@color/ungu_primer"
+                android:textColor="@color/text_primary"
                 android:textSize="10sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -171,8 +173,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Cicilan terakhir: "
-                android:textColor="@color/text_secondary"
-                android:textSize="10sp" />
+                android:textColor="@color/income_green"
+                android:textSize="10sp"
+                android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/tvCicilanTerakhirNominal"
@@ -189,8 +192,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="dd/mm/yyyy"
-                android:textColor="@color/text_secondary"
-                android:textSize="10sp" />
+                android:textColor="@color/income_green"
+                android:textSize="10sp"
+                android:textStyle="bold"/>
         </LinearLayout>
 
         <!-- Divider -->
@@ -222,7 +226,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="input cicilan"
-                android:textColor="@color/ungu_primer"
+                android:textColor="@color/text_label"
                 android:textSize="10sp" />
 
             <ImageView

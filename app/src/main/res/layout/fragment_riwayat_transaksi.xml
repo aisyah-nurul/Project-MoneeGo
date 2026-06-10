@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#E2E2E2"
+    android:background="@color/bg_main"
     android:weightSum="1">
 
     <!-- HEADER -->
@@ -13,7 +13,7 @@
         android:id="@+id/header_riwayat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#8A9DAD"
+        android:background="@color/bg_header"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:paddingTop="40dp"
@@ -90,7 +90,7 @@
             android:layout_width="0dp"
             android:layout_height="8dp"
             android:progress="50"
-            android:progressTint="#276F29"
+            android:progressTint="@color/income_green"
             android:progressBackgroundTint="#F44336"
             android:layout_marginTop="10dp"
             app:layout_constraintTop_toBottomOf="@id/ll_legend"
@@ -175,7 +175,7 @@
                     android:text="Rp0"
                     android:textSize="13sp"
                     android:textStyle="bold"
-                    android:textColor="#276F29"/>
+                    android:textColor="@color/income_green"/>
             </LinearLayout>
 
             <View
@@ -219,7 +219,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Selisih"
+                    android:text="@string/label_selisih"
                     android:textSize="10sp"
                     android:textColor="#CCFFFFFF"/>
                 <TextView
@@ -229,7 +229,7 @@
                     android:text="Rp0"
                     android:textSize="13sp"
                     android:textStyle="bold"
-                    android:textColor="#1A1A2E"/>
+                    android:textColor="@color/text_hint"/>
             </LinearLayout>
 
         </LinearLayout>
@@ -245,7 +245,7 @@
         android:layout_marginTop="8dp"
         android:visibility="gone"
         app:cardCornerRadius="16dp"
-        app:cardBackgroundColor="@android:color/white"
+        app:cardBackgroundColor="@color/bg_card"
         app:cardElevation="4dp">
 
         <CalendarView
@@ -288,13 +288,13 @@
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:src="@drawable/ic_hutang"
-                android:alpha="0.35"
-                android:contentDescription="Belum ada transaksi"/>
+                android:alpha="0.6"
+                android:contentDescription="@string/empty_transaksi"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Belum ada transaksi"
+                android:text="@string/empty_transaksi"
                 android:textColor="@color/teks_muted"
                 android:textSize="13sp"
                 android:layout_marginTop="8dp"/>

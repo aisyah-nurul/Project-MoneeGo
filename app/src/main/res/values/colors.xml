@@ -86,8 +86,10 @@
     <color name="teks_muted">#888888</color>
     <color name="bg_halaman">#F0EFF5</color>
     <color name="bg_progress">#EEEEEE</color>
+    <color name="insight_red_bg">#FFCDD2</color>
+    <color name="insight_yellow_bg">#FFF9C4</color>
 
-    <!-- ── Color Attributes (untuk ?attr/) ── -->
-    <!-- Dipakai di layout dengan ?attr/colorBackground dll -->
-    <!-- Ini di-override oleh values-night/colors.xml saat dark mode -->
+    <color name="tab_selected_bg">#E8EDF7</color>
+    <color name="tab_normal_bg">#F5F5F5</color>
+    <color name="tab_stroke">#E0E0E0</color>
 </resources>

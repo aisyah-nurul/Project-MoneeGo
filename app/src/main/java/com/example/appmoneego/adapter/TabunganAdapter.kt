@@ -54,11 +54,15 @@ class TabunganAdapter(
         private val divider: View            = itemView.findViewById(R.id.divider)
 
         fun bind(item: Tabungan, mode: Mode) {
+            val context = itemView.context
             tvNama.text = item.nama
 
             if (item.deadline != null) {
-                val sdf = SimpleDateFormat("dd MMM yyyy", Locale("id"))
-                val prefix = if (mode == Mode.SELESAI) "Selesai " else "Deadline: "
+                val sdf = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+                val prefix = if (mode == Mode.SELESAI)
+                    context.getString(R.string.label_selesai) + " "
+                else
+                    context.getString(R.string.label_deadline) + ": "
                 tvDeadline.text = "$prefix${sdf.format(Date(item.deadline))}"
                 tvDeadline.visibility = View.VISIBLE
             } else {
@@ -85,8 +89,9 @@ class TabunganAdapter(
                 progressBar.progress = persen
 
                 val sisa = item.targetNominal - item.terkumpul
-                tvSisa.text = "⏰ Kurang ${CurrencyFormatter.format(sisa)}"
+                tvSisa.text = "⏰ ${context.getString(R.string.label_kurang)} ${CurrencyFormatter.format(sisa)}"
 
+                btnTabung.text = context.getString(R.string.btn_tabung)
                 btnTabung.setOnClickListener { onTabungClick(item) }
 
             } else {
