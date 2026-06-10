@@ -4,8 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_main"
-    android:scrollbars="none">
+    android:background="#E2E2E2"  android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -62,18 +61,18 @@
             android:text="@string/section_ekspor"
             android:textSize="11sp"
             android:textStyle="bold"
-            android:textColor="@color/text_primary"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:letterSpacing="0.1"
             android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="4dp"/>
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="8dp"/>
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
-            android:layout_marginBottom="12dp"
-            app:cardCornerRadius="14dp"
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="20dp"
             app:cardBackgroundColor="@color/bg_card"
             app:cardElevation="0dp">
 
@@ -82,19 +81,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="12dp"
+                android:padding="18dp"
                 android:gravity="center_vertical"
                 android:background="?attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true">
 
-                <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@drawable/ic_ekspor"
-                    android:layout_marginEnd="12dp"
-                    app:tint="@color/primary_slate"/>
+                <LinearLayout
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_circle_blue"
+                    android:gravity="center"
+                    android:layout_marginEnd="14dp">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_ekspor"
+                        app:tint="#FFFFFF"/>
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -105,22 +109,28 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/ekspor_title"
-                        android:textSize="14sp"
+                        android:textSize="15sp"
                         android:textStyle="bold"
                         android:textColor="?attr/colorOnSurface"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/ekspor_desc"
-                        android:textSize="11sp"
-                        android:textColor="@color/text_primary"/>
+                        android:textSize="12sp"
+                        android:textColor="?attr/colorOnSurfaceVariant"/>
                 </LinearLayout>
 
-                <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:src="@drawable/ic_download"
-                    app:tint="@color/primary_slate"/>
+                <LinearLayout
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="@drawable/bg_circle_gray"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_download"
+                        app:tint="@color/primary_slate"/>
+                </LinearLayout>
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -132,17 +142,17 @@
             android:text="@string/section_tampilan"
             android:textSize="11sp"
             android:textStyle="bold"
-            android:textColor="@color/text_primary"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:letterSpacing="0.1"
             android:layout_marginHorizontal="20dp"
-            android:layout_marginBottom="4dp"/>
+            android:layout_marginBottom="8dp"/>
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
-            android:layout_marginBottom="12dp"
-            app:cardCornerRadius="14dp"
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="20dp"
             app:cardBackgroundColor="@color/bg_card"
             app:cardElevation="0dp">
 
@@ -157,19 +167,24 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="12dp"
+                    android:padding="18dp"
                     android:gravity="center_vertical"
                     android:background="?attr/selectableItemBackground"
                     android:clickable="true"
                     android:focusable="true">
 
-                    <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:src="@drawable/ic_bahasa"
-                        android:layout_marginEnd="12dp"
-                        app:tint="@color/primary_slate"/>
+                    <LinearLayout
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_circle_yellow"
+                        android:gravity="center"
+                        android:layout_marginEnd="14dp">
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_bahasa"
+                            app:tint="#FFFFFF"/>
+                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -180,21 +195,21 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/bahasa_label"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/text_primary"/>
+                            android:textSize="12sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"/>
                         <TextView
                             android:id="@+id/tv_bahasa_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/bahasa_value"
-                            android:textSize="11sp"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
                             android:textColor="?attr/colorOnSurface"/>
                     </LinearLayout>
 
                     <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
                         android:src="@drawable/ic_chevron_down"
                         app:tint="?attr/colorOnSurfaceVariant"/>
 
@@ -203,23 +218,29 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginHorizontal="16dp"
-                    android:background="@color/divider"/>
+                    android:background="?attr/colorOutlineVariant"
+                    android:layout_marginHorizontal="18dp"/>
 
                 <!-- DARK MODE -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="12dp"
+                    android:padding="18dp"
                     android:gravity="center_vertical">
 
-                    <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:src="@drawable/ic_moon"
-                        android:layout_marginEnd="12dp" />
+                    <LinearLayout
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_circle_green"
+                        android:gravity="center"
+                        android:layout_marginEnd="14dp">
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_moon"
+                            app:tint="#FFFFFF"/>
+                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -230,15 +251,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/dark_mode_title"
-                            android:textSize="14sp"
+                            android:textSize="15sp"
                             android:textStyle="bold"
                             android:textColor="?attr/colorOnSurface"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/dark_mode_desc"
-                            android:textSize="11sp"
-                            android:textColor="@color/text_primary"/>
+                            android:textSize="12sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"/>
                     </LinearLayout>
 
                     <Switch
@@ -252,23 +273,29 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginHorizontal="16dp"
-                    android:background="@color/divider"/>/>
+                    android:background="?attr/colorOutlineVariant"
+                    android:layout_marginHorizontal="18dp"/>
 
                 <!-- NOTIFIKASI -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="12dp"
+                    android:padding="18dp"
                     android:gravity="center_vertical">
 
-                    <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:src="@drawable/ic_notification"
-                        android:layout_marginEnd="12dp" />
+                    <LinearLayout
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_circle_red"
+                        android:gravity="center"
+                        android:layout_marginEnd="14dp">
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_notification"
+                            app:tint="#FFFFFF"/>
+                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -279,15 +306,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/notifikasi_title"
-                            android:textSize="14sp"
+                            android:textSize="15sp"
                             android:textStyle="bold"
                             android:textColor="?attr/colorOnSurface"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/notifikasi_desc"
-                            android:textSize="11sp"
-                            android:textColor="@color/text_primary"/>
+                            android:textSize="12sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"/>
                     </LinearLayout>
 
                     <Switch
@@ -295,67 +322,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="false"/>
-
-                </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginHorizontal="16dp"
-                    android:background="@color/divider"/>
-
-                <!-- WAKTU NOTIFIKASI -->
-                <LinearLayout
-                    android:id="@+id/ll_waktu_notifikasi"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="12dp"
-                    android:gravity="center_vertical"
-                    android:background="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:visibility="gone">
-
-                    <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:src="@drawable/ic_tanggal"
-                        android:layout_marginEnd="12dp"/>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/notif_label_waktu"
-                            android:textSize="11sp"
-                            android:textColor="?attr/colorOnSurfaceVariant"/>
-                        <TextView
-                            android:id="@+id/tv_waktu_notifikasi"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="08:00"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/primary_navy"/>
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tv_ubah_waktu"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/notif_ubah_waktu"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/primary_slate"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="6dp"
-                        android:background="@drawable/bg_jenis_unselected"/>
 
                 </LinearLayout>
 
@@ -369,17 +335,17 @@
             android:text="@string/section_tentang"
             android:textSize="11sp"
             android:textStyle="bold"
-            android:textColor="@color/text_primary"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:letterSpacing="0.1"
             android:layout_marginHorizontal="20dp"
-            android:layout_marginBottom="4dp"/>
+            android:layout_marginBottom="8dp"/>
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
-            android:layout_marginBottom="12dp"
-            app:cardCornerRadius="14dp"
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="20dp"
             app:cardBackgroundColor="@color/bg_card"
             app:cardElevation="0dp">
 
@@ -392,15 +358,21 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="12dp"
+                    android:padding="18dp"
                     android:gravity="center_vertical">
 
-                    <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:src="@drawable/ic_info"
-                        android:layout_marginEnd="12dp"/>
+                    <LinearLayout
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_circle_blue"
+                        android:gravity="center"
+                        android:layout_marginEnd="14dp">
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_info"
+                            app:tint="#FFFFFF"/>
+                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -411,14 +383,14 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/versi_label"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/text_primary"/>
+                            android:textSize="12sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/versi_value"
-                            android:textSize="11sp"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
                             android:textColor="?attr/colorOnSurface"/>
                     </LinearLayout>
 
@@ -427,22 +399,28 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:layout_marginHorizontal="16dp"
-                    android:background="@color/divider"/>/>
+                    android:background="?attr/colorOutlineVariant"
+                    android:layout_marginHorizontal="18dp"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="12dp"
+                    android:padding="18dp"
                     android:gravity="center_vertical">
 
-                    <ImageView
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:src="@drawable/ic_person"
-                        android:layout_marginEnd="12dp"/>
+                    <LinearLayout
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_circle_red"
+                        android:gravity="center"
+                        android:layout_marginEnd="14dp">
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_person"
+                            app:tint="#FFFFFF"/>
+                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -453,14 +431,14 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/pengembang_label"
-                            android:textSize="14sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/text_primary"/>
+                            android:textSize="12sp"
+                            android:textColor="?attr/colorOnSurfaceVariant"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/pengembang_value"
-                            android:textSize="11sp"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
                             android:textColor="?attr/colorOnSurface"/>
                     </LinearLayout>
 
@@ -474,7 +452,7 @@
             android:layout_height="wrap_content"
             android:text="@string/footer_text"
             android:textSize="11sp"
-            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textColor="@color/bg_card"
             android:gravity="center"
             android:layout_marginTop="8dp"/>
 

@@ -25,12 +25,9 @@ class TabunganFragment : Fragment() {
     private lateinit var hutangViewModel: HutangViewModel
     private lateinit var adapter:         TabunganAdapter
 
-    // 0 = Berjalan, 1 = Selesai
     private var tabAktif = 0
-
-    // ── State privasi saldo (sama persis dengan DompetFragment) ──────────────
     private var nominalVisible = true
-    private var totalTerkumpul = 0.0   // simpan nilai terakhir agar bisa di-mask/unmask
+    private var totalTerkumpul = 0.0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,7 +40,6 @@ class TabunganFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Baca state privasi dari SharedPreferences — sama seperti Dompet
         nominalVisible = VisibilityPrefs.isNominalVisible(requireContext())
 
         viewModel       = ViewModelProvider(this)[TabunganViewModel::class.java]
@@ -54,16 +50,15 @@ class TabunganFragment : Fragment() {
         setupObservers()
         setupHutangBanner()
         setupClickListeners()
-        setupTombolMata()   // ← setup icon mata
-        syncIkonMata()      // ← sinkron ikon awal
+        setupTombolMata()
+        syncIkonMata()
     }
 
-    // ── onResume: sinkron ulang state privasi saat kembali ke halaman ────────
     override fun onResume() {
         super.onResume()
         nominalVisible = VisibilityPrefs.isNominalVisible(requireContext())
         syncIkonMata()
-        renderNominal()   // tampilkan ulang dengan state terbaru
+        renderNominal()
     }
 
     // ── Adapter ───────────────────────────────────────────────────────────────
@@ -88,7 +83,7 @@ class TabunganFragment : Fragment() {
         binding.rvTabungan.adapter = adapter
     }
 
-    // ── Tab Listener (TabLayout, identik dengan HutangFragment) ──────────────
+    // ── Tab Listener ─────────────────────────────────────────────────────────
     private fun setupTabListener() {
         binding.tabLayoutTabungan.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
@@ -117,23 +112,17 @@ class TabunganFragment : Fragment() {
     // ── Observers ─────────────────────────────────────────────────────────────
     private fun setupObservers() {
         viewModel.tabunganList.observe(viewLifecycleOwner) { list ->
-            // Simpan nilai untuk keperluan mask/unmask
             totalTerkumpul = list.sumOf { it.terkumpul }
 
             val tercapai = list.count { it.terkumpul >= it.targetNominal }
             val berjalan = list.count { it.terkumpul < it.targetNominal }
 
-            // ── Nominal: tampil atau sembunyikan sesuai state ─────────────────
             renderNominal()
 
-            // ── Subtitle: "Total Terkumpul dari X Impian" ─────────────────────
             binding.tvJumlahImpian.text = "Total Terkumpul dari ${list.size} Impian"
+            binding.tvTercapai.text     = tercapai.toString()
+            binding.tvBerjalan.text     = berjalan.toString()
 
-            // ── Stat: angka saja, tanpa kata "Target" ─────────────────────────
-            binding.tvTercapai.text = tercapai.toString()
-            binding.tvBerjalan.text = berjalan.toString()
-
-            // ── Banner motivasi ───────────────────────────────────────────────
             val closest = list
                 .filter { it.terkumpul < it.targetNominal }
                 .minByOrNull { it.targetNominal - it.terkumpul }
@@ -163,25 +152,22 @@ class TabunganFragment : Fragment() {
         }
     }
 
-    // ── Tombol Mata (logic identik DompetFragment.setupTombolMata) ────────────
+    // ── Tombol Mata ───────────────────────────────────────────────────────────
     private fun setupTombolMata() {
         binding.ivToggleSaldoTabungan.setOnClickListener {
             nominalVisible = !nominalVisible
-            // Simpan ke SharedPreferences (shared state, sama seperti Dompet)
             VisibilityPrefs.setNominalVisible(requireContext(), nominalVisible)
             syncIkonMata()
             renderNominal()
         }
     }
 
-    // Sinkron ikon mata (ic_eye / ic_eye_off) — identik dengan DompetFragment
     private fun syncIkonMata() {
         binding.ivToggleSaldoTabungan.setImageResource(
             if (nominalVisible) R.drawable.ic_eye else R.drawable.ic_eye_off
         )
     }
 
-    // Render nominal: tampil angka asli atau "Rp ***" sesuai state
     private fun renderNominal() {
         binding.tvTotalTerkumpul.text = if (nominalVisible)
             CurrencyFormatter.format(totalTerkumpul)
@@ -199,7 +185,9 @@ class TabunganFragment : Fragment() {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
-        binding.fabTambahTabungan.setOnClickListener {
+        // ── PERUBAHAN: FAB diganti tombol biasa (btnTambahTabungan) ──────────
+        // Fungsi sama persis — membuka TambahTabunganDialog
+        binding.btnTambahTabungan.setOnClickListener {
             TambahTabunganDialog { tabungan ->
                 viewModel.insert(tabungan)
             }.show(parentFragmentManager, "TambahTabungan")

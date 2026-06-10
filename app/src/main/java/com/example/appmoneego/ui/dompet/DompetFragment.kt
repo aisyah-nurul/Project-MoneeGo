@@ -114,7 +114,6 @@ class DompetFragment : Fragment() {
 
         dompetViewModel.allDompet.observe(viewLifecycleOwner) { list ->
             adapter.submitList(list)
-            // ── EMPTY STATE ───────────────────────────────────────────────────
             updateEmptyState(list.isEmpty())
         }
     }
@@ -177,9 +176,6 @@ class DompetFragment : Fragment() {
         }
     }
 
-    // ── EMPTY STATE helper ────────────────────────────────────────────────────
-    // Style identik dengan HutangFragment.refreshList():
-    //   VISIBLE → layoutEmpty, GONE → rvHutang dan sebaliknya
     private fun updateEmptyState(isEmpty: Boolean) {
         rvDompet.visibility          = if (isEmpty) View.GONE    else View.VISIBLE
         layoutEmptyDompet.visibility = if (isEmpty) View.VISIBLE else View.GONE
@@ -252,25 +248,37 @@ class DompetFragment : Fragment() {
                     tanggalDibuat = tanggalDipilih
                 )
                 dompetViewModel.insert(dompetBaru)
+
                 if (saldo > 0) {
-                    dompetViewModel.allDompet.observe(viewLifecycleOwner) { listDompet ->
-                        val dompetBaik = listDompet.firstOrNull {
-                            it.nama == nama && it.jenis == jenisTerpilih
-                        }
-                        dompetBaik?.let { d ->
-                            transaksiViewModel.insertTanpaUpdateSaldo(
-                                Transaksi(
-                                    nominal  = saldo,
-                                    jenis    = "PEMASUKAN",
-                                    kategori = "Saldo Awal",
-                                    catatan  = "Saldo awal dompet ${d.nama}",
-                                    tanggal  = tanggalDipilih,
-                                    dompetId = d.id
+                    // ── PERUBAHAN: observer sekali pakai agar tidak insert berulang ──
+                    // Gunakan Observer manual yang di-remove setelah insert pertama
+                    val observer = object : androidx.lifecycle.Observer<List<Dompet>> {
+                        override fun onChanged(listDompet: List<Dompet>) {
+                            val dompetBaik = listDompet.firstOrNull {
+                                it.nama == nama && it.jenis == jenisTerpilih
+                            }
+                            if (dompetBaik != null) {
+                                // ── PERUBAHAN UTAMA ─────────────────────────────────
+                                // kategori = nama dompet  → icon di riwayat ikut jenis
+                                // catatan  = jenis dompet → adapter baca untuk icon
+                                transaksiViewModel.insertTanpaUpdateSaldo(
+                                    Transaksi(
+                                        nominal  = saldo,
+                                        jenis    = "PEMASUKAN",
+                                        kategori = dompetBaik.nama,          // ← nama dompet
+                                        catatan  = dompetBaik.jenis,         // ← jenis dompet
+                                        tanggal  = tanggalDipilih,
+                                        dompetId = dompetBaik.id
+                                    )
                                 )
-                            )
+                                // Remove observer agar tidak insert lagi saat list update
+                                dompetViewModel.allDompet.removeObserver(this)
+                            }
                         }
                     }
+                    dompetViewModel.allDompet.observe(viewLifecycleOwner, observer)
                 }
+
                 Toast.makeText(
                     requireContext(),
                     getString(R.string.toast_dompet_ditambahkan, nama),

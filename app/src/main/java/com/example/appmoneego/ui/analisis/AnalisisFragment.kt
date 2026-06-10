@@ -97,11 +97,15 @@ class AnalisisFragment : Fragment() {
             setHoleColor(Color.WHITE)
             setTransparentCircleColor(Color.WHITE)
             setTransparentCircleAlpha(80)
-            setUsePercentValues(false) // kita handle sendiri supaya bulat
+            setUsePercentValues(false)
             setDrawEntryLabels(true)
             setEntryLabelColor(Color.WHITE)
             setEntryLabelTextSize(10f)
             setTouchEnabled(true)
+
+            // Ganti teks default "No chart data available" ke bahasa Indonesia
+            setNoDataText("Belum ada data untuk ditampilkan")
+            setNoDataTextColor(Color.parseColor("#90A4AE"))
 
             setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
                 override fun onValueSelected(e: Entry?, h: Highlight?) {

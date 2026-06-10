@@ -34,7 +34,6 @@ class TransaksiAdapter(
         data class Item(val transaksi: Transaksi)       : TransaksiItem()
         data class TransferItem(val pair: TransferPair) : TransaksiItem()
 
-        // Untuk keperluan sorting, ambil tanggal dari masing-masing tipe
         fun getTanggal(): Long = when (this) {
             is Item         -> transaksi.tanggal
             is TransferItem -> pair.tanggal
@@ -45,6 +44,7 @@ class TransaksiAdapter(
         const val TYPE_ITEM     = 0
         const val TYPE_TRANSFER = 1
 
+        // ── Kategori standar → icon ───────────────────────────────────────────
         private val KATEGORI_ICON = mapOf(
             "Makanan"           to R.drawable.ic_makanan,
             "Fashion"           to R.drawable.ic_fashion,
@@ -63,15 +63,47 @@ class TransaksiAdapter(
             "Saldo Awal"        to R.drawable.ic_wallet,
             "Transfer"          to R.drawable.ic_wallet
         )
+
+        // ── Jenis dompet → icon (dipakai untuk transaksi saldo awal) ─────────
+        // catatan field menyimpan jenis dompet saat insert saldo awal otomatis
+        private val JENIS_DOMPET_ICON = mapOf(
+            "Rekening Bank"  to R.drawable.ic_wallet_bank,
+            "Dompet Digital" to R.drawable.ic_wallet_digital,
+            "Uang Tunai"     to R.drawable.ic_wallet_cash,
+            "Investasi"      to R.drawable.ic_wallet_investasi,
+            "Tabungan"       to R.drawable.ic_wallet_tabungan,
+            "Lainnya"        to R.drawable.ic_wallet_lainnya
+        )
+
+        // Set nama kategori "standar" yang diketahui sistem.
+        // Jika kategori TIDAK ada di sini, berarti itu adalah nama dompet
+        // dari transaksi saldo awal otomatis — gunakan icon dari jenis dompet.
+        private val KATEGORI_STANDAR = KATEGORI_ICON.keys.toSet()
     }
 
-    private var semuaData:    List<Transaksi>           = emptyList()
-    private var daftarDompet: List<Dompet>              = emptyList()
+    private var semuaData:    List<Transaksi>            = emptyList()
+    private var daftarDompet: List<Dompet>               = emptyList()
     private var displayList:  MutableList<TransaksiItem> = mutableListOf()
 
     fun submitDompet(list: List<Dompet>)  { daftarDompet = list; rebuildDisplayList() }
     fun submitList(list: List<Transaksi>) { semuaData    = list; rebuildDisplayList() }
     fun getDaftarDompet(): List<Dompet>   = daftarDompet
+
+    // ── Resolve icon untuk satu transaksi ────────────────────────────────────
+    // Logic:
+    //   1. Jika kategori ada di KATEGORI_STANDAR → pakai icon kategori seperti biasa
+    //   2. Jika kategori TIDAK ada di KATEGORI_STANDAR (= nama dompet dari saldo awal)
+    //      → baca field catatan yang berisi jenis dompet → pakai JENIS_DOMPET_ICON
+    //   3. Fallback ke ic_wallet jika tidak ditemukan
+    private fun resolveIcon(transaksi: Transaksi): Int {
+        if (transaksi.kategori in KATEGORI_STANDAR) {
+            // Kategori standar — gunakan map biasa
+            return KATEGORI_ICON[transaksi.kategori] ?: R.drawable.ic_wallet
+        }
+        // Bukan kategori standar = nama dompet dari saldo awal otomatis
+        // catatan berisi jenis dompet (diset oleh DompetFragment)
+        return JENIS_DOMPET_ICON[transaksi.catatan] ?: R.drawable.ic_wallet
+    }
 
     private fun rebuildDisplayList() {
         val newList = mutableListOf<TransaksiItem>()
@@ -124,12 +156,10 @@ class TransaksiAdapter(
         val pemasukan   = semuaData.filter { it.jenis == "PEMASUKAN"   && it.kategori != "Transfer" }
         val pengeluaran = semuaData.filter { it.jenis == "PENGELUARAN" && it.kategori != "Transfer" }
 
-        // ── Gabung semua jenis transaksi ──────────────────────────────────────
         transferPairs.forEach { newList.add(TransaksiItem.TransferItem(it)) }
         pemasukan.forEach     { newList.add(TransaksiItem.Item(it)) }
         pengeluaran.forEach   { newList.add(TransaksiItem.Item(it)) }
 
-        // ── Sort descending berdasarkan tanggal (terbaru di atas) ─────────────
         newList.sortByDescending { it.getTanggal() }
 
         val diff = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
@@ -185,10 +215,23 @@ class TransaksiAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(transaksi: Transaksi) {
-            val iconRes = KATEGORI_ICON[transaksi.kategori] ?: R.drawable.ic_wallet
-            binding.ivKategoriIcon.setImageResource(iconRes)
+            // ── PERUBAHAN: gunakan resolveIcon() untuk handle saldo awal ──────
+            binding.ivKategoriIcon.setImageResource(resolveIcon(transaksi))
+
+            // ── PERUBAHAN: tampilkan nama dompet sebagai judul transaksi ──────
+            // Jika kategori bukan kategori standar = nama dompet dari saldo awal
             binding.tvKategori.text = transaksi.kategori
-            binding.tvCatatan.text  = transaksi.catatan.ifEmpty { "-" }
+
+            // ── PERUBAHAN: untuk saldo awal, catatan berisi jenis dompet ──────
+            // Tampilkan nama dompet (dari field nama dompet di entity Dompet)
+            // sebagai catatan baris bawah, agar info tetap informatif
+            val isSaldoAwal = transaksi.kategori !in KATEGORI_STANDAR
+            binding.tvCatatan.text = if (isSaldoAwal) {
+                // catatan = jenis dompet; tampilkan sebagai deskripsi
+                transaksi.catatan.ifEmpty { "-" }
+            } else {
+                transaksi.catatan.ifEmpty { "-" }
+            }
 
             val isIncome = transaksi.jenis == "PEMASUKAN"
             val warna    = if (isIncome) 0xFF4CAF50.toInt() else 0xFFEF5350.toInt()

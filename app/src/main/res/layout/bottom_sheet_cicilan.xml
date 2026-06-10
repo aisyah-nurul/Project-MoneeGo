@@ -157,7 +157,7 @@
                     android:progressBackgroundTint="#DDDDDD"/>
             </LinearLayout>
 
-            <!-- Riwayat cicilan (selalu tampil) -->
+            <!-- Riwayat cicilan -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -174,13 +174,14 @@
                 android:nestedScrollingEnabled="false"
                 android:layout_marginBottom="16dp"/>
 
-            <!-- Form input cicilan — hanya tampil saat hutang BELUM selesai -->
+            <!-- Form input cicilan -->
             <LinearLayout
                 android:id="@+id/layoutFormCicilan"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
+                <!-- Nominal cicilan -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -204,6 +205,7 @@
                         android:textSize="14sp"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <!-- Tanggal bayar -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -228,6 +230,62 @@
                         android:textSize="14sp"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <!-- Sumber Dana (ganti catatan) -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sumber Dana"
+                    android:textColor="#333333"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="6dp"/>
+
+                <!-- Header sumber dana — klik untuk expand/collapse -->
+                <LinearLayout
+                    android:id="@+id/llSumberDanaHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:background="@drawable/bg_input_rounded"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_wallet"
+                        android:layout_marginEnd="10dp"/>
+
+                    <TextView
+                        android:id="@+id/tvSumberDanaCicilan"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Pilih dompet"
+                        android:textColor="#888888"
+                        android:textSize="14sp"/>
+
+                    <ImageView
+                        android:id="@+id/ivChevronSumberDana"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_chevron_down"/>
+                </LinearLayout>
+
+                <!-- Daftar pilihan dompet (expand/collapse) -->
+                <LinearLayout
+                    android:id="@+id/llOpsiDompet"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_input_rounded"
+                    android:layout_marginTop="2dp"
+                    android:visibility="gone"/>
+
+                <!-- Catatan opsional -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -235,6 +293,7 @@
                     android:textColor="#333333"
                     android:textSize="13sp"
                     android:textStyle="bold"
+                    android:layout_marginTop="12dp"
                     android:layout_marginBottom="6dp"/>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -272,7 +331,7 @@
 
             </LinearLayout>
 
-            <!-- Badge lunas — hanya tampil saat hutang SUDAH selesai -->
+            <!-- Badge lunas -->
             <LinearLayout
                 android:id="@+id/layoutLunas"
                 android:layout_width="match_parent"

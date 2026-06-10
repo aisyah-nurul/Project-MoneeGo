@@ -7,10 +7,12 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.appmoneego.R
 import com.example.appmoneego.adapter.TransaksiAdapter
+import com.example.appmoneego.data.entity.Transaksi
 import com.example.appmoneego.databinding.FragmentRiwayatTransaksiBinding
 import com.example.appmoneego.utils.CurrencyFormatter
 import com.example.appmoneego.utils.DateUtils
@@ -36,6 +38,9 @@ class RiwayatTransaksiFragment : Fragment() {
     private var lastTotalMasuk  = 0.0
     private var lastTotalKeluar = 0.0
 
+    // Simpan LiveData aktif agar observer bisa dihapus dengan benar
+    private var currentLiveData: LiveData<List<Transaksi>>? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -46,19 +51,19 @@ class RiwayatTransaksiFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         nominalVisible = VisibilityPrefs.isNominalVisible(requireContext())
-
         setupAdapter()
         setupKalender()
         setupNavigasiTanggal()
         setupTombolMata()
         observeDompet()
         syncIkonMata()
+        loadTransaksiByTanggal(selectedDateMillis)
     }
 
     override fun onResume() {
         super.onResume()
+        // Reload data saat kembali dari edit — ini memastikan perubahan langsung terlihat
         loadTransaksiByTanggal(selectedDateMillis)
     }
 
@@ -121,14 +126,12 @@ class RiwayatTransaksiFragment : Fragment() {
         }
     }
 
-    // ── EMPTY STATE helper ────────────────────────────────────────────────────
-    // Style identik HutangFragment — hanya beda view id dan teks
     private fun updateEmptyState(isEmpty: Boolean) {
         binding.rvTransaksi.visibility          = if (isEmpty) View.GONE    else View.VISIBLE
         binding.layoutEmptyTransaksi.visibility = if (isEmpty) View.VISIBLE else View.GONE
     }
 
-    // ── Load transaksi ────────────────────────────────────────────────────────
+    // ── Load transaksi — FIX: hapus observer lama sebelum pasang baru ─────────
 
     private fun loadTransaksiByTanggal(timeMillis: Long) {
         val start = DateUtils.getStartOfDay(timeMillis)
@@ -136,12 +139,15 @@ class RiwayatTransaksiFragment : Fragment() {
 
         binding.tvTanggalHeader.text = DateUtils.formatTanggal(timeMillis)
 
-        viewModel.getByDateRange(start, end).removeObservers(viewLifecycleOwner)
+        // Hapus observer dari LiveData lama dulu
+        currentLiveData?.removeObservers(viewLifecycleOwner)
 
-        viewModel.getByDateRange(start, end).observe(viewLifecycleOwner) { list ->
+        // Simpan LiveData baru dan pasang observer
+        val liveData = viewModel.getByDateRange(start, end)
+        currentLiveData = liveData
+
+        liveData.observe(viewLifecycleOwner) { list ->
             adapter.submitList(list)
-
-            // ── UPDATE EMPTY STATE ────────────────────────────────────────────
             updateEmptyState(list.isEmpty())
 
             lastTotalMasuk  = list.filter {
@@ -176,7 +182,7 @@ class RiwayatTransaksiFragment : Fragment() {
         }
     }
 
-    // ── Total & Selisih Harian ────────────────────────────────────────────────
+    // ── Total & Selisih ───────────────────────────────────────────────────────
 
     private fun updateTotalHarian() {
         if (nominalVisible) {
@@ -191,19 +197,16 @@ class RiwayatTransaksiFragment : Fragment() {
 
     private fun hitungDanTampilkanSelisih() {
         val selisih = lastTotalMasuk - lastTotalKeluar
-
         val teksSelisih = when {
             selisih > 0  -> CurrencyFormatter.format(selisih)
             selisih < 0  -> "-${CurrencyFormatter.format(-selisih)}"
             else         -> CurrencyFormatter.format(0.0)
         }
-
         val warnaSelisih = when {
             selisih > 0 -> requireContext().getColor(R.color.income_green)
             selisih < 0 -> requireContext().getColor(R.color.expense_red)
             else -> requireContext().getColor(R.color.text_secondary)
         }
-
         binding.tvSelisihHarian.text = if (nominalVisible)
             teksSelisih else getString(R.string.mask_saldo)
         binding.tvSelisihHarian.setTextColor(warnaSelisih)

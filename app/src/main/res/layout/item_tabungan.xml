@@ -14,14 +14,24 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- Icon bulat kiri -->
-        <ImageView
+        <!-- Icon bulat kiri: background biru + icon paper bag di tengah -->
+        <!-- PERUBAHAN: ImageView → FrameLayout agar bisa tumpuk bg + icon -->
+        <FrameLayout
             android:id="@+id/iv_ikon"
             android:layout_width="44dp"
             android:layout_height="44dp"
-            android:background="@drawable/bg_circle_pink"
+            android:background="@drawable/bg_circle_blue"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent">
+
+            <ImageView
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_paper_bag"
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/icon_tabungan"/>
+        </FrameLayout>
 
         <!-- Nama tabungan -->
         <TextView
