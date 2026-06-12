@@ -31,4 +31,15 @@ class TabunganViewModel(application: Application) : AndroidViewModel(application
     fun tambahTerkumpul(tabungan: Tabungan, jumlah: Double) = viewModelScope.launch {
         repository.update(tabungan.copy(terkumpul = tabungan.terkumpul + jumlah))
     }
+
+    // ── Target Tabungan Prioritas ─────────────────────────────────────────────
+
+    /**
+     * Mengaktifkan/mematikan status prioritas pada satu tabungan.
+     * Dipanggil dari switch "Jadikan Sebagai Target Tabungan Prioritas?"
+     * di DetailTabunganBottomSheet.
+     */
+    fun setPrioritas(id: Int, isPriority: Boolean) = viewModelScope.launch {
+        repository.setPrioritas(id, isPriority)
+    }
 }

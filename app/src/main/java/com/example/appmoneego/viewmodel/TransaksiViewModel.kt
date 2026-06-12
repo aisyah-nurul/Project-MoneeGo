@@ -53,7 +53,6 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
 
         try {
             if (dompetIdLama != transaksi.dompetId) {
-                // ── Dompet BERUBAH ──────────────────────────────────────────
                 Log.d("EditTransaksi", "Dompet berubah: $dompetIdLama → ${transaksi.dompetId}")
 
                 val dompetLama = dompetRepo.getById(dompetIdLama)
@@ -79,7 +78,6 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
                 }
 
             } else {
-                // ── Dompet SAMA ─────────────────────────────────────────────
                 Log.d("EditTransaksi", "Dompet sama: $dompetIdLama")
                 val dompet = dompetRepo.getById(transaksi.dompetId)
                 Log.d("EditTransaksi", "dompet=$dompet")
@@ -98,14 +96,11 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
                 }
             }
 
-            // ── Update transaksi — SELALU dijalankan, bahkan kalau dompet null ──
             transaksiRepo.update(transaksi)
             Log.d("EditTransaksi", "transaksiRepo.update() SELESAI ✓ id=${transaksi.id}")
 
         } catch (e: Exception) {
-            // Tangkap exception yang sebelumnya tertelan diam-diam
             Log.e("EditTransaksi", "ERROR di update(): ${e.message}", e)
-            // Tetap coba update transaksi walau ada error saldo
             try {
                 transaksiRepo.update(transaksi)
                 Log.d("EditTransaksi", "transaksiRepo.update() FALLBACK SELESAI ✓")
@@ -125,6 +120,32 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
             dompetRepo.update(it.copy(saldo = saldoBaru))
         }
         transaksiRepo.delete(transaksi)
+    }
+
+    // ── FUNGSI BARU: update transaksi saldo awal saat dompet diedit ──────────
+    //
+    // Dipanggil oleh DompetFragment saat user edit dompet.
+    // Hanya update: nominal, kategori, catatan.
+    // TIDAK menyentuh saldo dompet (karena saldo sudah dihandle di DompetViewModel.update).
+    //
+    // Parameter:
+    //   transaksi    — transaksi saldo awal yang akan diupdate
+    //   nominalBaru  — saldo dompet terbaru (= nominal transaksi baru)
+    //   kategoriBaru — nama dompet terbaru  (tampil sebagai judul di riwayat)
+    //   catatanBaru  — jenis dompet terbaru (dibaca adapter untuk menentukan icon)
+    fun updateSaldoAwalDompet(
+        transaksi:    Transaksi,
+        nominalBaru:  Double,
+        kategoriBaru: String,
+        catatanBaru:  String
+    ) = viewModelScope.launch {
+        val transaksiDiupdate = transaksi.copy(
+            nominal  = nominalBaru,
+            kategori = kategoriBaru,
+            catatan  = catatanBaru
+        )
+        transaksiRepo.update(transaksiDiupdate)
+        Log.d("SinkronDompet", "updateSaldoAwalDompet ✓ id=${transaksi.id} nominal=$nominalBaru kategori=$kategoriBaru catatan=$catatanBaru")
     }
 
     fun getByDateRange(start: Long, end: Long) = transaksiRepo.getByDateRange(start, end)

@@ -15,7 +15,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.appmoneego.R
-import com.example.appmoneego.ui.tabungan.TabunganViewModel
 import com.example.appmoneego.utils.CurrencyFormatter
 import com.example.appmoneego.utils.VisibilityPrefs
 import com.example.appmoneego.viewmodel.DashboardViewModel
@@ -24,7 +23,6 @@ import java.util.Calendar
 class DashboardFragment : Fragment() {
 
     private lateinit var dashboardViewModel: DashboardViewModel
-    private lateinit var tabunganViewModel: TabunganViewModel
 
     // ── View saldo & bulan ────────────────────────────────────────────────────
     private lateinit var tvSaldo:       TextView
@@ -155,27 +153,34 @@ class DashboardFragment : Fragment() {
         }
     }
 
+    // ── Target Tabungan Prioritas ─────────────────────────────────────────────
+    //
+    // PERBAIKAN: Dashboard sekarang BENAR-BENAR user-driven.
+    //
+    // - dashboardViewModel.tabunganPrioritas mengamati tabunganPrioritas dari
+    //   repository, yang query-nya: SELECT * FROM tabungan WHERE isPriority = 1.
+    // - Jika belum ada satupun tabungan dengan isPriority = true,
+    //   LiveData ini mengirim null.
+    // - TIDAK ADA fallback ke tabungan pertama / terbaru / yang sedang berjalan.
+    // - Saat user menyalakan/mematikan switch "Jadikan Sebagai Target Tabungan
+    //   Prioritas?" di DetailTabunganBottomSheet, Room akan otomatis memicu
+    //   LiveData ini ulang (karena observe), sehingga Dashboard ikut update
+    //   secara realtime tanpa perlu refresh manual.
     private fun setupTabunganPrioritas() {
-        tabunganViewModel = ViewModelProvider(this)[TabunganViewModel::class.java]
-
-        tabunganViewModel.tabunganList.observe(viewLifecycleOwner) { list ->
-            // Ambil tabungan berjalan yang paling dekat selesai (prioritas)
-            val prioritas = list
-                .filter { it.terkumpul < it.targetNominal }
-                .minByOrNull { it.targetNominal - it.terkumpul }
-
+        dashboardViewModel.tabunganPrioritas.observe(viewLifecycleOwner) { prioritas ->
             if (prioritas == null) {
-                // Belum ada target — tampilkan tombol buat target
-                tvNamaPrioritas.text  = "Belum ada target tabungan"
-                progressPrioritas.progress = 0
-                tvProgressPersen.text = "Progress: 0%"
-                tvSisaPrioritas.text  = ""
+                // ── KONDISI 1 & 3: belum ada / baru dimatikan → state kosong ──
+                tvNamaPrioritas.text         = "Belum ada target tabungan prioritas"
+                progressPrioritas.progress   = 0
+                tvProgressPersen.text        = "Progress: 0%"
+                tvSisaPrioritas.text         = ""
                 btnBuatTarget.visibility     = View.VISIBLE
                 btnGantiPrioritas.visibility = View.GONE
             } else {
+                // ── KONDISI 2: ada tabungan dengan isPriority = true ──────────
                 val persen = if (prioritas.targetNominal > 0)
                     ((prioritas.terkumpul / prioritas.targetNominal) * 100).toInt() else 0
-                val sisa = prioritas.targetNominal - prioritas.terkumpul
+                val sisa = (prioritas.targetNominal - prioritas.terkumpul).coerceAtLeast(0.0)
 
                 tvNamaPrioritas.text        = prioritas.nama
                 progressPrioritas.progress  = persen

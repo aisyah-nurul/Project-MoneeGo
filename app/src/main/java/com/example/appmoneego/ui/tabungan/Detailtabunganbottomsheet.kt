@@ -15,6 +15,7 @@ import android.widget.LinearLayout
 import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -44,6 +45,10 @@ class DetailTabunganBottomSheet(
     private var selectedDompetId   = 0
     private var selectedDompetNama = ""
     private var isDropdownOpen     = false
+
+    // ViewModel diambil dari Activity supaya bisa langsung memanggil setPrioritas()
+    // (sumber tunggal kebenaran untuk status prioritas tabungan)
+    private val tabunganViewModel: TabunganViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -348,10 +353,22 @@ class DetailTabunganBottomSheet(
         }
 
         // ── Switch prioritas ──────────────────────────────────────────────────
+        // Set state awal switch sesuai data tabungan saat ini (TANPA memicu listener,
+        // karena setChecked sebelum setOnCheckedChangeListener tidak akan memanggil listener)
+        switchPrioritas.isChecked = tabungan.isPriority
+
         switchPrioritas.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) Toast.makeText(
-                requireContext(), "'${tabungan.nama}' dijadikan prioritas", Toast.LENGTH_SHORT
-            ).show()
+            // Update database — sumber tunggal kebenaran untuk Dashboard.
+            // Jika isChecked = true, repository akan otomatis mematikan
+            // prioritas pada tabungan lain (hanya 1 yang aktif).
+            tabunganViewModel.setPrioritas(tabungan.id, isChecked)
+
+            val pesan = if (isChecked)
+                "'${tabungan.nama}' dijadikan Target Tabungan Prioritas"
+            else
+                "'${tabungan.nama}' tidak lagi menjadi prioritas"
+
+            Toast.makeText(requireContext(), pesan, Toast.LENGTH_SHORT).show()
         }
 
         // ── Tombol tutup ──────────────────────────────────────────────────────

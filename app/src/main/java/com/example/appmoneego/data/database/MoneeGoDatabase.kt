@@ -15,7 +15,10 @@ import com.example.appmoneego.data.entity.*
         Hutang::class,
         CicilanEntity::class
     ],
-    version = 4,
+    // ── Versi dinaikkan dari 4 -> 5 karena ada field baru: Tabungan.isPriority ──
+    // fallbackToDestructiveMigration() akan menghapus & membuat ulang tabel
+    // secara otomatis, jadi tidak perlu menulis migration manual.
+    version = 5,
     exportSchema = false
 )
 abstract class MoneeGoDatabase : RoomDatabase() {

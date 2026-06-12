@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -240,38 +241,36 @@ class DompetFragment : Fragment() {
             val saldo = if (saldoStr.isEmpty()) 0.0 else CurrencyFormatter.parse(saldoStr)
 
             if (dompetEdit == null) {
+                // ── MODE TAMBAH BARU ──────────────────────────────────────────
+                val namaFinal  = nama
+                val jenisFinal = jenisTerpilih
+
                 val dompetBaru = Dompet(
-                    nama          = nama,
-                    jenis         = jenisTerpilih,
+                    nama          = namaFinal,
+                    jenis         = jenisFinal,
                     saldo         = saldo,
-                    ikon          = getIkonByJenis(jenisTerpilih),
+                    ikon          = getIkonByJenis(jenisFinal),
                     tanggalDibuat = tanggalDipilih
                 )
                 dompetViewModel.insert(dompetBaru)
 
                 if (saldo > 0) {
-                    // ── PERUBAHAN: observer sekali pakai agar tidak insert berulang ──
-                    // Gunakan Observer manual yang di-remove setelah insert pertama
-                    val observer = object : androidx.lifecycle.Observer<List<Dompet>> {
+                    val observer = object : Observer<List<Dompet>> {
                         override fun onChanged(listDompet: List<Dompet>) {
                             val dompetBaik = listDompet.firstOrNull {
-                                it.nama == nama && it.jenis == jenisTerpilih
+                                it.nama == namaFinal && it.jenis == jenisFinal
                             }
                             if (dompetBaik != null) {
-                                // ── PERUBAHAN UTAMA ─────────────────────────────────
-                                // kategori = nama dompet  → icon di riwayat ikut jenis
-                                // catatan  = jenis dompet → adapter baca untuk icon
                                 transaksiViewModel.insertTanpaUpdateSaldo(
                                     Transaksi(
                                         nominal  = saldo,
                                         jenis    = "PEMASUKAN",
-                                        kategori = dompetBaik.nama,          // ← nama dompet
-                                        catatan  = dompetBaik.jenis,         // ← jenis dompet
+                                        kategori = dompetBaik.nama,
+                                        catatan  = dompetBaik.jenis,
                                         tanggal  = tanggalDipilih,
                                         dompetId = dompetBaik.id
                                     )
                                 )
-                                // Remove observer agar tidak insert lagi saat list update
                                 dompetViewModel.allDompet.removeObserver(this)
                             }
                         }
@@ -281,19 +280,72 @@ class DompetFragment : Fragment() {
 
                 Toast.makeText(
                     requireContext(),
-                    getString(R.string.toast_dompet_ditambahkan, nama),
+                    getString(R.string.toast_dompet_ditambahkan, namaFinal),
                     Toast.LENGTH_SHORT
                 ).show()
+
             } else {
+                // ── MODE EDIT ─────────────────────────────────────────────────
+                val dompetLama   = dompetEdit
+                val saldoLama    = dompetLama.saldo
+                val jenisLama    = dompetLama.jenis
+                val namaLama     = dompetLama.nama
+                val jenisBaru    = jenisTerpilih
+                val namaBaru     = nama
+
+                // Update entity Dompet
                 dompetViewModel.update(
-                    dompetEdit.copy(
-                        nama          = nama,
-                        jenis         = jenisTerpilih,
+                    dompetLama.copy(
+                        nama          = namaBaru,
+                        jenis         = jenisBaru,
                         saldo         = saldo,
-                        ikon          = getIkonByJenis(jenisTerpilih),
+                        ikon          = getIkonByJenis(jenisBaru),
                         tanggalDibuat = tanggalDipilih
                     )
                 )
+
+                // ── FIX MASALAH 1, 2, 3: Sinkronisasi transaksi saldo awal ───
+                //
+                // Transaksi saldo awal disimpan dengan:
+                //   kategori = nama dompet  (bukan "Saldo Awal")
+                //   catatan  = jenis dompet (dibaca adapter untuk icon)
+                //
+                // Saat user edit dompet, kita perlu:
+                //   1. Cari transaksi saldo awal milik dompet ini
+                //      (filter: dompetId = id dompet ini, kategori = nama dompet lama)
+                //   2. Update:
+                //      - nominal → saldo baru (FIX masalah 2 & 3)
+                //      - kategori → nama baru (agar judul riwayat ikut nama terbaru)
+                //      - catatan → jenis baru (agar icon riwayat ikut jenis terbaru)
+                //
+                // Karena transaksiViewModel.allTransaksi adalah LiveData,
+                // kita observe sekali pakai lalu langsung remove.
+
+                val observerSinkron = object : Observer<List<Transaksi>> {
+                    override fun onChanged(semuaTransaksi: List<Transaksi>) {
+                        // Cari transaksi saldo awal: dompetId cocok DAN
+                        // kategori = nama dompet lama (cara kita tahu itu saldo awal)
+                        val transaksiSaldoAwal = semuaTransaksi.filter { t ->
+                            t.dompetId == dompetLama.id &&
+                                    t.kategori == namaLama &&
+                                    t.jenis    == "PEMASUKAN"
+                        }
+
+                        transaksiSaldoAwal.forEach { t ->
+                            // Update nominal, kategori, dan catatan sekaligus
+                            transaksiViewModel.updateSaldoAwalDompet(
+                                transaksi    = t,
+                                nominalBaru  = saldo,       // FIX masalah 2 & 3: saldo baru
+                                kategoriBaru = namaBaru,    // FIX masalah 1: nama dompet terbaru
+                                catatanBaru  = jenisBaru    // FIX masalah 1: jenis dompet terbaru
+                            )
+                        }
+
+                        transaksiViewModel.allTransaksi.removeObserver(this)
+                    }
+                }
+                transaksiViewModel.allTransaksi.observe(viewLifecycleOwner, observerSinkron)
+
                 Toast.makeText(
                     requireContext(),
                     getString(R.string.toast_dompet_diperbarui),

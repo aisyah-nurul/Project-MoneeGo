@@ -9,5 +9,9 @@ data class Tabungan(
     val nama: String,
     val targetNominal: Double,
     val terkumpul: Double = 0.0,
-    val deadline: Long? = null
+    val deadline: Long? = null,
+    // ── Field baru ────────────────────────────────────────────────────────────
+    // Menandai apakah tabungan ini dijadikan "Target Tabungan Prioritas" di Dashboard.
+    // Hanya satu tabungan yang boleh isPriority = true pada satu waktu.
+    val isPriority: Boolean = false
 )
