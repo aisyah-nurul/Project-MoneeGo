@@ -26,7 +26,7 @@ class DetailTransaksiDialog(
     private var _binding: DialogDetailTransaksiBinding? = null
     private val binding get() = _binding!!
 
-    // Map ikon kategori — sama persis dengan TransaksiAdapter
+    // Map ikon kategori — dipakai untuk PENGELUARAN dan TRANSFER
     private val kategoriIcon = mapOf(
         "Makanan"           to R.drawable.ic_makanan,
         "Fashion"           to R.drawable.ic_fashion,
@@ -84,8 +84,17 @@ class DetailTransaksiDialog(
         val isTransfer    = transaksi.kategori == "Transfer"
         val isPemasukan   = transaksi.jenis == "PEMASUKAN"
 
-        // Ikon kategori
-        val iconRes = kategoriIcon[transaksi.kategori] ?: R.drawable.ic_wallet
+        // ── FIX BUG 1: Icon untuk PEMASUKAN non-transfer ────────────────────
+        // Gunakan icon berdasarkan JENIS DOMPET asal transaksi (sama seperti
+        // mapping di DompetAdapter), bukan icon kategori — karena kategori
+        // PEMASUKAN tidak punya mapping icon yang relevan dengan dompet.
+        // PENGELUARAN dan TRANSFER tetap pakai kategoriIcon seperti semula.
+        val iconRes = if (!isTransfer && isPemasukan) {
+            val dompetAsal = daftarDompet.find { it.id == transaksi.dompetId }
+            getIconDompet(dompetAsal?.jenis ?: "Lainnya")
+        } else {
+            kategoriIcon[transaksi.kategori] ?: R.drawable.ic_wallet
+        }
         binding.ivDialogIcon.setImageResource(iconRes)
 
         // Nama kategori
@@ -150,6 +159,21 @@ class DetailTransaksiDialog(
     }
 
     /**
+     * Mapping icon berdasarkan jenis dompet — identik dengan
+     * DompetAdapter.getIconRes(), dipakai khusus untuk transaksi PEMASUKAN
+     * agar icon di popup detail konsisten dengan icon dompet yang tampil
+     * di halaman Riwayat Transaksi maupun halaman Dompet.
+     */
+    private fun getIconDompet(jenis: String): Int = when (jenis) {
+        "Rekening Bank"  -> R.drawable.ic_wallet_bank
+        "Dompet Digital" -> R.drawable.ic_wallet_digital
+        "Uang Tunai"     -> R.drawable.ic_wallet_cash
+        "Investasi"      -> R.drawable.ic_wallet_investasi
+        "Tabungan"       -> R.drawable.ic_wallet_tabungan
+        else             -> R.drawable.ic_wallet_lainnya
+    }
+
+    /**
      * Parse nama dompet tujuan dari field catatan.
      *
      * Konvensi yang dipakai TambahTransaksiFragment saat simpan transfer:
@@ -182,20 +206,13 @@ class DetailTransaksiDialog(
             dismiss()
         }
 
-        // Tombol Hapus: konfirmasi dulu
+        // ── FIX BUG 2: Hapus tanpa dialog konfirmasi di sini ────────────────
+        // Konfirmasi penghapusan sudah ditangani oleh RiwayatTransaksiFragment
+        // di onDeleteClick. Kalau ditampilkan lagi di sini, user harus
+        // konfirmasi dua kali. Jadi cukup teruskan event dan tutup dialog.
         binding.btnDelete.setOnClickListener {
-            androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                .setTitle("Hapus Transaksi")
-                .setMessage(
-                    "Yakin ingin menghapus " +
-                            "\"${transaksi.catatan.ifEmpty { transaksi.kategori }}\"?"
-                )
-                .setPositiveButton("Hapus") { _, _ ->
-                    onDeleteClick(transaksi)
-                    dismiss()
-                }
-                .setNegativeButton("Batal", null)
-                .show()
+            onDeleteClick(transaksi)
+            dismiss()
         }
     }
 

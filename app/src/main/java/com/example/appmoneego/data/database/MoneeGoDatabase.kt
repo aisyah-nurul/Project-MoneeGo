@@ -15,10 +15,10 @@ import com.example.appmoneego.data.entity.*
         Hutang::class,
         CicilanEntity::class
     ],
-    // ── Versi dinaikkan dari 4 -> 5 karena ada field baru: Tabungan.isPriority ──
-    // fallbackToDestructiveMigration() akan menghapus & membuat ulang tabel
-    // secara otomatis, jadi tidak perlu menulis migration manual.
-    version = 5,
+    // FIX BUG 2: version dinaikkan 3 → 4 karena CicilanEntity menambah
+    // kolom baru "transaksiId". fallbackToDestructiveMigration akan
+    // membuat ulang database (data lama hilang) — wajar untuk tahap dev.
+    version = 4,
     exportSchema = false
 )
 abstract class MoneeGoDatabase : RoomDatabase() {
@@ -41,7 +41,7 @@ abstract class MoneeGoDatabase : RoomDatabase() {
                     MoneeGoDatabase::class.java,
                     "moneego_database"
                 )
-                    .fallbackToDestructiveMigration() // ✅ ini versi yang benar
+                    .fallbackToDestructiveMigration()
                     .build()
 
                 INSTANCE = instance

@@ -47,7 +47,6 @@ class TambahHutangDialog(
     }
 
     private fun setupJenisHutang(view: View) {
-        // Pakai findViewById langsung karena XML pakai TextView bukan Button
         val buttons = mapOf(
             view.findViewById<TextView>(R.id.btnKartuKredit)     to "Kartu Kredit",
             view.findViewById<TextView>(R.id.btnPinjol)          to "Pinjaman Online",
@@ -57,7 +56,6 @@ class TambahHutangDialog(
             view.findViewById<TextView>(R.id.btnLainnya)         to "Lainnya"
         )
 
-        // Set semua unselected dulu
         buttons.keys.forEach { tv ->
             tv.setBackgroundResource(R.drawable.bg_jenis_unselected)
             tv.setTextColor(Color.parseColor("#555555"))
@@ -95,8 +93,10 @@ class TambahHutangDialog(
                 isEditing = true
                 val raw = s.toString().replace(Regex("[^0-9]"), "")
                 jumlahAngka = raw.toLongOrNull() ?: 0L
+                // ✅ MASALAH 2 FIX: hanya format angka dengan titik, tanpa prefix "Rp "
+                // Prefix "Rp" sudah ada di XML sebagai prefixText pada TextInputLayout
                 val formatted = if (jumlahAngka > 0)
-                    "Rp " + NumberFormat.getNumberInstance(Locale("id", "ID")).format(jumlahAngka)
+                    NumberFormat.getNumberInstance(Locale("id", "ID")).format(jumlahAngka)
                 else ""
                 binding.etJumlah.setText(formatted)
                 binding.etJumlah.setSelection(formatted.length)
@@ -113,7 +113,8 @@ class TambahHutangDialog(
                 cal.set(y, m, d)
                 tanggalDipilih = sdf.format(cal.time)
                 binding.etJatuhTempo.setText(tanggalDipilih)
-            }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
+            }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),
+                cal.get(Calendar.DAY_OF_MONTH)).show()
         }
     }
 
@@ -137,7 +138,8 @@ class TambahHutangDialog(
             val hutangBaru = Hutang(
                 id                = UUID.randomUUID().toString(),
                 nama              = nama,
-                totalHutang       = if (jenisHutangDipilih == "Kartu Kredit" && limitKredit > 0) limitKredit else jumlahAngka,
+                totalHutang       = if (jenisHutangDipilih == "Kartu Kredit" && limitKredit > 0)
+                    limitKredit else jumlahAngka,
                 sudahDibayar      = 0L,
                 tanggalJatuhTempo = tanggalDipilih,
                 catatan           = jenisHutangDipilih,

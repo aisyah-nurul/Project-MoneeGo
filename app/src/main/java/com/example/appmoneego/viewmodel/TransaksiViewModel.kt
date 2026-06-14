@@ -6,6 +6,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.example.appmoneego.data.database.MoneeGoDatabase
+import com.example.appmoneego.data.dao.CicilanDao
+import com.example.appmoneego.data.dao.HutangDao
 import com.example.appmoneego.data.entity.Transaksi
 import com.example.appmoneego.repository.TransaksiRepository
 import com.example.appmoneego.repository.DompetRepository
@@ -16,12 +18,20 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
     private val transaksiRepo: TransaksiRepository
     private val dompetRepo: DompetRepository
 
+    // FIX BUG 2 & 3: akses langsung ke cicilan & hutang — dibutuhkan saat
+    // transaksi cicilan hutang dihapus dari Riwayat Transaksi, agar riwayat
+    // cicilan terkait ikut terhapus dan sudahDibayar/selesai dihitung ulang.
+    private val cicilanDao: CicilanDao
+    private val hutangDao: HutangDao
+
     val allTransaksi: LiveData<List<Transaksi>>
 
     init {
         val db = MoneeGoDatabase.getDatabase(application)
         transaksiRepo = TransaksiRepository(db.transaksiDao())
         dompetRepo    = DompetRepository(db.dompetDao())
+        cicilanDao    = db.cicilanDao()
+        hutangDao     = db.hutangDao()
         allTransaksi  = transaksiRepo.allTransaksi
     }
 
@@ -111,6 +121,7 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun delete(transaksi: Transaksi) = viewModelScope.launch {
+        // Kembalikan saldo dompet seperti semula
         val dompet = dompetRepo.getById(transaksi.dompetId)
         dompet?.let {
             val saldoBaru = if (transaksi.jenis == "PEMASUKAN")
@@ -119,20 +130,36 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
                 it.saldo + transaksi.nominal
             dompetRepo.update(it.copy(saldo = saldoBaru))
         }
+
+        // ── FIX BUG 2 & 3 ────────────────────────────────────────────────────
+        // Jika transaksi ini adalah cicilan hutang (terhubung lewat
+        // transaksiId di CicilanEntity), hapus juga riwayat cicilannya
+        // di Detail Hutang dan hitung ulang sudahDibayar/selesai dari
+        // data cicilan yang masih tersisa — bukan pakai nilai cache lama.
+        val cicilanTerkait = cicilanDao.getCicilanByTransaksiId(transaksi.id)
+        if (cicilanTerkait != null) {
+            cicilanDao.deleteCicilanById(cicilanTerkait.id)
+
+            val hutang = hutangDao.getHutangById(cicilanTerkait.hutangId)
+            if (hutang != null) {
+                val totalSudahDibayar = cicilanDao
+                    .getCicilanByHutangId(hutang.id)
+                    .sumOf { it.nominal }
+
+                hutangDao.updateHutang(
+                    hutang.copy(
+                        sudahDibayar = totalSudahDibayar,
+                        selesai = hutang.totalHutang > 0 &&
+                                totalSudahDibayar >= hutang.totalHutang
+                    )
+                )
+                Log.d("HapusTransaksi", "Cicilan terkait dihapus, hutang ${hutang.nama} di-recalc: sudahDibayar=$totalSudahDibayar")
+            }
+        }
+
         transaksiRepo.delete(transaksi)
     }
 
-    // ── FUNGSI BARU: update transaksi saldo awal saat dompet diedit ──────────
-    //
-    // Dipanggil oleh DompetFragment saat user edit dompet.
-    // Hanya update: nominal, kategori, catatan.
-    // TIDAK menyentuh saldo dompet (karena saldo sudah dihandle di DompetViewModel.update).
-    //
-    // Parameter:
-    //   transaksi    — transaksi saldo awal yang akan diupdate
-    //   nominalBaru  — saldo dompet terbaru (= nominal transaksi baru)
-    //   kategoriBaru — nama dompet terbaru  (tampil sebagai judul di riwayat)
-    //   catatanBaru  — jenis dompet terbaru (dibaca adapter untuk menentukan icon)
     fun updateSaldoAwalDompet(
         transaksi:    Transaksi,
         nominalBaru:  Double,

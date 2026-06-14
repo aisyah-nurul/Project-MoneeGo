@@ -18,6 +18,12 @@ interface CicilanDao {
     @Query("SELECT * FROM cicilan WHERE hutangId = :hutangId ORDER BY tanggalBayar DESC LIMIT 1")
     suspend fun getCicilanTerakhir(hutangId: String): CicilanEntity?
 
+    // FIX BUG 2: cari cicilan berdasarkan transaksiId — dipakai saat transaksi
+    // dihapus dari Riwayat Transaksi, untuk tahu cicilan mana yang harus
+    // ikut dihapus dari Detail Hutang.
+    @Query("SELECT * FROM cicilan WHERE transaksiId = :transaksiId LIMIT 1")
+    suspend fun getCicilanByTransaksiId(transaksiId: Int): CicilanEntity?
+
     @Query("DELETE FROM cicilan WHERE hutangId = :hutangId")
     suspend fun deleteCicilanByHutangId(hutangId: String)
 

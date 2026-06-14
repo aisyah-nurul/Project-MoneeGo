@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Switch
@@ -46,8 +45,6 @@ class DetailTabunganBottomSheet(
     private var selectedDompetNama = ""
     private var isDropdownOpen     = false
 
-    // ViewModel diambil dari Activity supaya bisa langsung memanggil setPrioritas()
-    // (sumber tunggal kebenaran untuk status prioritas tabungan)
     private val tabunganViewModel: TabunganViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -58,7 +55,6 @@ class DetailTabunganBottomSheet(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // ── Bind views ────────────────────────────────────────────────────────
         val tvNama          = view.findViewById<TextView>(R.id.tvDetailNama)
         val tvHariIni       = view.findViewById<TextView>(R.id.tvDetailHariIni)
         val tvTerkumpul     = view.findViewById<TextView>(R.id.tvDetailTerkumpul)
@@ -70,7 +66,6 @@ class DetailTabunganBottomSheet(
         val switchPrioritas = view.findViewById<Switch>(R.id.switchPrioritas)
         val rvRiwayat       = view.findViewById<RecyclerView>(R.id.rvRiwayatTabungan)
 
-        // Dropdown sumber dana
         val llDropdownHeader = view.findViewById<LinearLayout>(R.id.llSumberDanaHeader)
         val ivIkonDompet     = view.findViewById<ImageView>(R.id.ivIkonDompetDipilih)
         val tvNamaDompet     = view.findViewById<TextView>(R.id.tvSumberDanaTabungan)
@@ -100,18 +95,18 @@ class DetailTabunganBottomSheet(
             DatePickerDialog(requireContext(), { _, y, m, d ->
                 cal.set(y, m, d)
                 etTanggal.setText(sdf.format(cal.time))
-            }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
+            }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),
+                cal.get(Calendar.DAY_OF_MONTH)).show()
         }
 
-        // ── Helper: resolve drawable dari nama string ─────────────────────────
+        // ── Helper resolve drawable ───────────────────────────────────────────
         fun resolveIkon(namaIkon: String): Int {
             val resId = requireContext().resources.getIdentifier(
-                namaIkon, "drawable", requireContext().packageName
-            )
+                namaIkon, "drawable", requireContext().packageName)
             return if (resId != 0) resId else R.drawable.ic_wallet_lainnya
         }
 
-        // ── Render daftar opsi dompet di dalam dropdown ───────────────────────
+        // ── Render dropdown dompet ────────────────────────────────────────────
         fun renderDropdown() {
             llOpsiDompet.removeAllViews()
             if (daftarDompet.isEmpty()) {
@@ -128,8 +123,7 @@ class DetailTabunganBottomSheet(
                     orientation  = LinearLayout.HORIZONTAL
                     layoutParams = LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                    )
+                        LinearLayout.LayoutParams.WRAP_CONTENT)
                     setPadding(48, 24, 48, 24)
                     gravity     = android.view.Gravity.CENTER_VERTICAL
                     isClickable = true
@@ -138,9 +132,7 @@ class DetailTabunganBottomSheet(
                     setOnClickListener {
                         selectedDompetId   = dompet.id
                         selectedDompetNama = dompet.nama
-
-                        // Update header dropdown
-                        tvNamaDompet.text = dompet.nama
+                        tvNamaDompet.text  = dompet.nama
                         tvNamaDompet.setTextColor(0xFF1A1A2E.toInt())
                         ivIkonDompet.setImageResource(resolveIkon(dompet.ikon))
                         try {
@@ -148,8 +140,6 @@ class DetailTabunganBottomSheet(
                                 android.graphics.Color.parseColor(dompet.warna))
                         } catch (e: Exception) { ivIkonDompet.clearColorFilter() }
                         ivIkonDompet.visibility = View.VISIBLE
-
-                        // Tutup dropdown
                         isDropdownOpen          = false
                         llOpsiDompet.visibility = View.GONE
                         dividerDompet.visibility = View.GONE
@@ -157,15 +147,12 @@ class DetailTabunganBottomSheet(
                         renderDropdown()
                     }
                 }
-
                 val ivIkon = ImageView(requireContext()).apply {
                     layoutParams = LinearLayout.LayoutParams(56, 56).apply { marginEnd = 24 }
                     setImageResource(resolveIkon(dompet.ikon))
-                    try {
-                        setColorFilter(android.graphics.Color.parseColor(dompet.warna))
+                    try { setColorFilter(android.graphics.Color.parseColor(dompet.warna))
                     } catch (e: Exception) { clearColorFilter() }
                 }
-
                 val tvNama2 = TextView(requireContext()).apply {
                     text = dompet.nama
                     textSize = 14f
@@ -173,19 +160,15 @@ class DetailTabunganBottomSheet(
                     layoutParams = LinearLayout.LayoutParams(
                         0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
                 }
-
                 val ivCentang = ImageView(requireContext()).apply {
                     layoutParams = LinearLayout.LayoutParams(40, 40)
                     setImageResource(R.drawable.ic_check_green)
                     visibility = if (dompet.id == selectedDompetId) View.VISIBLE else View.GONE
                 }
-
                 row.addView(ivIkon)
                 row.addView(tvNama2)
                 row.addView(ivCentang)
                 llOpsiDompet.addView(row)
-
-                // Divider antar item
                 if (dompet != daftarDompet.last()) {
                     llOpsiDompet.addView(View(requireContext()).apply {
                         layoutParams = LinearLayout.LayoutParams(
@@ -209,32 +192,15 @@ class DetailTabunganBottomSheet(
 
         llDropdownHeader.setOnClickListener { toggleDropdown() }
 
-        // ── Load dompet dari DB ───────────────────────────────────────────────
-        lifecycleScope.launch {
-            daftarDompet = withContext(Dispatchers.IO) { dompetDao.getAllDompetSync() }
-            if (daftarDompet.isNotEmpty() && selectedDompetId == 0) {
-                val first = daftarDompet[0]
-                selectedDompetId   = first.id
-                selectedDompetNama = first.nama
-                tvNamaDompet.text  = first.nama
-                tvNamaDompet.setTextColor(0xFF1A1A2E.toInt())
-                ivIkonDompet.setImageResource(resolveIkon(first.ikon))
-                try {
-                    ivIkonDompet.setColorFilter(
-                        android.graphics.Color.parseColor(first.warna))
-                } catch (e: Exception) { ivIkonDompet.clearColorFilter() }
-                ivIkonDompet.visibility = View.VISIBLE
-            }
-            renderDropdown()
-        }
-
         // ── Riwayat cicilan ───────────────────────────────────────────────────
+        // Didefinisikan di sini agar bisa dipanggil ulang setelah hapus cicilan
         fun loadRiwayat() {
             lifecycleScope.launch {
                 val riwayat: List<CicilanEntity> = withContext(Dispatchers.IO) {
                     cicilanDao.getCicilanByHutangId(tabungan.id.toString())
                 }
                 rvRiwayat.layoutManager = LinearLayoutManager(requireContext())
+                // ✅ Bug 1 fix: daftarDompet sudah pasti terisi saat loadRiwayat() dipanggil
                 rvRiwayat.adapter = RiwayatCicilanAdapter(
                     list         = riwayat,
                     daftarDompet = daftarDompet,
@@ -264,8 +230,7 @@ class DetailTabunganBottomSheet(
                                     onUpdated(updated)
                                     tvTerkumpul.text = CurrencyFormatter.format(newTerkumpul)
                                     tvSisa.text = CurrencyFormatter.format(
-                                        (tabungan.targetNominal - newTerkumpul).coerceAtLeast(0.0)
-                                    )
+                                        (tabungan.targetNominal - newTerkumpul).coerceAtLeast(0.0))
                                     loadRiwayat()
                                 }
                             }
@@ -276,7 +241,26 @@ class DetailTabunganBottomSheet(
             }
         }
 
-        loadRiwayat()
+        // ── Load dompet dari DB → setelah selesai baru load riwayat ──────────
+        lifecycleScope.launch {
+            daftarDompet = withContext(Dispatchers.IO) { dompetDao.getAllDompetSync() }
+            if (daftarDompet.isNotEmpty() && selectedDompetId == 0) {
+                val first = daftarDompet[0]
+                selectedDompetId   = first.id
+                selectedDompetNama = first.nama
+                tvNamaDompet.text  = first.nama
+                tvNamaDompet.setTextColor(0xFF1A1A2E.toInt())
+                ivIkonDompet.setImageResource(resolveIkon(first.ikon))
+                try {
+                    ivIkonDompet.setColorFilter(
+                        android.graphics.Color.parseColor(first.warna))
+                } catch (e: Exception) { ivIkonDompet.clearColorFilter() }
+                ivIkonDompet.visibility = View.VISIBLE
+            }
+            renderDropdown()
+            // ✅ loadRiwayat() dipanggil DI SINI, setelah daftarDompet pasti sudah terisi
+            loadRiwayat()
+        }
 
         // ── Format input nominal ──────────────────────────────────────────────
         etNominal.addTextChangedListener(object : TextWatcher {
@@ -353,25 +337,16 @@ class DetailTabunganBottomSheet(
         }
 
         // ── Switch prioritas ──────────────────────────────────────────────────
-        // Set state awal switch sesuai data tabungan saat ini (TANPA memicu listener,
-        // karena setChecked sebelum setOnCheckedChangeListener tidak akan memanggil listener)
         switchPrioritas.isChecked = tabungan.isPriority
-
         switchPrioritas.setOnCheckedChangeListener { _, isChecked ->
-            // Update database — sumber tunggal kebenaran untuk Dashboard.
-            // Jika isChecked = true, repository akan otomatis mematikan
-            // prioritas pada tabungan lain (hanya 1 yang aktif).
             tabunganViewModel.setPrioritas(tabungan.id, isChecked)
-
             val pesan = if (isChecked)
                 "'${tabungan.nama}' dijadikan Target Tabungan Prioritas"
             else
                 "'${tabungan.nama}' tidak lagi menjadi prioritas"
-
             Toast.makeText(requireContext(), pesan, Toast.LENGTH_SHORT).show()
         }
 
-        // ── Tombol tutup ──────────────────────────────────────────────────────
         view.findViewById<View>(R.id.btnTutupDetail).setOnClickListener { dismiss() }
     }
 }

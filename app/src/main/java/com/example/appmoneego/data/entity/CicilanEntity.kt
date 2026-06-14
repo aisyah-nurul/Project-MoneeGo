@@ -11,5 +11,6 @@ data class CicilanEntity(
     val nominal: Long = 0L,
     val tanggalBayar: String = "",
     val catatan: String = "",
-    val dompetId: Int = 0  // 0 = tidak dipilih
+    val dompetId: Int = 0,
+    val transaksiId: Int = 0
 )

@@ -1,6 +1,8 @@
 package com.example.appmoneego.ui.dompet
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,6 +33,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import java.text.NumberFormat
+import java.util.Locale
 
 class DompetFragment : Fragment() {
 
@@ -197,13 +201,39 @@ class DompetFragment : Fragment() {
         val btnSimpan = v.findViewById<Button>(R.id.btnSimpanDompet)
 
         var tanggalDipilih: Long = System.currentTimeMillis()
+        // Simpan nilai numerik murni — dipakai saat simpan
+        var saldoAngka: Long = 0L
 
+        // ── MODE EDIT: isi field dengan data lama ─────────────────────────────
         dompetEdit?.let {
+            saldoAngka = it.saldo.toLong()
+            val formatted = if (saldoAngka > 0)
+                NumberFormat.getNumberInstance(Locale("id", "ID")).format(saldoAngka)
+            else ""
+            etSaldo.setText(formatted)
             etNama.setText(it.nama)
-            etSaldo.setText(it.saldo.toLong().toString())
             btnSimpan.text = getString(R.string.btn_simpan_perubahan)
             tanggalDipilih = it.tanggalDibuat
         }
+
+        // ✅ MASALAH 1 FIX: TextWatcher auto-format rupiah di field Saldo Awal
+        etSaldo.addTextChangedListener(object : TextWatcher {
+            var isEditing = false
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                if (isEditing) return
+                isEditing = true
+                val raw = s.toString().replace(Regex("[^0-9]"), "")
+                saldoAngka = raw.toLongOrNull() ?: 0L
+                val formatted = if (saldoAngka > 0)
+                    NumberFormat.getNumberInstance(Locale("id", "ID")).format(saldoAngka)
+                else ""
+                etSaldo.setText(formatted)
+                etSaldo.setSelection(formatted.length)
+                isEditing = false
+            }
+        })
 
         var jenisTerpilih = dompetEdit?.jenis ?: "Lainnya"
         val jenisMap = mapOf(
@@ -231,14 +261,14 @@ class DompetFragment : Fragment() {
         }
 
         btnSimpan.setOnClickListener {
-            val nama     = etNama.text.toString().trim()
-            val saldoStr = etSaldo.text.toString().trim()
+            val nama = etNama.text.toString().trim()
             if (nama.isEmpty()) {
                 tilNama.error = getString(R.string.error_nama_dompet_kosong)
                 return@setOnClickListener
             }
             tilNama.error = null
-            val saldo = if (saldoStr.isEmpty()) 0.0 else CurrencyFormatter.parse(saldoStr)
+            // ✅ Pakai saldoAngka (numerik murni) bukan parse dari teks berformat
+            val saldo = saldoAngka.toDouble()
 
             if (dompetEdit == null) {
                 // ── MODE TAMBAH BARU ──────────────────────────────────────────
@@ -286,14 +316,11 @@ class DompetFragment : Fragment() {
 
             } else {
                 // ── MODE EDIT ─────────────────────────────────────────────────
-                val dompetLama   = dompetEdit
-                val saldoLama    = dompetLama.saldo
-                val jenisLama    = dompetLama.jenis
-                val namaLama     = dompetLama.nama
-                val jenisBaru    = jenisTerpilih
-                val namaBaru     = nama
+                val dompetLama = dompetEdit
+                val namaLama   = dompetLama.nama
+                val namaBaru   = nama
+                val jenisBaru  = jenisTerpilih
 
-                // Update entity Dompet
                 dompetViewModel.update(
                     dompetLama.copy(
                         nama          = namaBaru,
@@ -304,44 +331,38 @@ class DompetFragment : Fragment() {
                     )
                 )
 
-                // ── FIX MASALAH 1, 2, 3: Sinkronisasi transaksi saldo awal ───
-                //
-                // Transaksi saldo awal disimpan dengan:
-                //   kategori = nama dompet  (bukan "Saldo Awal")
-                //   catatan  = jenis dompet (dibaca adapter untuk icon)
-                //
-                // Saat user edit dompet, kita perlu:
-                //   1. Cari transaksi saldo awal milik dompet ini
-                //      (filter: dompetId = id dompet ini, kategori = nama dompet lama)
-                //   2. Update:
-                //      - nominal → saldo baru (FIX masalah 2 & 3)
-                //      - kategori → nama baru (agar judul riwayat ikut nama terbaru)
-                //      - catatan → jenis baru (agar icon riwayat ikut jenis terbaru)
-                //
-                // Karena transaksiViewModel.allTransaksi adalah LiveData,
-                // kita observe sekali pakai lalu langsung remove.
-
                 val observerSinkron = object : Observer<List<Transaksi>> {
                     override fun onChanged(semuaTransaksi: List<Transaksi>) {
-                        // Cari transaksi saldo awal: dompetId cocok DAN
-                        // kategori = nama dompet lama (cara kita tahu itu saldo awal)
-                        val transaksiSaldoAwal = semuaTransaksi.filter { t ->
-                            t.dompetId == dompetLama.id &&
-                                    t.kategori == namaLama &&
-                                    t.jenis    == "PEMASUKAN"
-                        }
-
-                        transaksiSaldoAwal.forEach { t ->
-                            // Update nominal, kategori, dan catatan sekaligus
-                            transaksiViewModel.updateSaldoAwalDompet(
-                                transaksi    = t,
-                                nominalBaru  = saldo,       // FIX masalah 2 & 3: saldo baru
-                                kategoriBaru = namaBaru,    // FIX masalah 1: nama dompet terbaru
-                                catatanBaru  = jenisBaru    // FIX masalah 1: jenis dompet terbaru
-                            )
-                        }
-
                         transaksiViewModel.allTransaksi.removeObserver(this)
+
+                        val transaksiSaldoAwal = semuaTransaksi.filter { t ->
+                            t.dompetId == dompetLama.id && t.jenis == "PEMASUKAN" &&
+                                    (t.kategori == namaLama || t.kategori == namaBaru)
+                        }
+
+                        if (transaksiSaldoAwal.isNotEmpty()) {
+                            transaksiSaldoAwal.forEach { t ->
+                                transaksiViewModel.updateSaldoAwalDompet(
+                                    transaksi    = t,
+                                    nominalBaru  = saldo,
+                                    kategoriBaru = namaBaru,
+                                    catatanBaru  = jenisBaru
+                                )
+                            }
+                        } else {
+                            if (saldo > 0) {
+                                transaksiViewModel.insertTanpaUpdateSaldo(
+                                    Transaksi(
+                                        nominal  = saldo,
+                                        jenis    = "PEMASUKAN",
+                                        kategori = namaBaru,
+                                        catatan  = jenisBaru,
+                                        tanggal  = tanggalDipilih,
+                                        dompetId = dompetLama.id
+                                    )
+                                )
+                            }
+                        }
                     }
                 }
                 transaksiViewModel.allTransaksi.observe(viewLifecycleOwner, observerSinkron)

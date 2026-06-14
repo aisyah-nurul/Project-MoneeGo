@@ -7,18 +7,20 @@
     android:paddingTop="7dp"
     android:paddingBottom="7dp">
 
-    <!-- Icon centang hijau -->
+    <!-- FIX BUG 1: icon sekarang dinamis sesuai jenis dompet,
+         bukan icon centang generik untuk semua dompet -->
     <FrameLayout
         android:layout_width="26dp"
         android:layout_height="26dp"
         android:background="@drawable/bg_circle_green"
         android:layout_marginEnd="8dp">
         <ImageView
+            android:id="@+id/ivRiwayatIcon"
             android:layout_width="14dp"
             android:layout_height="14dp"
             android:layout_gravity="center"
-            android:src="@drawable/ic_check_green"
-            android:contentDescription="Lunas" />
+            android:src="@drawable/ic_wallet_bank"
+            android:contentDescription="Sumber dana" />
     </FrameLayout>
 
     <!-- Cicilan ke-N + tanggal -->
