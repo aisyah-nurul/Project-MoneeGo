@@ -1,6 +1,7 @@
 package com.example.appmoneego.ui.dashboard
 
 import android.graphics.drawable.GradientDrawable
+import androidx.core.content.ContextCompat
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -61,9 +62,13 @@ class DashboardFragment : Fragment() {
 
     private val calBulanAktif: Calendar = Calendar.getInstance()
 
-    private val NAMA_BULAN = listOf(
-        "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-        "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    private val NAMA_BULAN get() = listOf(
+        getString(R.string.bulan_jan), getString(R.string.bulan_feb),
+        getString(R.string.bulan_mar), getString(R.string.bulan_apr),
+        getString(R.string.bulan_mei), getString(R.string.bulan_jun),
+        getString(R.string.bulan_jul), getString(R.string.bulan_agu),
+        getString(R.string.bulan_sep), getString(R.string.bulan_okt),
+        getString(R.string.bulan_nov), getString(R.string.bulan_des)
     )
 
     override fun onCreateView(
@@ -80,12 +85,18 @@ class DashboardFragment : Fragment() {
 
         initViews(view)
         setupViewModel()
+        dashboardViewModel.updateContext(requireContext())
         setupTabunganPrioritas()
         setupToggleSaldo()
         setupNavigasiBulan()
         setupClickListeners(view)
         syncIkonMata()
         updateLabelBulan()
+    }
+    override fun onResume() {
+        super.onResume()
+        dashboardViewModel.updateContext(requireContext())
+        setupTabunganPrioritas() // ← tambahkan ini
     }
 
     private fun initViews(view: View) {
@@ -136,16 +147,20 @@ class DashboardFragment : Fragment() {
             tvInsightRingkasan.text = insight.pesan
             when (insight.tipe) {
                 "WARNING" -> {
-                    cardRingkasan.setCardBackgroundColor(0xFFFFCDD2.toInt())
-                    setIndikatorWarna(viewIndikatorRingkasan, 0xFFF44336.toInt())
+                    cardRingkasan.setCardBackgroundColor(ContextCompat.getColor(requireContext(),
+                            R.color.insight_red_bg))
                 }
                 "SUCCESS" -> {
-                    cardRingkasan.setCardBackgroundColor(0xFFC8E6C9.toInt())
-                    setIndikatorWarna(viewIndikatorRingkasan, 0xFF4CAF50.toInt())
+                    cardRingkasan.setCardBackgroundColor(ContextCompat.getColor(requireContext(),
+                            R.color.insight_yellow_bg))
                 }
                 else -> {
-                    cardRingkasan.setCardBackgroundColor(0xFFFFCDD2.toInt())
-                    setIndikatorWarna(viewIndikatorRingkasan, 0xFFF44336.toInt())
+                    cardRingkasan.setCardBackgroundColor(ContextCompat.getColor(requireContext(),
+                            R.color.insight_red_bg)
+                    )
+                    setIndikatorWarna(viewIndikatorRingkasan, ContextCompat.getColor(requireContext(),
+                            R.color.expense_red)
+                    )
                 }
             }
         }
@@ -158,17 +173,16 @@ class DashboardFragment : Fragment() {
     private fun setupTabunganPrioritas() {
         tabunganViewModel = ViewModelProvider(this)[TabunganViewModel::class.java]
 
+        tabunganViewModel.tabunganList.removeObservers(viewLifecycleOwner)
         tabunganViewModel.tabunganList.observe(viewLifecycleOwner) { list ->
-            // Ambil tabungan berjalan yang paling dekat selesai (prioritas)
             val prioritas = list
                 .filter { it.terkumpul < it.targetNominal }
                 .minByOrNull { it.targetNominal - it.terkumpul }
 
             if (prioritas == null) {
-                // Belum ada target — tampilkan tombol buat target
-                tvNamaPrioritas.text  = "Belum ada target tabungan"
+                tvNamaPrioritas.text  = getString(R.string.label_belum_ada_target) // ← fix
                 progressPrioritas.progress = 0
-                tvProgressPersen.text = "Progress: 0%"
+                tvProgressPersen.text = getString(R.string.label_progress_persen, 0) // ← fix
                 tvSisaPrioritas.text  = ""
                 btnBuatTarget.visibility     = View.VISIBLE
                 btnGantiPrioritas.visibility = View.GONE
@@ -179,8 +193,9 @@ class DashboardFragment : Fragment() {
 
                 tvNamaPrioritas.text        = prioritas.nama
                 progressPrioritas.progress  = persen
-                tvProgressPersen.text       = "Progress: $persen%"
-                tvSisaPrioritas.text        = "Sisa ${CurrencyFormatter.format(sisa)}"
+                tvProgressPersen.text       = getString(R.string.label_progress_persen, persen) // ← fix
+                tvSisaPrioritas.text        = getString(R.string.label_sisa_nominal,     // ← fix
+                    CurrencyFormatter.format(sisa))
                 btnBuatTarget.visibility     = View.GONE
                 btnGantiPrioritas.visibility = View.VISIBLE
             }
@@ -204,7 +219,10 @@ class DashboardFragment : Fragment() {
         val warnaSelisih = when {
             selisih > 0  -> 0xFF4CAF50.toInt()
             selisih < 0  -> 0xFFF44336.toInt()
-            else         -> 0xFF1A1A2E.toInt()
+            else -> ContextCompat.getColor(
+                requireContext(),
+                R.color.expense_red
+            )
         }
         tvSelisih.text = if (isSaldoVisible) nilaiSelisih else "***"
         tvSelisih.setTextColor(warnaSelisih)

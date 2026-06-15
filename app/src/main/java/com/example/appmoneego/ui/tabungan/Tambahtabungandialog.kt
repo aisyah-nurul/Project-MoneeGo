@@ -45,7 +45,7 @@ class TambahTabunganDialog(
         var targetAngka   = 0.0
         var deadlineMs: Long? = null
         var kategoriDipilih = "Lainnya"
-        val sdf = SimpleDateFormat("dd MMMM yyyy", Locale("id", "ID"))
+        val sdf = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
 
         // Mapping kategori
         val kategoriMap = mapOf(
@@ -61,8 +61,13 @@ class TambahTabunganDialog(
         // Highlight kategori terpilih
         fun highlight(selected: LinearLayout) {
             kategoriMap.keys.forEach { btn ->
-                btn.isSelected = (btn == selected)
-                btn.alpha = 1f
+
+                if (btn == selected) {
+                    btn.setBackgroundResource(R.drawable.bg_kategori_selected)
+                } else {
+                    btn.setBackgroundResource(R.drawable.bg_kategori_unselected)
+                }
+
             }
         }
 

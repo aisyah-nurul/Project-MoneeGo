@@ -80,7 +80,7 @@
             android:layout_height="5dp"
             android:max="100"
             android:progress="26"
-            android:progressTint="@color/primary_navy"
+            android:progressTint="#6C8FC8"
             android:progressBackgroundTint="@color/progress_track" />
 
     </LinearLayout>

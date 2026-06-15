@@ -55,7 +55,7 @@ class TambahTransaksiFragment : Fragment() {
 
     private var nominalString    = ""
     private var jenisTransaksi   = "PENGELUARAN"
-    private var selectedKategori = "Makanan"
+    private var selectedKategori = ""
     private var selectedTanggal: Long = System.currentTimeMillis()
     private var lastSavedTransaksi: Transaksi? = null
     private var isGridKategoriOpen = false
@@ -166,13 +166,13 @@ class TambahTransaksiFragment : Fragment() {
     private fun buatBgTabAktif(): GradientDrawable = GradientDrawable().apply {
         shape        = GradientDrawable.RECTANGLE
         cornerRadius = 10f * resources.displayMetrics.density
-        setColor("#4A6FA5".toColorInt())
+        setColor("#6B8FA3".toColorInt())
     }
 
     private fun buatBgTabNonAktif(): GradientDrawable = GradientDrawable().apply {
-        shape        = GradientDrawable.RECTANGLE
+        shape = GradientDrawable.RECTANGLE
         cornerRadius = 10f * resources.displayMetrics.density
-        setColor(requireContext().getColor(R.color.primary_navy))
+        setColor("#3F5570".toColorInt())
     }
 
     private fun updateTabUI(aktif: String) {
@@ -186,7 +186,7 @@ class TambahTransaksiFragment : Fragment() {
                 tab.setTextColor(Color.WHITE)
             } else {
                 tab.background = buatBgTabNonAktif()
-                tab.setTextColor(Color.parseColor("#6B8FA3"))
+                tab.setTextColor(Color.parseColor("#C7D4E2"))
             }
         }
     }
@@ -244,7 +244,11 @@ class TambahTransaksiFragment : Fragment() {
         updateTanggalDisplay()
         setupGridKategori(kategoriPengeluaran)
         updateTabUI("PENGELUARAN")
-
+        if (selectedKategori.isEmpty()) {
+            selectedKategori = kategoriPengeluaran[0].nama
+            tvKategori.text  = selectedKategori
+            ivKategoriIcon.setImageResource(kategoriPengeluaran[0].iconRes)
+        }
         dompetViewModel.allDompet.observe(viewLifecycleOwner) { dompetList ->
             daftarDompet = dompetList
             renderOpsiSumberDana()
@@ -283,9 +287,13 @@ class TambahTransaksiFragment : Fragment() {
         setupGridKategori(daftar)
         updateTabUI(jenisTransaksi)
 
-        tvKategori.text = selectedKategori
-        val iconItem = daftar.find { it.nama == selectedKategori }
-        if (iconItem != null) ivKategoriIcon.setImageResource(iconItem.iconRes)
+        val namaDisplay = resolveKategoriNama(selectedKategori)
+        tvKategori.text = namaDisplay
+        val iconItem = daftar.find { it.nama == namaDisplay }
+        if (iconItem != null) {
+            ivKategoriIcon.setImageResource(iconItem.iconRes)
+            selectedKategori = namaDisplay
+        }
 
         tampilkanCatatan()
 
@@ -850,6 +858,37 @@ class TambahTransaksiFragment : Fragment() {
         val angka = nominalString.toLongOrNull() ?: 0L
         tvNominal.text = if (angka == 0L) "Rp 0" else CurrencyFormatter.format(angka.toDouble())
     }
+    private fun resolveKategoriNama(namaDb: String): String {
+        val peta = mapOf(
+            "Makanan"           to R.string.kat_makanan,
+            "Fashion"           to R.string.kat_fashion,
+            "Transportasi"      to R.string.kat_transportasi,
+            "Pendidikan"        to R.string.kat_pendidikan,
+            "Sosial"            to R.string.kat_sosial,
+            "Kesehatan"         to R.string.kat_kesehatan,
+            "Rumah Tangga"      to R.string.kat_rumah_tangga,
+            "Kebutuhan Pribadi" to R.string.kat_kebutuhan_pribadi,
+            "Gaji"              to R.string.kat_gaji,
+            "Bonus"             to R.string.kat_bonus,
+            "Freelance"         to R.string.kat_freelance,
+            "Investasi"         to R.string.kat_investasi,
+            "Hadiah"            to R.string.kat_hadiah,
+            "Penjualan"         to R.string.kat_penjualan,
+            "Food"              to R.string.kat_makanan,
+            "Transportation"    to R.string.kat_transportasi,
+            "Education"         to R.string.kat_pendidikan,
+            "Social"            to R.string.kat_sosial,
+            "Health"            to R.string.kat_kesehatan,
+            "Household"         to R.string.kat_rumah_tangga,
+            "Personal Needs"    to R.string.kat_kebutuhan_pribadi,
+            "Salary"            to R.string.kat_gaji,
+            "Investment"        to R.string.kat_investasi,
+            "Gift"              to R.string.kat_hadiah,
+            "Sales"             to R.string.kat_penjualan
+        )
+        val resId = peta[namaDb]
+        return if (resId != null) getString(resId) else namaDb
+    }
 
     private fun setupGridKategori(daftar: List<KategoriItem>) {
         gridKategori.removeAllViews()
@@ -1199,7 +1238,9 @@ class TambahTransaksiFragment : Fragment() {
             tvLabelBaris2.text = getString(R.string.label_tanggal)
             tvLabelBaris3.text = getString(R.string.label_dompet)
             val daftar  = if (jenisTransaksi == "PEMASUKAN") kategoriPemasukan else kategoriPengeluaran
-            val iconRes = daftar.find { it.nama == selectedKategori }?.iconRes ?: R.drawable.ic_makanan
+            val namaResolved = resolveKategoriNama(selectedKategori)
+            val iconRes = daftar.find { it.nama == namaResolved }?.iconRes ?: R.drawable.ic_makanan
+            tvKategoriTercatat.text = namaResolved
             ivIconBaris1.setImageResource(iconRes)
             ivIconBaris2.setImageResource(R.drawable.ic_tanggal)
             ivIconBaris3.setImageResource(R.drawable.ic_wallet)

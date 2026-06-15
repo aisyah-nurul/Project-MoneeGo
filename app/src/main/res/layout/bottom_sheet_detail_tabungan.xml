@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@android:color/white"
+    android:background="@color/bg_card"
     android:paddingBottom="32dp">
 
     <!-- Handle bar -->
@@ -32,7 +32,7 @@
             android:layout_height="32dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_close"
-            app:tint="#888888"
+            app:tint="@color/text_secondary"
             android:layout_gravity="end|center_vertical"
             android:contentDescription="Tutup"/>
     </FrameLayout>
@@ -69,7 +69,7 @@
                 android:text="Nama Target"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:textColor="#1A1A2E"/>
+                android:textColor="@color/text_primary"/>
 
             <TextView
                 android:id="@+id/tvDetailHariIni"
@@ -77,14 +77,14 @@
                 android:layout_height="wrap_content"
                 android:text="Hari ini: -"
                 android:textSize="12sp"
-                android:textColor="#888888"/>
+                android:textColor="@color/text_secondary"/>
         </LinearLayout>
 
         <Button
             android:id="@+id/btnHapusTabungan"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
-            android:text="HAPUS"
+            android:text="@string/hapus"
             android:textSize="13sp"
             android:textColor="#FFFFFF"
             android:backgroundTint="#E53935"
@@ -110,9 +110,9 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TERKUMPUL"
+                android:text="@string/label_tabungan_tercapai"
                 android:textSize="11sp"
-                android:textColor="#888888"
+                android:textColor="@color/text_secondary"
                 android:letterSpacing="0.1"/>
 
             <TextView
@@ -122,7 +122,7 @@
                 android:text="Rp 0"
                 android:textSize="22sp"
                 android:textStyle="bold"
-                android:textColor="#1A1A2E"/>
+                android:textColor="@color/text_primary"/>
         </LinearLayout>
 
         <LinearLayout
@@ -135,9 +135,9 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="SISA"
+                android:text="@string/label_kurang"
                 android:textSize="11sp"
-                android:textColor="#888888"
+                android:textColor="@color/text_secondary"
                 android:letterSpacing="0.1"/>
 
             <TextView
@@ -155,9 +155,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Riwayat cicilan"
+        android:text="@string/label_riwayat_cicilan"
         android:textSize="13sp"
-        android:textColor="#333333"
+        android:textColor="@color/text_primary"
         android:textStyle="bold"
         android:layout_marginStart="20dp"
         android:layout_marginBottom="8dp"/>
@@ -176,9 +176,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="MASUKKAN NOMINAL TABUNGAN"
+        android:text="@string/label_nominal_cicilan"
         android:textSize="11sp"
-        android:textColor="#888888"
+        android:textColor="@color/text_secondary"
         android:letterSpacing="0.08"
         android:layout_marginStart="20dp"
         android:layout_marginBottom="8dp"/>
@@ -189,7 +189,7 @@
         android:layout_height="72dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:background="#F5F5F5"
+        android:background="#4F6B88"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
         android:layout_marginStart="20dp"
@@ -202,7 +202,7 @@
             android:text="Rp"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:textColor="#1A1A2E"
+            android:textColor="@color/text_primary"
             android:layout_marginEnd="8dp"/>
 
         <EditText
@@ -214,7 +214,8 @@
             android:inputType="number"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:textColor="#1A1A2E"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_hint"
             android:background="@null"
             android:gravity="center"/>
     </LinearLayout>
@@ -223,15 +224,17 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tanggal bayar"
+        android:text="@string/label_tanggal_bayar"
         android:textSize="13sp"
-        android:textColor="#333333"
+        android:textColor="@color/text_primary"
         android:textStyle="bold"
         android:layout_marginStart="20dp"
         android:layout_marginBottom="6dp"/>
 
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxBackgroundColor="#4F6B88"
+        app:boxStrokeColor="#6E89A5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -245,16 +248,17 @@
             android:focusable="false"
             android:clickable="true"
             android:textSize="14sp"
-            android:textColor="#1A2B34"/>
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_hint"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- ── Sumber Dana dropdown ── -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sumber Dana"
+        android:text="@string/label_sumber_dana"
         android:textSize="13sp"
-        android:textColor="#333333"
+        android:textColor="@color/text_primary"
         android:textStyle="bold"
         android:layout_marginStart="20dp"
         android:layout_marginBottom="6dp"/>
@@ -267,8 +271,8 @@
         android:layout_marginBottom="20dp"
         app:cardCornerRadius="8dp"
         app:cardElevation="0dp"
-        app:cardBackgroundColor="@android:color/white"
-        app:strokeColor="#CCCCCC"
+        app:cardBackgroundColor="#4F6B88"
+        app:strokeColor="#6E89A5"
         app:strokeWidth="1dp">
 
         <LinearLayout
@@ -303,12 +307,13 @@
                     android:layout_weight="1"
                     android:text="Pilih dompet..."
                     android:textSize="14sp"
-                    android:textColor="#888888"/>
+                    android:textColor="@color/text_primary"/>
 
                 <ImageView
                     android:id="@+id/ivChevronSumberDanaTabungan"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
+                    app:tint="@color/text_primary"
                     android:src="@drawable/ic_chevron_down"
                     android:scaleType="fitCenter"/>
 
@@ -318,7 +323,7 @@
                 android:id="@+id/dividerSumberDanaTabungan"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#EEEEEE"
+                android:background="#6E89A5"
                 android:visibility="gone"/>
 
             <LinearLayout
@@ -339,8 +344,8 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="16dp"
-        android:text="KONFIRMASI"
-        android:backgroundTint="#2C3E6B"
+        android:text="@string/btn_selesai"
+        android:backgroundTint="#56789A"
         android:textColor="@android:color/white"
         android:textSize="14sp"
         android:textStyle="bold"/>
@@ -355,15 +360,15 @@
         android:paddingEnd="20dp"
         android:paddingTop="12dp"
         android:paddingBottom="12dp"
-        android:background="#FFF9E6">
+        android:background="@color/bg_card">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Jadikan Sebagai Target Tabungan Prioritas?"
+            android:text="@string/toast_prioritas_diset"
             android:textSize="12sp"
-            android:textColor="#555555"/>
+            android:textColor="@color/text_primary"/>
 
         <Switch
             android:id="@+id/switchPrioritas"

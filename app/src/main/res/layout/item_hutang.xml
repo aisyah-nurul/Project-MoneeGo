@@ -65,7 +65,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Total hutang"
+                    android:text="@string/label_total_hutang"
                     android:textColor="@color/text_secondary"
                     android:textSize="10sp" />
                 <TextView
@@ -87,7 +87,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sudah dibayar"
+                    android:text="@string/label_sudah_dibayar"
                     android:textColor="@color/text_secondary"
                     android:textSize="10sp" />
                 <TextView
@@ -109,7 +109,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sisa hutang"
+                    android:text="@string/label_sisa_hutang"
                     android:textColor="@color/text_secondary"
                     android:textSize="10sp" />
                 <TextView
@@ -172,7 +172,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cicilan terakhir: "
+                android:text="@string/label_riwayat_cicilan"
                 android:textColor="@color/income_green"
                 android:textSize="10sp"
                 android:textStyle="bold"/>
@@ -225,7 +225,7 @@
                 android:id="@+id/tvTapHint"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="input cicilan"
+                android:text="@string/btn_simpan_cicilan"
                 android:textColor="@color/text_label"
                 android:textSize="10sp" />
 
@@ -234,7 +234,7 @@
                 android:layout_width="14dp"
                 android:layout_height="14dp"
                 android:src="@drawable/ic_chevron_right"
-                android:tint="@color/ungu_primer"
+                app:tint="@color/ungu_primer"
                 android:layout_marginStart="2dp"
                 android:contentDescription="Detail" />
         </LinearLayout>

@@ -55,7 +55,10 @@
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
-            app:boxStrokeColor="#6B8FA3"
+            app:boxStrokeColor="#0D1B2A"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxBackgroundColor="#1D334B"
             app:hintEnabled="false">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -96,7 +99,7 @@
                 android:layout_margin="4dp"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:background="@drawable/bg_tab_selected"
+                android:background="@drawable/bg_jenis_unselected"
                 android:padding="10dp"
                 android:clickable="true"
                 android:focusable="true">
@@ -124,7 +127,7 @@
                 android:layout_margin="4dp"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:background="@drawable/bg_tab_selected"
+                android:background="@drawable/bg_jenis_unselected"
                 android:padding="10dp"
                 android:clickable="true"
                 android:focusable="true">
@@ -152,7 +155,7 @@
                 android:layout_margin="4dp"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:background="@drawable/bg_tab_selected"
+                android:background="@drawable/bg_jenis_unselected"
                 android:padding="10dp"
                 android:clickable="true"
                 android:focusable="true">
@@ -179,7 +182,7 @@
                 android:layout_margin="4dp"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:background="@drawable/bg_tab_selected"
+                android:background="@drawable/bg_jenis_unselected"
                 android:padding="10dp"
                 android:clickable="true"
                 android:focusable="true">
@@ -206,7 +209,7 @@
                 android:layout_margin="4dp"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:background="@drawable/bg_tab_selected"
+                android:background="@drawable/bg_jenis_unselected"
                 android:padding="10dp"
                 android:clickable="true"
                 android:focusable="true">
@@ -233,7 +236,7 @@
                 android:layout_margin="4dp"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:background="@drawable/bg_tab_selected"
+                android:background="@drawable/bg_jenis_unselected"
                 android:padding="10dp"
                 android:clickable="true"
                 android:focusable="true">
@@ -274,7 +277,10 @@
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
-            app:boxStrokeColor="#6B8FA3"
+            app:boxStrokeColor="#0D1B2A"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxBackgroundColor="#1D334B"
             app:prefixText="Rp "
             app:hintEnabled="false">
 
@@ -298,7 +304,7 @@
             android:textSize="15sp"
             android:textStyle="bold"
             android:textColor="@color/white"
-            android:backgroundTint="#2C3E6B" />
+            android:backgroundTint="@color/primary_slate" />
 
     </LinearLayout>
 </ScrollView>

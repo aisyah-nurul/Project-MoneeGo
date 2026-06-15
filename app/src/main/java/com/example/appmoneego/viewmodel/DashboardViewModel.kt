@@ -1,6 +1,7 @@
 package com.example.appmoneego.viewmodel
 
 import android.app.Application
+import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -15,6 +16,14 @@ import com.example.appmoneego.utils.InsightGenerator
 import java.util.Calendar
 
 class DashboardViewModel(application: Application) : AndroidViewModel(application) {
+    private var insightContext: Context = application.applicationContext
+
+    fun updateContext(context: Context) {
+        insightContext = context
+        // Re-generate tips dan insight dengan locale baru
+        _insightTips.value = InsightGenerator.getTipsRandom(insightContext)
+        recalculateInsight()
+    }
 
     private val transaksiRepo: TransaksiRepository
     private val dompetRepo: DompetRepository
@@ -46,6 +55,11 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     // Tips random — di-generate satu kali saat ViewModel dibuat
     // Tidak perlu LiveData karena tidak bergantung database
     private val _insightTips = MutableLiveData<InsightItem>()
+    fun refreshInsight() {
+        _insightTips.value = InsightGenerator.getTipsRandom(insightContext)
+        setupInsightSources()
+    }
+
     val insightTips: LiveData<InsightItem> get() = _insightTips
 
     // Sumber-sumber data mentah untuk insight — disimpan agar bisa di-remove
@@ -145,12 +159,12 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
 
     private fun recalculateInsight() {
         _insightRingkasan.value = InsightGenerator.hitungInsight(
-            context                  = getApplication(),
-            totalJumlahTransaksi     = cacheTotalJumlah,
-            tanggalTerakhir          = cacheTanggalTerakhir,
-            pengeluaranBulanIni      = cachePengeluaranIni,
-            pengeluaranBulanLalu     = cachePengeluaranLalu,
-            jumlahTransaksiBulanIni  = cacheJumlahBulanIni
+            context                = insightContext,
+            totalJumlahTransaksi   = cacheTotalJumlah,
+            tanggalTerakhir        = cacheTanggalTerakhir,
+            pengeluaranBulanIni    = cachePengeluaranIni,
+            pengeluaranBulanLalu   = cachePengeluaranLalu,
+            jumlahTransaksiBulanIni = cacheJumlahBulanIni
         )
     }
 

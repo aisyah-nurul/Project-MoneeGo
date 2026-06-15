@@ -119,7 +119,7 @@ class TabunganFragment : Fragment() {
 
             renderNominal()
 
-            binding.tvJumlahImpian.text = "Total Terkumpul dari ${list.size} Impian"
+            binding.tvJumlahImpian.text = getString(R.string.label_total_terkumpul_impian, list.size)
             binding.tvTercapai.text     = tercapai.toString()
             binding.tvBerjalan.text     = berjalan.toString()
 
@@ -128,9 +128,9 @@ class TabunganFragment : Fragment() {
                 .minByOrNull { it.targetNominal - it.terkumpul }
             binding.tvInsightTabungan.text = if (closest != null) {
                 val sisa = closest.targetNominal - closest.terkumpul
-                "Target '${closest.nama}' sisa ${CurrencyFormatter.format(sisa)} lagi! Selesaikan yuk?"
+                getString(R.string.insight_target_sisa, closest.nama, CurrencyFormatter.format(sisa))
             } else {
-                "Semangat menabung untuk mencapai impianmu!"
+                getString(R.string.insight_tabungan)
             }
 
             refreshList(list)
@@ -146,7 +146,7 @@ class TabunganFragment : Fragment() {
             } else {
                 val totalHutang = aktif.sumOf { it.sisaHutang.toDouble() }
                 binding.tvInfoHutang.text =
-                    "${aktif.size} hutang · Total ${CurrencyFormatter.format(totalHutang)}"
+                    getString(R.string.label_info_hutang, aktif.size, CurrencyFormatter.format(totalHutang))
                 binding.cardInfoHutang.visibility = View.VISIBLE
             }
         }

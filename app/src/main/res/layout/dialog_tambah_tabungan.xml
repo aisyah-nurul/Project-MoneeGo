@@ -22,13 +22,13 @@
             android:layout_height="4dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="16dp"
-            android:background="#CCCCCC"/>
+            android:background="#6B8FA3"/>
 
         <!-- Judul -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tambah Target Tabungan"
+            android:text="@string/title_tambah_tabungan"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/text_primary"
@@ -39,7 +39,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nama Target"
+            android:text="@string/label_nama_target"
             android:textSize="13sp"
             android:textColor="@color/text_secondary"
             android:textStyle="bold"
@@ -55,14 +55,17 @@
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
-            app:boxStrokeColor="#6B8FA3"
+            app:boxStrokeColor="#B7D0E0"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxBackgroundColor="@color/card_saldo_bg"
             app:hintEnabled="false">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etNamaTabungan"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Contoh, Beli Laptop"
+                android:hint="@string/hint_nama_target"
                 android:inputType="textCapWords"
                 android:textSize="14sp"
                 android:textColor="@color/text_primary"
@@ -73,7 +76,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Kategori"
+            android:text="@string/label_kategori"
             android:textSize="13sp"
             android:textColor="@color/text_secondary"
             android:textStyle="bold"
@@ -94,7 +97,7 @@
                 android:layout_margin="4dp"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:background="@drawable/bg_tab_selected"
+                android:background="@drawable/bg_kategori_unselected"
                 android:padding="10dp"
                 android:clickable="true"
                 android:focusable="true">
@@ -107,7 +110,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Elektronik"
+                    android:text="@string/kat_elektronik"
                     android:textSize="10sp"
                     android:textColor="@color/text_primary"
                     android:gravity="center"/>
@@ -121,7 +124,7 @@
                 android:layout_margin="4dp"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:background="@drawable/bg_tab_selected"
+                android:background="@drawable/bg_kategori_unselected"
                 android:padding="10dp"
                 android:clickable="true"
                 android:focusable="true">
@@ -134,7 +137,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Kendaraan"
+                    android:text="@string/kat_kendaraan"
                     android:textSize="10sp"
                     android:textColor="@color/text_primary"
                     android:gravity="center"/>
@@ -148,7 +151,7 @@
                 android:layout_margin="4dp"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:background="@drawable/bg_tab_selected"
+                android:background="@drawable/bg_kategori_unselected"
                 android:padding="10dp"
                 android:clickable="true"
                 android:focusable="true">
@@ -161,7 +164,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Liburan"
+                    android:text="@string/kat_liburan"
                     android:textSize="10sp"
                     android:textColor="@color/text_primary"
                     android:gravity="center"/>
@@ -175,7 +178,7 @@
                 android:layout_margin="4dp"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:background="@drawable/bg_tab_selected"
+                android:background="@drawable/bg_kategori_unselected"
                 android:padding="10dp"
                 android:clickable="true"
                 android:focusable="true">
@@ -188,7 +191,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Rumah"
+                    android:text="@string/kat_rumah"
                     android:textSize="10sp"
                     android:textColor="@color/text_primary"
                     android:gravity="center"/>
@@ -202,7 +205,7 @@
                 android:layout_margin="4dp"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:background="@drawable/bg_tab_selected"
+                android:background="@drawable/bg_kategori_unselected"
                 android:padding="10dp"
                 android:clickable="true"
                 android:focusable="true">
@@ -215,7 +218,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Pendidikan"
+                    android:text="@string/kat_pendidikan"
                     android:textSize="10sp"
                     android:textColor="@color/text_primary"
                     android:gravity="center"/>
@@ -229,7 +232,7 @@
                 android:layout_margin="4dp"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:background="@drawable/bg_tab_selected"
+                android:background="@drawable/bg_kategori_unselected"
                 android:padding="10dp"
                 android:clickable="true"
                 android:focusable="true">
@@ -242,7 +245,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Lainnya"
+                    android:text="@string/jenis_lainnya"
                     android:textSize="10sp"
                     android:textColor="@color/text_primary"
                     android:gravity="center"/>
@@ -254,7 +257,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Target Nominal"
+            android:text="@string/label_target_nominal"
             android:textSize="13sp"
             android:textColor="@color/text_secondary"
             android:textStyle="bold"
@@ -270,7 +273,10 @@
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
-            app:boxStrokeColor="#6B8FA3"
+            app:boxStrokeColor="#B7D0E0"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxBackgroundColor="@color/card_saldo_bg"
             app:prefixText="Rp "
             app:hintEnabled="false">
 
@@ -289,7 +295,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Deadline (Opsional)"
+            android:text="@string/label_jatuh_tempo"
             android:textSize="13sp"
             android:textColor="@color/text_secondary"
             android:textStyle="bold"
@@ -305,7 +311,10 @@
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
-            app:boxStrokeColor="#6B8FA3"
+            app:boxStrokeColor="#B7D0E0"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxBackgroundColor="@color/card_saldo_bg"
             app:endIconDrawable="@drawable/ic_hutang"
             app:endIconMode="custom"
             app:hintEnabled="false">
@@ -314,7 +323,7 @@
                 android:id="@+id/etDeadlineTabungan"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Pilih tanggal"
+                android:hint="@string/hint_pilih_tanggal"
                 android:focusable="false"
                 android:clickable="true"
                 android:textSize="14sp"
@@ -327,11 +336,11 @@
             android:id="@+id/btnSimpanTabungan"
             android:layout_width="match_parent"
             android:layout_height="52dp"
-            android:text="Simpan"
+            android:text="@string/btn_simpan_tabungan"
             android:textSize="15sp"
             android:textStyle="bold"
             android:textColor="@color/white"
-            android:backgroundTint="#2C3E6B"/>
+            android:backgroundTint="@color/primary_slate"/>
 
     </LinearLayout>
 </ScrollView>

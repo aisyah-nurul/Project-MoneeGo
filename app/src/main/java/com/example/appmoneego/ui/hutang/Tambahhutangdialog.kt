@@ -61,7 +61,7 @@ class TambahHutangDialog(
         buttons.keys.forEach { tv ->
             tv.setBackgroundResource(R.drawable.bg_jenis_unselected)
             tv.setTextColor(
-                resources.getColor(R.color.primary_navy, null)
+                resources.getColor(R.color.text_primary, null)
             )
         }
 
@@ -83,7 +83,7 @@ class TambahHutangDialog(
             } else {
                 tv.setBackgroundResource(R.drawable.bg_jenis_unselected)
                 tv.setTextColor(
-                    resources.getColor(R.color.primary_navy, null)
+                    resources.getColor(R.color.text_primary, null)
                 )
             }
         }

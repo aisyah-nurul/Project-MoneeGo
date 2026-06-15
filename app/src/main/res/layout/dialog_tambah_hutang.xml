@@ -14,7 +14,7 @@
         android:layout_height="4dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="12dp"
-        android:background="#CCCCCC"/>
+        android:background="#6B8FA3"/>
 
     <!-- Header: judul + tombol simpan -->
     <LinearLayout
@@ -40,7 +40,7 @@
             android:id="@+id/btnSimpan"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
-            android:backgroundTint="#2ECC71"
+            android:backgroundTint="#7A9DB5"
             android:text="@string/btn_simpan"
             android:textColor="#FFFFFF"
             android:textSize="13sp"/>
@@ -72,7 +72,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:boxBackgroundColor="@color/card_form_inner"
+                app:boxBackgroundColor="@color/card_saldo_bg"
                 android:layout_marginTop="6dp">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -161,12 +161,12 @@
                     android:layout_height="40dp"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_jenis_unselected"
+                    android:background="@drawable/bg_tab_selected"
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center"
                     android:text="@string/jenis_pinjaman_bank"
-                    android:textColor="@color/text_secondary"
+                    android:textColor="@color/text_primary"
                     android:textSize="11sp"/>
 
                 <TextView
@@ -187,7 +187,7 @@
                 <TextView
                     android:id="@+id/btnLainnya"
                     android:layout_width="0dp"
-                    android:layout_height="40dp"
+                    android:layout_height="48dp"
                     android:layout_marginStart="4dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_jenis_unselected"
@@ -214,7 +214,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:boxBackgroundColor="@color/card_form_inner"
+                app:boxBackgroundColor="@color/card_saldo_bg"
                 android:layout_marginTop="6dp">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -252,7 +252,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    app:boxBackgroundColor="@color/card_form_inner">
+                    app:boxBackgroundColor="@color/card_saldo_bg">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etLimitKredit"
@@ -285,7 +285,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 app:endIconDrawable="@drawable/ic_hutang"
-                app:boxBackgroundColor="@color/card_form_inner"
+                app:boxBackgroundColor="@color/card_saldo_bg"
                 app:endIconMode="custom">
 
                 <com.google.android.material.textfield.TextInputEditText

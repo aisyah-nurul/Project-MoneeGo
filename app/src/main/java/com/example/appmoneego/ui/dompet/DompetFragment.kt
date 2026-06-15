@@ -216,8 +216,13 @@ class DompetFragment : Fragment() {
 
         fun highlight(selected: LinearLayout) {
             jenisMap.keys.forEach { btn ->
-                btn.isSelected = (btn == selected)
-                btn.alpha = if (btn == selected) 1f else 0.9f
+
+                if (btn == selected) {
+                    btn.setBackgroundResource(R.drawable.bg_jenis_selected)
+                } else {
+                    btn.setBackgroundResource(R.drawable.bg_jenis_unselected)
+                }
+
             }
         }
 

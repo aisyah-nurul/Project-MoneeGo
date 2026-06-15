@@ -32,7 +32,7 @@
     <string name="banner_title">Ayo Mulai Menabung!</string>
     <string name="banner_desc">Belum ada target tabungan. Buat target pertama kamu dan raih barang impian!</string>
     <string name="btn_buat_target">+ BUAT TARGET BARU</string>
-    <string name="label_insight">INSIGHT ANDA</string>
+    <string name="label_insight">Insight</string>
 
     <!-- Tambah Transaksi -->
     <string name="title_tambah_transaksi">TAMBAH TRANSAKSI</string>
@@ -233,9 +233,91 @@
     <string name="mask_saldo">Rp ***</string>
     <string name="mask_nominal">***</string>
     <string name="format_persentase">%1$s %2$d%%</string>
+    <string name="tagline_splash">Kelola keuanganmu dengan mudah</string>
+
+    <!-- Notifikasi Reminder -->
+    <string name="notif_diaktifkan">Pengingat aktif setiap hari pukul %s</string>
+    <string name="notif_dimatikan">Pengingat dimatikan</string>
+    <string name="notif_permission_ditolak">Izin notifikasi diperlukan</string>
+
+    <string name="notif_label_waktu">Waktu Pengingat Harian</string>
+    <string name="notif_ubah_waktu">Ubah</string>
+    <string name="pilih_waktu_notifikasi">Pilih Waktu Notifikasi</string>
+
+    <string name="label_selisih">Selisih</string>
+    <string name="empty_transaksi">Belum ada transaksi</string>
+    <string name="label_tabungan_tercapai">Tabungan Tercapai</string>
+    <string name="label_tabungan_berjalan">Tabungan Berjalan</string>
+    <string name="empty_tabungan">Belum ada tabungan</string>
+    <string name="title_analisis">Analisis</string>
+    <string name="tab_analisis_pengeluaran">PENGELUARAN</string>
+    <string name="tab_analisis_pemasukan">PEMASUKAN</string>
+    <string name="label_total_pengeluaran_analisis">Total Pengeluaran</string>
+    <string name="label_terbesar_analisis">Terbesar</string>
+    <string name="label_oleh_kategori">Oleh Kategori</string>
+    <string name="label_oleh_dompet">Oleh Dompet</string>
+    <string name="title_tabunganku">TABUNGANKU</string>
+
+    <!-- Tips MoneeGo -->
+    <string name="tips_01">Catat setiap pengeluaran kecil. Pengeluaran kecil yang diabaikan bisa menumpuk jadi besar.</string>
+    <string name="tips_02">Terapkan aturan 50/30/20: 50% kebutuhan, 30% keinginan, 20% tabungan.</string>
+    <string name="tips_03">Buat anggaran bulanan sebelum bulan dimulai, bukan setelah uang habis.</string>
+    <string name="tips_04">Hindari belanja impulsif. Tunggu 24 jam sebelum membeli barang yang tidak direncanakan.</string>
+    <string name="tips_05">Bayar diri sendiri dulu — sisihkan tabungan di awal bulan, bukan dari sisa.</string>
+    <string name="tips_06">Cek langganan digital yang jarang dipakai dan pertimbangkan untuk dibatalkan.</string>
+    <string name="tips_07">Masak di rumah lebih sering. Biaya makan di luar bisa 3-5x lebih mahal.</string>
+    <string name="tips_08">Dana darurat idealnya setara 3-6 bulan pengeluaran bulanan.</string>
+    <string name="tips_09">Lunasi hutang berbunga tinggi terlebih dahulu sebelum menabung di instrumen lain.</string>
+    <string name="tips_10">Keuangan sehat bukan soal berapa banyak yang kamu hasilkan, tapi seberapa bijak kamu mengelolanya.</string>
+
+    <!-- Insight -->
+    <string name="insight_welcome_1">Selamat datang di MoneeGo! Mulailah mencatat pengeluaran pertama Anda hari ini.</string>
+    <string name="insight_welcome_2">Belum ada data keuangan. Yuk mulai catat pemasukan dan pengeluaran pertama!</string>
+    <string name="insight_tidak_aktif_1">Sudah lama belum mencatat transaksi 😢</string>
+    <string name="insight_tidak_aktif_2">MoneeGo merindukan catatan keuanganmu ✨</string>
+    <string name="insight_tidak_aktif_3">Yuk mulai lagi kebiasaan baikmu 📖</string>
+    <string name="insight_tidak_aktif_4">Ayo cek kondisi keuanganmu hari ini 👀</string>
+    <string name="insight_kategori_dominan">Lebih dari setengah pengeluaran Anda digunakan untuk kategori %s.</string>
+    <string name="insight_kategori_terbesar">Pengeluaran terbesar bulan ini berada pada kategori %s.</string>
+    <string name="insight_naik">Pengeluaran bulan ini meningkat dibanding bulan sebelumnya.</string>
+    <string name="insight_turun">Pengeluaran bulan ini lebih rendah dibanding bulan sebelumnya.</string>
+    <string name="insight_jumlah_transaksi">Anda telah mencatat %d transaksi bulan ini.</string>
+
+    <string name="label_deadline">Deadline</string>
+    <string name="label_kurang">Kurang</string>
+    <string name="btn_tabung">Tabung ↗</string>
+    <string name="error_nominal_tabungan">Masukkan jumlah tabungan</string>
+    <string name="toast_berhasil_menabung">Berhasil menabung %s!</string>
+    <string name="dialog_hapus_target_title">Hapus Target</string>
+    <string name="dialog_hapus_target_pesan">Yakin ingin menghapus target \'%s\'?</string>
+    <string name="toast_target_dihapus">Target dihapus</string>
+    <string name="toast_prioritas_diset">\'%s\' dijadikan prioritas</string>
+    <string name="error_nama_target_kosong">Nama target wajib diisi</string>
+    <string name="error_nominal_kosong">Target nominal wajib diisi</string>
 
     <string name="tutup">Tutup</string>
     <string name="edit">Edit</string>
     <string name="hapus">Hapus</string>
-    <string name="icon_tabungan">Ikon tabungan</string>
+    <string name="icon_tabungan">Icon Tabungan</string>
+
+    <string name="label_belum_ada_target">Belum ada target tabungan</string>
+    <string name="label_progress_persen">Progress: %d%%</string>
+    <string name="label_sisa_nominal">Sisa %s</string>
+    <string name="btn_ganti_prioritas">GANTI →</string>
+    <string name="label_target_prioritas">TARGET TABUNGAN PRIORITAS</string>
+    <string name="insight_target_sisa">Target \'%s\' sisa %s lagi! Selesaikan yuk?</string>
+    <string name="label_info_hutang">%d hutang · Total %s</string>
+    <string name="label_tambah_tabungan">+ Tambah tabungan</string>
+    <string name="btn_tambah_tabungan">+ Tambah tabungan</string>
+
+    <string name="kat_elektronik">Elektronik</string>
+    <string name="kat_kendaraan">Kendaraan</string>
+    <string name="kat_liburan">Liburan</string>
+    <string name="kat_rumah">Rumah</string>
+    <string name="hint_pilih_tanggal">Pilih tanggal</string>
+    <string name="label_cicilan_terakhir">Cicilan terakhir: </string>
+    <string name="label_input_cicilan">Input cicilan</string>
+
+    <string name="label_hutang_lunas_stat">Hutang Lunas</string>
+    <string name="label_dari_total">dari total</string>
 </resources>

@@ -41,6 +41,26 @@ class TransaksiAdapter(
     }
 
     companion object {
+        private fun resolveKategoriDisplay(context: android.content.Context, namaDb: String): String {
+            val peta = mapOf(
+                "Makanan"           to R.string.kat_makanan,
+                "Fashion"           to R.string.kat_fashion,
+                "Transportasi"      to R.string.kat_transportasi,
+                "Pendidikan"        to R.string.kat_pendidikan,
+                "Sosial"            to R.string.kat_sosial,
+                "Kesehatan"         to R.string.kat_kesehatan,
+                "Rumah Tangga"      to R.string.kat_rumah_tangga,
+                "Kebutuhan Pribadi" to R.string.kat_kebutuhan_pribadi,
+                "Gaji"              to R.string.kat_gaji,
+                "Bonus"             to R.string.kat_bonus,
+                "Freelance"         to R.string.kat_freelance,
+                "Investasi"         to R.string.kat_investasi,
+                "Hadiah"            to R.string.kat_hadiah,
+                "Penjualan"         to R.string.kat_penjualan
+            )
+            val resId = peta[namaDb]
+            return if (resId != null) context.getString(resId) else namaDb
+        }
         const val TYPE_ITEM     = 0
         const val TYPE_TRANSFER = 1
 
@@ -220,7 +240,7 @@ class TransaksiAdapter(
 
             // ── PERUBAHAN: tampilkan nama dompet sebagai judul transaksi ──────
             // Jika kategori bukan kategori standar = nama dompet dari saldo awal
-            binding.tvKategori.text = transaksi.kategori
+            binding.tvKategori.text = resolveKategoriDisplay(binding.root.context, transaksi.kategori)
 
             // ── PERUBAHAN: untuk saldo awal, catatan berisi jenis dompet ──────
             // Tampilkan nama dompet (dari field nama dompet di entity Dompet)
