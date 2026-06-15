@@ -39,7 +39,7 @@
         android:id="@+id/tv_tagline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Kelola keuanganmu dengan mudah"
+        android:text="@string/tagline_splash"
         android:textColor="#CCFFFFFF"
         android:textSize="14sp"
         android:layout_marginTop="8dp"

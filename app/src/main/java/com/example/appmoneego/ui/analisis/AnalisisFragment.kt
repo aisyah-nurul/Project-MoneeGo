@@ -63,6 +63,26 @@ class AnalisisFragment : Fragment() {
         setupAdapter()
         setupClick()
         observeViewModel()
+        viewModel.setKategoriResolver { namaDb ->
+            val peta = mapOf(
+                "Makanan"           to R.string.kat_makanan,
+                "Fashion"           to R.string.kat_fashion,
+                "Transportasi"      to R.string.kat_transportasi,
+                "Pendidikan"        to R.string.kat_pendidikan,
+                "Sosial"            to R.string.kat_sosial,
+                "Kesehatan"         to R.string.kat_kesehatan,
+                "Rumah Tangga"      to R.string.kat_rumah_tangga,
+                "Kebutuhan Pribadi" to R.string.kat_kebutuhan_pribadi,
+                "Gaji"              to R.string.kat_gaji,
+                "Bonus"             to R.string.kat_bonus,
+                "Freelance"         to R.string.kat_freelance,
+                "Investasi"         to R.string.kat_investasi,
+                "Hadiah"            to R.string.kat_hadiah,
+                "Penjualan"         to R.string.kat_penjualan
+            )
+            val resId = peta[namaDb]
+            if (resId != null) getString(resId) else namaDb
+        }
     }
 
     private fun bindViews(view: View) {
@@ -135,8 +155,8 @@ class AnalisisFragment : Fragment() {
 
         layoutFilterTipe.setOnClickListener {
             val popup = PopupMenu(requireContext(), it)
-            popup.menu.add(0, 0, 0, "Oleh Kategori")
-            popup.menu.add(0, 1, 1, "Oleh Dompet")
+            popup.menu.add(0, 0, 0, getString(R.string.label_oleh_kategori))
+            popup.menu.add(0, 1, 1, getString(R.string.label_oleh_dompet))
             popup.setOnMenuItemClickListener { item ->
                 filterMode = if (item.itemId == 1) "dompet" else "kategori"
                 tvFilterTipe.text = item.title
@@ -235,13 +255,18 @@ class AnalisisFragment : Fragment() {
         updateChart(list)
 
         val tab = viewModel.activeTab.value ?: "PENGELUARAN"
-        tvLabelTotal.text   = if (tab == "PENGELUARAN") "Total Pengeluaran" else "Total Pemasukan"
+        tvLabelTotal.text = if (tab == "PENGELUARAN")
+            getString(R.string.label_total_pengeluaran_analisis)
+        else
+            getString(R.string.label_total_pemasukan)
         tvTotalNominal.text = formatRupiah(total)
         tvBulanLabel.text   = viewModel.getLabelBulan()
 
         val top = list.firstOrNull()
         tvTerbesarNama.text   = top?.nama ?: "-"
-        tvTerbesarPersen.text = top?.let { "${it.persentase.toInt()}% dari total" } ?: "-"
+        tvTerbesarPersen.text = top?.let {
+            "${it.persentase.toInt()}% ${getString(R.string.label_dari_total)}"
+        } ?: "-"
     }
 
     // FIX: refreshCurrentData sekarang selalu membaca filterMode TERKINI

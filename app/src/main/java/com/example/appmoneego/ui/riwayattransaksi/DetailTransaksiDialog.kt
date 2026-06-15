@@ -116,13 +116,15 @@ class DetailTransaksiDialog(
         binding.ivDialogIcon.setImageResource(iconRes)
 
         // Nama kategori
-        binding.tvDialogKategori.text = transaksi.kategori
+        binding.tvDialogKategori.text = getKategoriText(transaksi.kategori)
 
         // Nominal + warna
+        // MERGED: pakai R.color.text_primary (dari kode saya) untuk transfer,
+        // bukan hardcode hex 0xFF1A2B34, agar mengikuti tema aplikasi.
         when {
-            isTransfer  -> {
+            isTransfer -> {
                 binding.tvDialogNominal.text = CurrencyFormatter.format(transaksi.nominal)
-                binding.tvDialogNominal.setTextColor(0xFF1A2B34.toInt())
+                binding.tvDialogNominal.setTextColor(requireContext().getColor(R.color.text_primary))
             }
             isPemasukan -> {
                 binding.tvDialogNominal.text = "+${CurrencyFormatter.format(transaksi.nominal)}"
@@ -162,6 +164,26 @@ class DetailTransaksiDialog(
         }
     }
 
+    private fun getKategoriText(kategori: String): String {
+        return when (kategori) {
+            "Makanan"           -> getString(R.string.kat_makanan)
+            "Fashion"           -> getString(R.string.kat_fashion)
+            "Transportasi"      -> getString(R.string.kat_transportasi)
+            "Pendidikan"        -> getString(R.string.kat_pendidikan)
+            "Sosial"            -> getString(R.string.kat_sosial)
+            "Kesehatan"         -> getString(R.string.kat_kesehatan)
+            "Rumah Tangga"      -> getString(R.string.kat_rumah_tangga)
+            "Kebutuhan Pribadi" -> getString(R.string.kat_kebutuhan_pribadi)
+            "Gaji"              -> getString(R.string.kat_gaji)
+            "Bonus"             -> getString(R.string.kat_bonus)
+            "Freelance"         -> getString(R.string.kat_freelance)
+            "Investasi"         -> getString(R.string.kat_investasi)
+            "Hadiah"            -> getString(R.string.kat_hadiah)
+            "Penjualan"         -> getString(R.string.kat_penjualan)
+            else                -> kategori
+        }
+    }
+
     private fun getIconDompet(jenis: String): Int = when (jenis) {
         "Rekening Bank"  -> R.drawable.ic_wallet_bank
         "Dompet Digital" -> R.drawable.ic_wallet_digital
@@ -181,14 +203,30 @@ class DetailTransaksiDialog(
     }
 
     private fun setupTombol() {
+        // Tombol X: tutup dialog
         binding.btnClose.setOnClickListener { dismiss() }
+
+        // Tombol Edit
         binding.btnEdit.setOnClickListener {
             onEditClick(transaksi)
             dismiss()
         }
+
+        // MERGED: Tombol Hapus dengan konfirmasi AlertDialog terlebih dahulu
+        // (dari kode saya) agar pengguna tidak tidak sengaja menghapus transaksi.
         binding.btnDelete.setOnClickListener {
-            onDeleteClick(transaksi)
-            dismiss()
+            androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle("Hapus Transaksi")
+                .setMessage(
+                    "Yakin ingin menghapus " +
+                            "\"${transaksi.catatan.ifEmpty { transaksi.kategori }}\"?"
+                )
+                .setPositiveButton("Hapus") { _, _ ->
+                    onDeleteClick(transaksi)
+                    dismiss()
+                }
+                .setNegativeButton("Batal", null)
+                .show()
         }
     }
 

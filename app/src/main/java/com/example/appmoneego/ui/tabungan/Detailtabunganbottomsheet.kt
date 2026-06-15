@@ -1,5 +1,6 @@
 package com.example.appmoneego.ui.tabungan
 
+
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.os.Bundle
@@ -33,6 +34,7 @@ import kotlinx.coroutines.withContext
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class DetailTabunganBottomSheet(
     private val tabungan: Tabungan,
@@ -102,8 +104,8 @@ class DetailTabunganBottomSheet(
         tvSisa.text      = CurrencyFormatter.format(
             (tabungan.targetNominal - tabungan.terkumpul).coerceAtLeast(0.0)
         )
-        tvHariIni.text = "Hari ini: ${
-            SimpleDateFormat("dd MMM yyyy", Locale("id")).format(Date())
+        tvHariIni.text = getString(R.string.label_hari_ini) + ": ${
+            SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(Date())
         }"
 
         // ══════════════════════════════════════════════════════════════════════
@@ -181,7 +183,7 @@ class DetailTabunganBottomSheet(
             llOpsiDompet.removeAllViews()
             if (daftarDompet.isEmpty()) {
                 llOpsiDompet.addView(TextView(requireContext()).apply {
-                    text = "Belum ada dompet"
+                    text = getString(R.string.label_belum_ada_dompet)
                     textSize = 13f
                     setTextColor(0xFF888888.toInt())
                     setPadding(48, 24, 48, 24)
@@ -202,8 +204,12 @@ class DetailTabunganBottomSheet(
                     setOnClickListener {
                         selectedDompetId   = dompet.id
                         selectedDompetNama = dompet.nama
-                        tvNamaDompet.text  = dompet.nama
-                        tvNamaDompet.setTextColor(0xFF1A1A2E.toInt())
+
+                        // Update header dropdown
+                        tvNamaDompet.text = dompet.nama
+                        tvNamaDompet.setTextColor(
+                            requireContext().getColor(R.color.text_primary)
+                        )
                         ivIkonDompet.setImageResource(resolveIkon(dompet.ikon))
                         try {
                             ivIkonDompet.setColorFilter(
@@ -226,7 +232,9 @@ class DetailTabunganBottomSheet(
                 val tvNama2 = TextView(requireContext()).apply {
                     text = dompet.nama
                     textSize = 14f
-                    setTextColor(0xFF1A1A2E.toInt())
+                    setTextColor(
+                        requireContext().getColor(R.color.text_primary)
+                    )
                     layoutParams = LinearLayout.LayoutParams(
                         0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
                 }
@@ -261,6 +269,27 @@ class DetailTabunganBottomSheet(
 
         llDropdownHeader.setOnClickListener { toggleDropdown() }
 
+        // ── Load dompet dari DB ───────────────────────────────────────────────
+        lifecycleScope.launch {
+            daftarDompet = withContext(Dispatchers.IO) { dompetDao.getAllDompetSync() }
+            if (daftarDompet.isNotEmpty() && selectedDompetId == 0) {
+                val first = daftarDompet[0]
+                selectedDompetId   = first.id
+                selectedDompetNama = first.nama
+                tvNamaDompet.text  = first.nama
+                tvNamaDompet.setTextColor(
+                    requireContext().getColor(R.color.text_primary)
+                )
+                ivIkonDompet.setImageResource(resolveIkon(first.ikon))
+                try {
+                    ivIkonDompet.setColorFilter(
+                        android.graphics.Color.parseColor(first.warna))
+                } catch (e: Exception) { ivIkonDompet.clearColorFilter() }
+                ivIkonDompet.visibility = View.VISIBLE
+            }
+            renderDropdown()
+        }
+
         // ── Riwayat cicilan ───────────────────────────────────────────────────
         fun loadRiwayat() {
             lifecycleScope.launch {
@@ -283,12 +312,12 @@ class DetailTabunganBottomSheet(
                             return@RiwayatCicilanAdapter
                         }
                         AlertDialog.Builder(requireContext())
-                            .setTitle("Hapus Cicilan?")
+                            .setTitle(getString(R.string.dialog_hapus_transaksi_title))
                             .setMessage(
                                 "Tabungan sebesar ${CurrencyFormatter.format(cicilan.nominal.toDouble())} " +
                                         "akan dihapus dan total terkumpul akan disesuaikan."
                             )
-                            .setPositiveButton("Hapus") { _, _ ->
+                            .setPositiveButton(getString(R.string.hapus)) { _, _ ->
                                 lifecycleScope.launch {
                                     withContext(Dispatchers.IO) {
                                         cicilanDao.deleteCicilanById(cicilan.id)
@@ -311,7 +340,7 @@ class DetailTabunganBottomSheet(
                                     loadRiwayat()
                                 }
                             }
-                            .setNegativeButton("Batal", null)
+                            .setNegativeButton(getString(R.string.btn_batal), null)
                             .show()
                     }
                 )
@@ -326,7 +355,9 @@ class DetailTabunganBottomSheet(
                 selectedDompetId   = first.id
                 selectedDompetNama = first.nama
                 tvNamaDompet.text  = first.nama
-                tvNamaDompet.setTextColor(0xFF1A1A2E.toInt())
+                tvNamaDompet.setTextColor(
+                    requireContext().getColor(R.color.text_primary)
+                )
                 ivIkonDompet.setImageResource(resolveIkon(first.ikon))
                 try {
                     ivIkonDompet.setColorFilter(
@@ -360,11 +391,11 @@ class DetailTabunganBottomSheet(
         // ── Konfirmasi tabungan (hanya mode BERJALAN) ─────────────────────────
         btnKonfirmasi.setOnClickListener {
             if (jumlahAngka <= 0) {
-                etNominal.error = "Masukkan jumlah tabungan"
+                etNominal.error = getString(R.string.error_nominal_tabungan)
                 return@setOnClickListener
             }
             if (selectedDompetId == 0) {
-                Toast.makeText(requireContext(), "Pilih sumber dana dulu", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.pilih_dompet), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             lifecycleScope.launch {
@@ -384,11 +415,9 @@ class DetailTabunganBottomSheet(
                 }
                 val newTerkumpul = tabungan.terkumpul + jumlahAngka.toDouble()
                 onUpdated(tabungan.copy(terkumpul = newTerkumpul))
-                Toast.makeText(
-                    requireContext(),
-                    "Berhasil menabung ${CurrencyFormatter.format(jumlahAngka.toDouble())}!",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(requireContext(),
+                    getString(R.string.toast_berhasil_menabung, CurrencyFormatter.format(jumlahAngka.toDouble())),
+                    Toast.LENGTH_SHORT).show()
                 dismiss()
             }
         }
@@ -396,15 +425,15 @@ class DetailTabunganBottomSheet(
         // ── Hapus target ──────────────────────────────────────────────────────
         btnHapus.setOnClickListener {
             AlertDialog.Builder(requireContext())
-                .setTitle("Hapus Target")
-                .setMessage("Yakin ingin menghapus target '${tabungan.nama}'?")
-                .setPositiveButton("Hapus") { _, _ ->
+                .setTitle(getString(R.string.dialog_hapus_target_title))
+                .setMessage(getString(R.string.dialog_hapus_target_pesan, tabungan.nama))
+                .setPositiveButton(getString(R.string.hapus)) { _, _ ->
                     lifecycleScope.launch {
                         withContext(Dispatchers.IO) {
                             cicilanDao.deleteCicilanByHutangId(tabungan.id.toString())
                         }
                         onDeleted(tabungan)
-                        Toast.makeText(requireContext(), "Target dihapus", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), getString(R.string.toast_target_dihapus), Toast.LENGTH_SHORT).show()
                         dismiss()
                     }
                 }
@@ -413,6 +442,8 @@ class DetailTabunganBottomSheet(
         }
 
         // ── Switch prioritas (hanya mode BERJALAN) ────────────────────────────
+        // Menggunakan logika dari branch sendiri: memanggil ViewModel dan
+        // menampilkan pesan yang lebih informatif sesuai kondisi toggle
         switchPrioritas.isChecked = tabungan.isPriority
         switchPrioritas.setOnCheckedChangeListener { _, isChecked ->
             tabunganViewModel.setPrioritas(tabungan.id, isChecked)

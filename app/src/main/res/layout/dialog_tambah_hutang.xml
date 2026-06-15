@@ -14,7 +14,7 @@
         android:layout_height="4dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="12dp"
-        android:background="#CCCCCC"/>
+        android:background="#6B8FA3"/>
 
     <!-- Header: judul + tombol simpan -->
     <LinearLayout
@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/title_tambah_hutang"
-            android:textColor="#1A1A2E"
+            android:textColor="@color/text_primary"
             android:textSize="18sp"
             android:textStyle="bold"/>
 
@@ -40,7 +40,7 @@
             android:id="@+id/btnSimpan"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
-            android:backgroundTint="#2ECC71"
+            android:backgroundTint="#7A9DB5"
             android:text="@string/btn_simpan"
             android:textColor="#FFFFFF"
             android:textSize="13sp"/>
@@ -64,7 +64,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:text="@string/label_nama_hutang"
-                android:textColor="#333333"
+                android:textColor="@color/text_primary"
                 android:textSize="13sp"
                 android:textStyle="bold"/>
 
@@ -72,13 +72,16 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp">
+                android:layout_marginTop="6dp"
+                app:boxBackgroundColor="@color/card_saldo_bg">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etNama"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/hint_nama_hutang"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_hint"
                     android:textSize="14sp"/>
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -89,7 +92,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/label_jenis_hutang"
-                android:textColor="#333333"
+                android:textColor="@color/text_primary"
                 android:textSize="13sp"
                 android:textStyle="bold"/>
 
@@ -111,7 +114,7 @@
                     android:focusable="true"
                     android:gravity="center"
                     android:text="@string/jenis_kartu_kredit"
-                    android:textColor="#555555"
+                    android:textColor="@color/text_secondary"
                     android:textSize="11sp"/>
 
                 <TextView
@@ -126,7 +129,7 @@
                     android:focusable="true"
                     android:gravity="center"
                     android:text="@string/jenis_pinjol"
-                    android:textColor="#555555"
+                    android:textColor="@color/text_secondary"
                     android:textSize="11sp"/>
 
                 <TextView
@@ -140,7 +143,7 @@
                     android:focusable="true"
                     android:gravity="center"
                     android:text="@string/jenis_cicilan"
-                    android:textColor="#555555"
+                    android:textColor="@color/text_secondary"
                     android:textSize="11sp"/>
 
             </LinearLayout>
@@ -158,12 +161,12 @@
                     android:layout_height="40dp"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1"
-                    android:background="@drawable/bg_jenis_unselected"
+                    android:background="@drawable/bg_tab_selected"
                     android:clickable="true"
                     android:focusable="true"
                     android:gravity="center"
                     android:text="@string/jenis_pinjaman_bank"
-                    android:textColor="#555555"
+                    android:textColor="@color/text_primary"
                     android:textSize="11sp"/>
 
                 <TextView
@@ -178,13 +181,13 @@
                     android:focusable="true"
                     android:gravity="center"
                     android:text="@string/jenis_pinjam_kerabat"
-                    android:textColor="#555555"
+                    android:textColor="@color/text_secondary"
                     android:textSize="10sp"/>
 
                 <TextView
                     android:id="@+id/btnLainnya"
                     android:layout_width="0dp"
-                    android:layout_height="40dp"
+                    android:layout_height="48dp"
                     android:layout_marginStart="4dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_jenis_unselected"
@@ -192,34 +195,32 @@
                     android:focusable="true"
                     android:gravity="center"
                     android:text="@string/jenis_lainnya"
-                    android:textColor="#555555"
+                    android:textColor="@color/text_secondary"
                     android:textSize="11sp"/>
 
             </LinearLayout>
 
-            <!-- ═══════════════════════════════════════════════════════════ -->
-            <!-- BUG 1 FIX: Jumlah Hutang                                   -->
-            <!-- Sebelumnya: hint="Rp 0" di dalam EditText                  -->
-            <!--   → menyebabkan teks "Rp 0" muncul sebagai label mengambang-->
-            <!-- Sesudah: prefixText="Rp " di TextInputLayout               -->
-            <!--   → prefix "Rp" selalu terlihat di kiri field (sama persis  -->
-            <!--     dengan field Nominal Cicilan), hint hanya tampil saat   -->
-            <!--     field kosong dan tidak ada angka "0" yang menggantung.  -->
-            <!-- ═══════════════════════════════════════════════════════════ -->
+            <!-- Jumlah -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/label_jumlah_hutang"
-                android:textColor="#333333"
+                android:textColor="@color/text_primary"
                 android:textSize="13sp"
                 android:textStyle="bold"/>
 
+            <!--
+                MERGE: boxBackgroundColor dari teman (main) +
+                       prefixText="Rp " dari saya (HEAD) agar
+                       prefix selalu terlihat; hint cukup "0"
+            -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
+                app:boxBackgroundColor="@color/card_saldo_bg"
                 app:prefixText="Rp ">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -228,12 +229,13 @@
                     android:layout_height="wrap_content"
                     android:hint="0"
                     android:inputType="number"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_hint"
                     android:textSize="14sp"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Limit Kredit (hanya muncul saat kartu kredit) -->
-            <!-- BUG 1 FIX juga diterapkan di sini agar konsisten -->
             <LinearLayout
                 android:id="@+id/layoutLimitKredit"
                 android:layout_width="match_parent"
@@ -246,15 +248,23 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="@string/label_limit_kredit"
-                    android:textColor="#333333"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_hint"
                     android:textSize="13sp"
                     android:textStyle="bold"/>
 
+                <!--
+                    MERGE: Sama seperti etJumlah.
+                           boxBackgroundColor dari teman (main) +
+                           prefixText="Rp " dari saya (HEAD);
+                           hint="0", textColor & textColorHint dari teman
+                -->
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
+                    app:boxBackgroundColor="@color/card_saldo_bg"
                     app:prefixText="Rp ">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -263,6 +273,8 @@
                         android:layout_height="wrap_content"
                         android:hint="0"
                         android:inputType="number"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_hint"
                         android:textSize="14sp"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
@@ -275,7 +287,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/label_jatuh_tempo"
-                android:textColor="#333333"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint"
                 android:textSize="13sp"
                 android:textStyle="bold"/>
 
@@ -285,6 +298,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 app:endIconDrawable="@drawable/ic_hutang"
+                app:boxBackgroundColor="@color/card_saldo_bg"
                 app:endIconMode="custom">
 
                 <com.google.android.material.textfield.TextInputEditText

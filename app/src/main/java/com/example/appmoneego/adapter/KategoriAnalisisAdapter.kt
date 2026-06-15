@@ -53,6 +53,18 @@ class KategoriAnalisisAdapter(
      * Kalau tidak cocok → pakai icon wallet/dompet umum.
      */
     private fun getIcon(nama: String): Int = when (nama.lowercase().trim()) {
+        // Tambahkan di dalam when di fungsi getIcon():
+        "food"              -> R.drawable.ic_makanan
+        "transportation"    -> R.drawable.ic_transportasi
+        "education"         -> R.drawable.ic_pendidikan
+        "social"            -> R.drawable.ic_sosial
+        "health"            -> R.drawable.ic_kesehatan
+        "household"         -> R.drawable.ic_rumahtangga
+        "personal needs"    -> R.drawable.ic_kebutuhanpribadi
+        "salary"            -> R.drawable.ic_gaji
+        "investment"        -> R.drawable.ic_investasi
+        "gift"              -> R.drawable.ic_hadiah
+        "sales"             -> R.drawable.ic_penjualan
         // ── Kategori Pengeluaran ──────────────────────────────────────────────
         "makanan"           -> R.drawable.ic_makanan
         "fashion"           -> R.drawable.ic_fashion

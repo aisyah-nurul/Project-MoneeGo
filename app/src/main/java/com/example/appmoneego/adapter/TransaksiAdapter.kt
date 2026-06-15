@@ -41,6 +41,27 @@ class TransaksiAdapter(
     }
 
     companion object {
+        private fun resolveKategoriDisplay(context: android.content.Context, namaDb: String): String {
+            val peta = mapOf(
+                "Makanan"           to R.string.kat_makanan,
+                "Fashion"           to R.string.kat_fashion,
+                "Transportasi"      to R.string.kat_transportasi,
+                "Pendidikan"        to R.string.kat_pendidikan,
+                "Sosial"            to R.string.kat_sosial,
+                "Kesehatan"         to R.string.kat_kesehatan,
+                "Rumah Tangga"      to R.string.kat_rumah_tangga,
+                "Kebutuhan Pribadi" to R.string.kat_kebutuhan_pribadi,
+                "Gaji"              to R.string.kat_gaji,
+                "Bonus"             to R.string.kat_bonus,
+                "Freelance"         to R.string.kat_freelance,
+                "Investasi"         to R.string.kat_investasi,
+                "Hadiah"            to R.string.kat_hadiah,
+                "Penjualan"         to R.string.kat_penjualan
+            )
+            val resId = peta[namaDb]
+            return if (resId != null) context.getString(resId) else namaDb
+        }
+
         const val TYPE_ITEM     = 0
         const val TYPE_TRANSFER = 1
 
@@ -64,7 +85,7 @@ class TransaksiAdapter(
             "Transfer"          to R.drawable.ic_wallet
         )
 
-        // ── Jenis dompet → icon ───────────────────────────────────────────────
+        // ── Jenis dompet → icon (dipakai untuk transaksi saldo awal) ─────────
         private val JENIS_DOMPET_ICON = mapOf(
             "Rekening Bank"  to R.drawable.ic_wallet_bank,
             "Dompet Digital" to R.drawable.ic_wallet_digital,
@@ -76,28 +97,11 @@ class TransaksiAdapter(
 
         private val KATEGORI_STANDAR = KATEGORI_ICON.keys.toSet()
 
-        // ══════════════════════════════════════════════════════════════════════
-        // BUG 2 FIX: Daftar kategori yang iconnya harus menggunakan icon
-        // DOMPET SUMBER DANA, bukan icon kategori.
-        //
-        // Kenapa "Hutang" masuk sini?
-        //   Saat user membayar hutang, transaksi disimpan dengan:
-        //     jenis     = "PENGELUARAN"
-        //     kategori  = "Hutang"
-        //     dompetId  = id dompet yang dipakai membayar (Gopay, BCA, dll)
-        //
-        //   Sebelum fix: TransaksiAdapter memakai ic_hutang untuk semua
-        //   transaksi berkategori "Hutang" — icon tidak mencerminkan dompet
-        //   mana yang dipakai.
-        //
-        //   Setelah fix: Jika kategori == "Hutang", resolveIcon() akan mencari
-        //   dompet berdasarkan transaksi.dompetId, lalu mengembalikan icon
-        //   sesuai jenis dompet tersebut (Gopay → ic_wallet_digital,
-        //   BCA → ic_wallet_bank, dst).
-        //
-        //   Ini berlaku di CARD transaksi (ItemViewHolder) maupun
-        //   POPUP detail (DetailTransaksiDialog juga sudah dikerjakan terpisah).
-        // ══════════════════════════════════════════════════════════════════════
+        // ── MERGE (dari saya): Kategori yang iconnya pakai icon dompet sumber dana
+        // Saat user membayar hutang, transaksi disimpan dengan kategori = "Hutang"
+        // dan dompetId = id dompet yang dipakai membayar.
+        // resolveIcon() akan mencari dompet by dompetId lalu mengembalikan icon
+        // sesuai jenis dompet (Gopay → ic_wallet_digital, BCA → ic_wallet_bank, dst).
         private val KATEGORI_PAKAI_ICON_DOMPET = setOf("Hutang")
     }
 
@@ -110,14 +114,12 @@ class TransaksiAdapter(
     fun getDaftarDompet(): List<Dompet>   = daftarDompet
 
     // ── Resolve icon untuk satu transaksi ────────────────────────────────────
-    //
-    // Priority logic:
+    // Priority logic (MERGE: gabungan logika teman + saya):
     //   1. Jika kategori ada di KATEGORI_PAKAI_ICON_DOMPET (mis. "Hutang")
     //      → cari dompet by dompetId → kembalikan icon sesuai jenis dompet
     //   2. Jika kategori ada di KATEGORI_STANDAR → pakai icon kategori biasa
     //   3. Jika kategori TIDAK ada di KATEGORI_STANDAR (= nama dompet dari
-    //      saldo awal otomatis) → baca field catatan yang berisi jenis dompet
-    //      → pakai JENIS_DOMPET_ICON
+    //      saldo awal otomatis) → baca field catatan → pakai JENIS_DOMPET_ICON
     //   4. Fallback ke ic_wallet jika tidak ditemukan
     private fun resolveIcon(transaksi: Transaksi): Int {
         // Kasus 1: kategori yang harus pakai icon dompet sumber dana (mis. "Hutang")
@@ -126,7 +128,7 @@ class TransaksiAdapter(
             return JENIS_DOMPET_ICON[dompet?.jenis] ?: R.drawable.ic_wallet
         }
 
-        // Kasus 2: kategori standar dengan icon kategori
+        // Kasus 2: kategori standar — gunakan map biasa
         if (transaksi.kategori in KATEGORI_STANDAR) {
             return KATEGORI_ICON[transaksi.kategori] ?: R.drawable.ic_wallet
         }
@@ -229,7 +231,9 @@ class TransaksiAdapter(
 
             binding.tvNominal.text = if (nominalVisible)
                 CurrencyFormatter.format(pair.nominal) else "Rp ***"
-            binding.tvNominal.setTextColor(0xFF1A2B34.toInt())
+            binding.tvNominal.setTextColor(
+                binding.root.context.getColor(R.color.text_primary)
+            )
 
             binding.clHeaderInteraktif.visibility = View.GONE
             binding.cardDetail.visibility         = View.VISIBLE
@@ -244,16 +248,19 @@ class TransaksiAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(transaksi: Transaksi) {
-            // Gunakan resolveIcon() — sudah menangani hutang, saldo awal, dan kategori biasa
+            // resolveIcon() menangani hutang, saldo awal, dan kategori biasa
             binding.ivKategoriIcon.setImageResource(resolveIcon(transaksi))
-            binding.tvKategori.text = transaksi.kategori
 
+            // MERGE (dari teman/main): pakai resolveKategoriDisplay() untuk lokalisasi
+            binding.tvKategori.text = resolveKategoriDisplay(binding.root.context, transaksi.kategori)
+
+            // MERGE (dari saya): isSaldoAwal kini juga mengecualikan KATEGORI_PAKAI_ICON_DOMPET
             val isSaldoAwal = transaksi.kategori !in KATEGORI_STANDAR &&
                     transaksi.kategori !in KATEGORI_PAKAI_ICON_DOMPET
             binding.tvCatatan.text = transaksi.catatan.ifEmpty { "-" }
 
             val isIncome = transaksi.jenis == "PEMASUKAN"
-            val warna    = if (isIncome) 0xFF276F29.toInt() else 0xFFF44336.toInt()
+            val warna    = if (isIncome) 0xFF4CAF50.toInt() else 0xFFEF5350.toInt()
             val prefix   = if (isIncome) "+ " else "- "
 
             binding.tvNominal.text = if (nominalVisible)

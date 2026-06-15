@@ -16,21 +16,22 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class TabunganAdapter(
-    // BUG 3 FIX: tambah parameter nominalVisible dengan default true
+    // MERGED: tambah parameter nominalVisible dengan default true (dari kode saya)
     nominalVisible: Boolean = true,
     private val onTabungClick: (Tabungan) -> Unit,
     private val onItemClick: (Tabungan) -> Unit
 ) : ListAdapter<Tabungan, TabunganAdapter.TabunganViewHolder>(DIFF_CALLBACK) {
 
-    // BUG 3 FIX: state privasi adapter
+    // MERGED: state privasi adapter (dari kode saya)
     private var isNominalVisible: Boolean = nominalVisible
 
-    // BUG 3 FIX: dipanggil dari TabunganFragment saat icon mata di-tap
+    // MERGED: dipanggil dari TabunganFragment saat icon mata di-tap (dari kode saya)
     fun setNominalVisible(visible: Boolean) {
         isNominalVisible = visible
         notifyDataSetChanged()
     }
 
+    // Mode diatur dari luar via setMode(), default BERJALAN
     private var mode: Mode = Mode.BERJALAN
 
     enum class Mode { BERJALAN, SELESAI }
@@ -64,11 +65,15 @@ class TabunganAdapter(
         private val divider: View             = itemView.findViewById(R.id.divider)
 
         fun bind(item: Tabungan, mode: Mode) {
+            val context = itemView.context
             tvNama.text = item.nama
 
             if (item.deadline != null) {
-                val sdf = SimpleDateFormat("dd MMM yyyy", Locale("id"))
-                val prefix = if (mode == Mode.SELESAI) "Selesai " else "Deadline: "
+                val sdf = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+                val prefix = if (mode == Mode.SELESAI)
+                    context.getString(R.string.label_selesai) + " "
+                else
+                    context.getString(R.string.label_deadline) + ": "
                 tvDeadline.text = "$prefix${sdf.format(Date(item.deadline))}"
                 tvDeadline.visibility = View.VISIBLE
             } else {
@@ -86,14 +91,15 @@ class TabunganAdapter(
                 btnTabung.visibility          = View.VISIBLE
                 divider.visibility            = View.VISIBLE
 
-                // ── BUG 3 FIX: sembunyikan nominal saat mode privasi aktif ──────
+                // MERGED: sembunyikan nominal saat mode privasi aktif (dari kode saya)
                 // Yang disembunyikan: Target Nominal, Terkumpul, Sisa Target
                 // Yang TETAP tampil:  Persentase (progress %) — sesuai spec
                 if (isNominalVisible) {
                     tvTargetNominal.text = CurrencyFormatter.format(item.targetNominal)
                     tvTerkumpul.text     = CurrencyFormatter.format(item.terkumpul)
                     val sisa = item.targetNominal - item.terkumpul
-                    tvSisa.text = "⏰ Kurang ${CurrencyFormatter.format(sisa)}"
+                    // MERGED: pakai getString(R.string.label_kurang) dari kode teman
+                    tvSisa.text = "⏰ ${context.getString(R.string.label_kurang)} ${CurrencyFormatter.format(sisa)}"
                 } else {
                     tvTargetNominal.text = "Rp ***"
                     tvTerkumpul.text     = "Rp ***"
@@ -106,6 +112,8 @@ class TabunganAdapter(
                 tvPersentase.text    = "$persen%"
                 progressBar.progress = persen
 
+                // MERGED: pakai getString(R.string.btn_tabung) dari kode teman
+                btnTabung.text = context.getString(R.string.btn_tabung)
                 btnTabung.setOnClickListener { onTabungClick(item) }
 
             } else {

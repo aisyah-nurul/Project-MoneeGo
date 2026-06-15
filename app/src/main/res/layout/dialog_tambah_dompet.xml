@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:fillViewport="true"
-    android:background="@color/white">
+    android:background="@color/bg_card">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -31,7 +31,7 @@
             android:text="@string/title_tambah_dompet"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#1A2B34"
+            android:textColor="@color/text_primary"
             android:gravity="center"
             android:layout_marginBottom="24dp" />
 
@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:text="@string/label_nama_dompet"
             android:textSize="13sp"
-            android:textColor="#546E7A"
+            android:textColor="@color/text_primary"
             android:textStyle="bold"
             android:layout_marginBottom="6dp" />
 
@@ -55,7 +55,10 @@
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
-            app:boxStrokeColor="#6B8FA3"
+            app:boxStrokeColor="#0D1B2A"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxBackgroundColor="#1D334B"
             app:hintEnabled="false">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -65,8 +68,8 @@
                 android:hint="@string/hint_nama_dompet"
                 android:inputType="textCapWords"
                 android:textSize="14sp"
-                android:textColor="#1A2B34"
-                android:textColorHint="#90A4AE" />
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Label Jenis -->
@@ -75,7 +78,7 @@
             android:layout_height="wrap_content"
             android:text="@string/label_jenis_dompet"
             android:textSize="13sp"
-            android:textColor="#546E7A"
+            android:textColor="@color/text_primary"
             android:textStyle="bold"
             android:layout_marginBottom="10dp" />
 
@@ -96,7 +99,7 @@
                 android:layout_margin="4dp"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:background="@drawable/bg_tab_selected"
+                android:background="@drawable/bg_jenis_unselected"
                 android:padding="10dp"
                 android:clickable="true"
                 android:focusable="true">
@@ -111,7 +114,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/jenis_rekening_bank"
                     android:textSize="10sp"
-                    android:textColor="#1A2B34"
+                    android:textColor="@color/text_primary"
                     android:gravity="center"
                     android:maxLines="2" />
             </LinearLayout>
@@ -124,7 +127,7 @@
                 android:layout_margin="4dp"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:background="@drawable/bg_tab_selected"
+                android:background="@drawable/bg_jenis_unselected"
                 android:padding="10dp"
                 android:clickable="true"
                 android:focusable="true">
@@ -139,7 +142,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/jenis_dompet_digital"
                     android:textSize="10sp"
-                    android:textColor="#1A2B34"
+                    android:textColor="@color/text_primary"
                     android:gravity="center"
                     android:maxLines="2" />
             </LinearLayout>
@@ -152,7 +155,7 @@
                 android:layout_margin="4dp"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:background="@drawable/bg_tab_selected"
+                android:background="@drawable/bg_jenis_unselected"
                 android:padding="10dp"
                 android:clickable="true"
                 android:focusable="true">
@@ -167,7 +170,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/jenis_uang_tunai"
                     android:textSize="10sp"
-                    android:textColor="#1A2B34"
+                    android:textColor="@color/text_primary"
                     android:gravity="center" />
             </LinearLayout>
 
@@ -179,7 +182,7 @@
                 android:layout_margin="4dp"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:background="@drawable/bg_tab_selected"
+                android:background="@drawable/bg_jenis_unselected"
                 android:padding="10dp"
                 android:clickable="true"
                 android:focusable="true">
@@ -194,7 +197,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/jenis_investasi"
                     android:textSize="10sp"
-                    android:textColor="#1A2B34"
+                    android:textColor="@color/text_primary"
                     android:gravity="center" />
             </LinearLayout>
 
@@ -206,7 +209,7 @@
                 android:layout_margin="4dp"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:background="@drawable/bg_tab_selected"
+                android:background="@drawable/bg_jenis_unselected"
                 android:padding="10dp"
                 android:clickable="true"
                 android:focusable="true">
@@ -221,7 +224,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/jenis_tabungan"
                     android:textSize="10sp"
-                    android:textColor="#1A2B34"
+                    android:textColor="@color/text_primary"
                     android:gravity="center" />
             </LinearLayout>
 
@@ -233,7 +236,7 @@
                 android:layout_margin="4dp"
                 android:orientation="vertical"
                 android:gravity="center"
-                android:background="@drawable/bg_tab_selected"
+                android:background="@drawable/bg_jenis_unselected"
                 android:padding="10dp"
                 android:clickable="true"
                 android:focusable="true">
@@ -248,7 +251,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/jenis_lainnya"
                     android:textSize="10sp"
-                    android:textColor="#1A2B34"
+                    android:textColor="@color/text_primary"
                     android:gravity="center" />
             </LinearLayout>
 
@@ -260,7 +263,7 @@
             android:layout_height="wrap_content"
             android:text="@string/label_saldo_awal"
             android:textSize="13sp"
-            android:textColor="#546E7A"
+            android:textColor="@color/text_primary"
             android:textStyle="bold"
             android:layout_marginBottom="6dp" />
 
@@ -274,7 +277,10 @@
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusBottomEnd="12dp"
-            app:boxStrokeColor="#6B8FA3"
+            app:boxStrokeColor="#0D1B2A"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="2dp"
+            app:boxBackgroundColor="#1D334B"
             app:prefixText="Rp "
             app:hintEnabled="false">
 
@@ -285,8 +291,8 @@
                 android:hint="0"
                 android:inputType="numberDecimal"
                 android:textSize="14sp"
-                android:textColor="#1A2B34"
-                android:textColorHint="#90A4AE" />
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_hint" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Tombol Simpan -->
@@ -298,7 +304,7 @@
             android:textSize="15sp"
             android:textStyle="bold"
             android:textColor="@color/white"
-            android:backgroundTint="#2C3E6B" />
+            android:backgroundTint="@color/primary_slate" />
 
     </LinearLayout>
 </ScrollView>

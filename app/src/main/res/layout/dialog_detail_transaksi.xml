@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="#E2E2E2"
+    android:background="@color/bg_header"
     android:paddingBottom="20dp">
 
     <!-- ── Toolbar: [X]  |  [spacer]  |  [Edit]  [Hapus] ── -->
@@ -28,14 +28,14 @@
             android:focusable="true"
             android:layout_centerVertical="true"
             android:layout_alignParentStart="true"
-            app:tint="#888888"/>
+            app:tint="@color/text_primary"/>
 
         <!-- Tombol Hapus — pill merah, pojok kanan -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_delete"
             android:layout_width="wrap_content"
             android:layout_height="34dp"
-            android:text="Hapus"
+            android:text="@string/hapus"
             android:textSize="12sp"
             android:textColor="@android:color/white"
             android:backgroundTint="#C62828"
@@ -52,7 +52,7 @@
             android:id="@+id/btn_edit"
             android:layout_width="wrap_content"
             android:layout_height="34dp"
-            android:text="Edit"
+            android:text="@string/edit"
             android:textSize="12sp"
             android:textColor="@android:color/white"
             android:backgroundTint="#4A6FA5"
@@ -123,7 +123,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#E0E0E0"
+            android:background="@color/divider"
             android:layout_marginBottom="14dp"/>
 
         <!-- Tanggal -->
@@ -137,7 +137,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/label_tanggal_detail"
                 android:textSize="13sp"
-                android:textColor="#888888"/>
+                android:textColor="@color/text_primary"/>
             <TextView
                 android:id="@+id/tv_dialog_tanggal"
                 android:layout_width="0dp"
@@ -161,7 +161,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/label_dompet_detail"
                 android:textSize="13sp"
-                android:textColor="#888888"/>
+                android:textColor="@color/text_primary"/>
             <TextView
                 android:id="@+id/tv_dialog_dompet"
                 android:layout_width="0dp"
@@ -186,7 +186,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/label_dari_detail"
                 android:textSize="13sp"
-                android:textColor="#888888"/>
+                android:textColor="@color/text_primary"/>
             <TextView
                 android:id="@+id/tv_dialog_dari_dompet"
                 android:layout_width="0dp"
@@ -211,7 +211,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/label_ke_detail"
                 android:textSize="13sp"
-                android:textColor="#888888"/>
+                android:textColor="@color/text_primary"/>
             <TextView
                 android:id="@+id/tv_dialog_ke_dompet"
                 android:layout_width="0dp"
@@ -234,7 +234,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/label_catatan_detail"
                 android:textSize="13sp"
-                android:textColor="#888888"/>
+                android:textColor="@color/text_primary"/>
             <TextView
                 android:id="@+id/tv_dialog_catatan"
                 android:layout_width="0dp"

@@ -121,7 +121,7 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
                 llOpsiDompet.addView(TextView(requireContext()).apply {
                     text = "Belum ada dompet"
                     textSize = 13f
-                    setTextColor(0xFF888888.toInt())
+                    setTextColor(0xFF888888.toInt()) // MY CHANGE: warna abu-abu lebih netral
                     setPadding(48, 24, 48, 24)
                 })
                 return
@@ -140,7 +140,7 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
                         selectedDompetId   = dompet.id
                         selectedDompetNama = dompet.nama
                         tvSumberDana.text  = dompet.nama
-                        tvSumberDana.setTextColor(0xFF1A1A2E.toInt())
+                        tvSumberDana.setTextColor(0xFF1A1A2E.toInt()) // MY CHANGE: warna teks gelap
                         // FIX BUG 1: update icon header sesuai dompet yang dipilih
                         ivSumberDanaIcon?.setImageResource(getIconDompet(dompet.jenis))
                         isSumberDanaOpen        = false
@@ -159,7 +159,7 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
                 row.addView(TextView(requireContext()).apply {
                     text = dompet.nama
                     textSize = 14f
-                    setTextColor(0xFF1A1A2E.toInt())
+                    setTextColor(0xFF1A1A2E.toInt()) // MY CHANGE: warna teks gelap
                     layoutParams = LinearLayout.LayoutParams(
                         0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
                 })
@@ -168,15 +168,20 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
                     isClickable    = false
                     isFocusable    = false
                     buttonTintList = android.content.res.ColorStateList.valueOf(
-                        android.graphics.Color.parseColor("#534AB7"))
+                        android.graphics.Color.parseColor("#7A9DB5"))
                 })
                 llOpsiDompet.addView(row)
                 if (dompet != daftarDompet.last()) {
                     llOpsiDompet.addView(View(requireContext()).apply {
                         layoutParams = LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT, 1
-                        ).apply { setMargins(48, 0, 48, 0) }
-                        setBackgroundColor(0xFFEEEEEE.toInt())
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            3
+                        ).apply {
+                            setMargins(0, 0, 0, 0)
+                        }
+                        setBackgroundColor(
+                            android.graphics.Color.parseColor("#B7D0E0")
+                        )
                     })
                 }
             }
@@ -189,7 +194,7 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
                 selectedDompetId   = daftarDompet[0].id
                 selectedDompetNama = daftarDompet[0].nama
                 tvSumberDana?.text = selectedDompetNama
-                tvSumberDana?.setTextColor(0xFF1A1A2E.toInt())
+                tvSumberDana?.setTextColor(0xFF1A1A2E.toInt()) // MY CHANGE: warna teks gelap
                 // FIX BUG 1: set icon header sesuai dompet default pertama
                 ivSumberDanaIcon?.setImageResource(getIconDompet(daftarDompet[0].jenis))
             }

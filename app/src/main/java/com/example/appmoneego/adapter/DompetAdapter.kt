@@ -47,23 +47,20 @@ class DompetAdapter(
     }
 
     override fun onBindViewHolder(holder: DompetViewHolder, position: Int) {
-        val dompet = getItem(position)
+        val dompet  = getItem(position)
+        val context = holder.itemView.context
 
-        val anim = AnimationUtils.loadAnimation(
-            holder.itemView.context, android.R.anim.fade_in)
+        val anim = AnimationUtils.loadAnimation(context, android.R.anim.fade_in)
         anim.duration = 280
         holder.itemView.startAnimation(anim)
 
         holder.tvNama.text  = dompet.nama
-        holder.tvJenis.text = dompet.jenis
+        holder.tvJenis.text = terjemahkanJenis(context, dompet.jenis)
 
-        // Sembunyikan atau tampilkan saldo sesuai state mata
         holder.tvSaldo.text = if (nominalVisible())
             CurrencyFormatter.format(dompet.saldo)
         else
             "Rp ***"
-
-        // holder.tvTanggal — DIHAPUS, tidak di-bind lagi
 
         val style = getJenisStyle(dompet.jenis)
         try {
@@ -75,9 +72,19 @@ class DompetAdapter(
         }
 
         holder.ivIkon.setImageResource(getIconRes(dompet.jenis))
-
         holder.card.setOnClickListener     { onItemClick(dompet) }
         holder.card.setOnLongClickListener { onItemLongClick(dompet) }
+    }
+
+    private fun terjemahkanJenis(context: android.content.Context, jenis: String): String {
+        return when (jenis) {
+            "Rekening Bank"  -> context.getString(R.string.jenis_rekening_bank)
+            "Dompet Digital" -> context.getString(R.string.jenis_dompet_digital)
+            "Uang Tunai"     -> context.getString(R.string.jenis_uang_tunai)
+            "Investasi"      -> context.getString(R.string.jenis_investasi)
+            "Tabungan"       -> context.getString(R.string.jenis_tabungan)
+            else             -> context.getString(R.string.jenis_lainnya)
+        }
     }
 
     data class JenisStyle(val stripeHex: String, val bgHex: String)
