@@ -8,10 +8,31 @@
         android:id="@+id/splashFragment"
         android:name="com.example.appmoneego.ui.splash.SplashFragment"
         android:label="Splash">
+
+        <!-- User lama → langsung Dashboard -->
         <action
             android:id="@+id/action_splash_to_dashboard"
             app:destination="@id/dashboardFragment"
             app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true"/>
+
+        <!-- User baru → Welcome dulu -->
+        <action
+            android:id="@+id/action_splash_to_welcome"
+            app:destination="@id/welcomeFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+    <!-- Welcome — hanya muncul sekali -->
+    <fragment
+        android:id="@+id/welcomeFragment"
+        android:name="com.example.appmoneego.ui.welcome.WelcomeFragment"
+        android:label="Welcome">
+        <action
+            android:id="@+id/action_welcomeFragment_to_dashboardFragment"
+            app:destination="@id/dashboardFragment"
+            app:popUpTo="@id/welcomeFragment"
             app:popUpToInclusive="true"/>
     </fragment>
 
@@ -40,7 +61,6 @@
         <action
             android:id="@+id/action_riwayat_to_tambahTransaksi"
             app:destination="@id/tambahTransaksiFragment"/>
-        <!-- DIHAPUS: popUpTo dan popUpToInclusive — biarkan back stack normal -->
     </fragment>
 
     <fragment

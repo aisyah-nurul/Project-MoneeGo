@@ -26,7 +26,7 @@ class DetailTransaksiDialog(
     private var _binding: DialogDetailTransaksiBinding? = null
     private val binding get() = _binding!!
 
-    // Map ikon kategori — sama persis dengan TransaksiAdapter
+    // Map ikon kategori standar
     private val kategoriIcon = mapOf(
         "Makanan"           to R.drawable.ic_makanan,
         "Fashion"           to R.drawable.ic_fashion,
@@ -46,9 +46,19 @@ class DetailTransaksiDialog(
         "Transfer"          to R.drawable.ic_wallet
     )
 
+    // ══════════════════════════════════════════════════════════════════════════
+    // BUG 2 FIX: Daftar kategori yang harus memakai icon DOMPET SUMBER DANA.
+    //
+    // "Hutang" masuk daftar ini karena:
+    //   - Saat bayar hutang, transaksi disimpan dengan kategori = "Hutang"
+    //     dan dompetId = id dompet yang dipakai (Gopay, BCA, dll.)
+    //   - Popup detail harus menampilkan icon dompet tersebut, bukan ic_hutang
+    //   - Ini konsisten dengan perubahan di TransaksiAdapter.resolveIcon()
+    // ══════════════════════════════════════════════════════════════════════════
+    private val kategoriPakaiIconDompet = setOf("Hutang")
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog = super.onCreateDialog(savedInstanceState)
-        // Hapus title bar bawaan dialog
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         return dialog
     }
@@ -65,10 +75,7 @@ class DetailTransaksiDialog(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Latar belakang dialog transparan agar corner radius card terlihat
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        // Lebar dialog = 90% lebar layar
         dialog?.window?.setLayout(
             (resources.displayMetrics.widthPixels * 0.90).toInt(),
             ViewGroup.LayoutParams.WRAP_CONTENT
@@ -78,34 +85,54 @@ class DetailTransaksiDialog(
         setupTombol()
     }
 
-    // ── Isi semua data ke view ─────────────────────────────────────────────
-
     private fun isiData() {
-        val isTransfer    = transaksi.kategori == "Transfer"
-        val isPemasukan   = transaksi.jenis == "PEMASUKAN"
+        val isTransfer  = transaksi.kategori == "Transfer"
+        val isPemasukan = transaksi.jenis == "PEMASUKAN"
 
-        // Ikon kategori
-        val iconRes = kategoriIcon[transaksi.kategori] ?: R.drawable.ic_wallet
+        // ── Resolve icon ────────────────────────────────────────────────────
+        //
+        // Priority:
+        //   1. Jika kategori ada di kategoriPakaiIconDompet (mis. "Hutang")
+        //      → ambil icon dari jenis dompet sumber dana
+        //   2. Jika PEMASUKAN non-transfer → icon dompet (konsisten dengan
+        //      tampilan card di Riwayat Transaksi)
+        //   3. Sisanya → icon kategori standar
+        val iconRes = when {
+            transaksi.kategori in kategoriPakaiIconDompet -> {
+                // BUG 2 FIX: Bayar hutang → icon dompet sumber dana
+                val dompetAsal = daftarDompet.find { it.id == transaksi.dompetId }
+                getIconDompet(dompetAsal?.jenis ?: "Lainnya")
+            }
+            !isTransfer && isPemasukan -> {
+                // Pemasukan non-transfer → icon dompet (sudah benar sebelumnya)
+                val dompetAsal = daftarDompet.find { it.id == transaksi.dompetId }
+                getIconDompet(dompetAsal?.jenis ?: "Lainnya")
+            }
+            else -> {
+                // Pengeluaran / Transfer biasa → icon kategori
+                kategoriIcon[transaksi.kategori] ?: R.drawable.ic_wallet
+            }
+        }
         binding.ivDialogIcon.setImageResource(iconRes)
 
         // Nama kategori
         binding.tvDialogKategori.text = getKategoriText(transaksi.kategori)
 
         // Nominal + warna
+        // MERGED: pakai R.color.text_primary (dari kode saya) untuk transfer,
+        // bukan hardcode hex 0xFF1A2B34, agar mengikuti tema aplikasi.
         when {
             isTransfer -> {
                 binding.tvDialogNominal.text = CurrencyFormatter.format(transaksi.nominal)
                 binding.tvDialogNominal.setTextColor(requireContext().getColor(R.color.text_primary))
             }
             isPemasukan -> {
-                // Pemasukan: warna hijau, prefix +
-                binding.tvDialogNominal.text      = "+${CurrencyFormatter.format(transaksi.nominal)}"
-                binding.tvDialogNominal.setTextColor(0xFF2E7D32.toInt()) // income_green
+                binding.tvDialogNominal.text = "+${CurrencyFormatter.format(transaksi.nominal)}"
+                binding.tvDialogNominal.setTextColor(0xFF2E7D32.toInt())
             }
             else        -> {
-                // Pengeluaran: warna merah, prefix -
-                binding.tvDialogNominal.text      = "-${CurrencyFormatter.format(transaksi.nominal)}"
-                binding.tvDialogNominal.setTextColor(0xFFC62828.toInt()) // expense_red
+                binding.tvDialogNominal.text = "-${CurrencyFormatter.format(transaksi.nominal)}"
+                binding.tvDialogNominal.setTextColor(0xFFC62828.toInt())
             }
         }
 
@@ -113,88 +140,71 @@ class DetailTransaksiDialog(
         binding.tvDialogTanggal.text = DateUtils.formatTanggalPendek(transaksi.tanggal)
 
         if (isTransfer) {
-            // ── Mode Transfer ──────────────────────────────────────────────
-            // Sembunyikan row dompet tunggal & catatan
-            binding.rowDompet.visibility  = View.GONE
-            binding.rowCatatan.visibility = View.GONE
-
-            // Tampilkan row dari/ke dompet
+            binding.rowDompet.visibility     = View.GONE
+            binding.rowCatatan.visibility    = View.GONE
             binding.rowDariDompet.visibility = View.VISIBLE
             binding.rowKeDompet.visibility   = View.VISIBLE
 
-            // Catatan transfer dipakai untuk menyimpan "idDompetTujuan"
-            // Format catatan transfer: "transfer_to:<dompetTujuanId>"
-            // Ambil nama dompet asal dari dompetId
             val namaDompetAsal = daftarDompet.find { it.id == transaksi.dompetId }?.nama ?: "-"
             binding.tvDialogDariDompet.text = namaDompetAsal
 
-            // Ambil nama dompet tujuan dari catatan
             val namaDompetTujuan = parseDompetTujuan(transaksi.catatan)
             binding.tvDialogKeDompet.text = namaDompetTujuan
 
         } else {
-            // ── Mode Pemasukan / Pengeluaran ───────────────────────────────
             binding.rowDompet.visibility     = View.VISIBLE
             binding.rowCatatan.visibility    = View.VISIBLE
             binding.rowDariDompet.visibility = View.GONE
             binding.rowKeDompet.visibility   = View.GONE
 
-            // Nama dompet
             val namaDompet = daftarDompet.find { it.id == transaksi.dompetId }?.nama ?: "-"
             binding.tvDialogDompet.text = namaDompet
 
-            // Catatan
             binding.tvDialogCatatan.text = transaksi.catatan.ifEmpty { "-" }
         }
     }
+
     private fun getKategoriText(kategori: String): String {
         return when (kategori) {
-            "Makanan" -> getString(R.string.kat_makanan)
-            "Fashion" -> getString(R.string.kat_fashion)
-            "Transportasi" -> getString(R.string.kat_transportasi)
-            "Pendidikan" -> getString(R.string.kat_pendidikan)
-            "Sosial" -> getString(R.string.kat_sosial)
-            "Kesehatan" -> getString(R.string.kat_kesehatan)
-            "Rumah Tangga" -> getString(R.string.kat_rumah_tangga)
+            "Makanan"           -> getString(R.string.kat_makanan)
+            "Fashion"           -> getString(R.string.kat_fashion)
+            "Transportasi"      -> getString(R.string.kat_transportasi)
+            "Pendidikan"        -> getString(R.string.kat_pendidikan)
+            "Sosial"            -> getString(R.string.kat_sosial)
+            "Kesehatan"         -> getString(R.string.kat_kesehatan)
+            "Rumah Tangga"      -> getString(R.string.kat_rumah_tangga)
             "Kebutuhan Pribadi" -> getString(R.string.kat_kebutuhan_pribadi)
-
-            "Gaji" -> getString(R.string.kat_gaji)
-            "Bonus" -> getString(R.string.kat_bonus)
-            "Freelance" -> getString(R.string.kat_freelance)
-            "Investasi" -> getString(R.string.kat_investasi)
-            "Hadiah" -> getString(R.string.kat_hadiah)
-            "Penjualan" -> getString(R.string.kat_penjualan)
-
-            else -> kategori
+            "Gaji"              -> getString(R.string.kat_gaji)
+            "Bonus"             -> getString(R.string.kat_bonus)
+            "Freelance"         -> getString(R.string.kat_freelance)
+            "Investasi"         -> getString(R.string.kat_investasi)
+            "Hadiah"            -> getString(R.string.kat_hadiah)
+            "Penjualan"         -> getString(R.string.kat_penjualan)
+            else                -> kategori
         }
     }
 
-    /**
-     * Parse nama dompet tujuan dari field catatan.
-     *
-     * Konvensi yang dipakai TambahTransaksiFragment saat simpan transfer:
-     *   catatan = "transfer_to:<idDompetTujuan>"
-     *
-     * Jika format berbeda / tidak ditemukan, tampilkan catatan apa adanya
-     * sehingga tetap ada informasi yang muncul.
-     */
+    private fun getIconDompet(jenis: String): Int = when (jenis) {
+        "Rekening Bank"  -> R.drawable.ic_wallet_bank
+        "Dompet Digital" -> R.drawable.ic_wallet_digital
+        "Uang Tunai"     -> R.drawable.ic_wallet_cash
+        "Investasi"      -> R.drawable.ic_wallet_investasi
+        "Tabungan"       -> R.drawable.ic_wallet_tabungan
+        else             -> R.drawable.ic_wallet_lainnya
+    }
+
     private fun parseDompetTujuan(catatan: String): String {
         return if (catatan.startsWith("transfer_to:")) {
             val idTujuan = catatan.removePrefix("transfer_to:").trim().toIntOrNull()
             daftarDompet.find { it.id == idTujuan }?.nama ?: catatan
         } else {
-            // Fallback: tampilkan isi catatan sebagai nama tujuan
             catatan.ifEmpty { "-" }
         }
     }
 
-    // ── Setup tombol ────────────────────────────────────────────────────────
-
     private fun setupTombol() {
         // Tombol X: tutup dialog
-        binding.btnClose.setOnClickListener {
-            dismiss()
-        }
+        binding.btnClose.setOnClickListener { dismiss() }
 
         // Tombol Edit
         binding.btnEdit.setOnClickListener {
@@ -202,7 +212,8 @@ class DetailTransaksiDialog(
             dismiss()
         }
 
-        // Tombol Hapus: konfirmasi dulu
+        // MERGED: Tombol Hapus dengan konfirmasi AlertDialog terlebih dahulu
+        // (dari kode saya) agar pengguna tidak tidak sengaja menghapus transaksi.
         binding.btnDelete.setOnClickListener {
             androidx.appcompat.app.AlertDialog.Builder(requireContext())
                 .setTitle("Hapus Transaksi")

@@ -60,6 +60,10 @@ class DashboardFragment : Fragment() {
     private var rawPemasukan   = 0.0
     private var rawPengeluaran = 0.0
 
+    // BUG 3 FIX: simpan nilai sisa prioritas mentah agar bisa di-mask / unmask
+    // saat toggle privasi tanpa perlu fetch ulang dari ViewModel
+    private var rawSisaPrioritas = 0.0
+
     private val calBulanAktif: Calendar = Calendar.getInstance()
 
     private val NAMA_BULAN get() = listOf(
@@ -93,10 +97,11 @@ class DashboardFragment : Fragment() {
         syncIkonMata()
         updateLabelBulan()
     }
+
     override fun onResume() {
         super.onResume()
         dashboardViewModel.updateContext(requireContext())
-        setupTabunganPrioritas() // ← tambahkan ini
+        setupTabunganPrioritas()
     }
 
     private fun initViews(view: View) {
@@ -148,18 +153,18 @@ class DashboardFragment : Fragment() {
             when (insight.tipe) {
                 "WARNING" -> {
                     cardRingkasan.setCardBackgroundColor(ContextCompat.getColor(requireContext(),
-                            R.color.insight_red_bg))
+                        R.color.insight_red_bg))
                 }
                 "SUCCESS" -> {
                     cardRingkasan.setCardBackgroundColor(ContextCompat.getColor(requireContext(),
-                            R.color.insight_yellow_bg))
+                        R.color.insight_yellow_bg))
                 }
                 else -> {
                     cardRingkasan.setCardBackgroundColor(ContextCompat.getColor(requireContext(),
-                            R.color.insight_red_bg)
+                        R.color.insight_red_bg)
                     )
                     setIndikatorWarna(viewIndikatorRingkasan, ContextCompat.getColor(requireContext(),
-                            R.color.expense_red)
+                        R.color.expense_red)
                     )
                 }
             }
@@ -180,22 +185,33 @@ class DashboardFragment : Fragment() {
                 .minByOrNull { it.targetNominal - it.terkumpul }
 
             if (prioritas == null) {
-                tvNamaPrioritas.text  = getString(R.string.label_belum_ada_target) // ← fix
+                tvNamaPrioritas.text       = getString(R.string.label_belum_ada_target)
                 progressPrioritas.progress = 0
-                tvProgressPersen.text = getString(R.string.label_progress_persen, 0) // ← fix
-                tvSisaPrioritas.text  = ""
+                tvProgressPersen.text      = getString(R.string.label_progress_persen, 0)
+                // BUG 3 FIX: reset raw value & kosongkan tvSisaPrioritas
+                rawSisaPrioritas           = 0.0
+                tvSisaPrioritas.text       = ""
                 btnBuatTarget.visibility     = View.VISIBLE
                 btnGantiPrioritas.visibility = View.GONE
             } else {
                 val persen = if (prioritas.targetNominal > 0)
                     ((prioritas.terkumpul / prioritas.targetNominal) * 100).toInt() else 0
-                val sisa = prioritas.targetNominal - prioritas.terkumpul
+                val sisa = (prioritas.targetNominal - prioritas.terkumpul).coerceAtLeast(0.0)
 
-                tvNamaPrioritas.text        = prioritas.nama
-                progressPrioritas.progress  = persen
-                tvProgressPersen.text       = getString(R.string.label_progress_persen, persen) // ← fix
-                tvSisaPrioritas.text        = getString(R.string.label_sisa_nominal,     // ← fix
-                    CurrencyFormatter.format(sisa))
+                // BUG 3 FIX: simpan nilai sisa mentah
+                rawSisaPrioritas = sisa
+
+                tvNamaPrioritas.text       = prioritas.nama
+                progressPrioritas.progress = persen
+                // Progress persen TETAP tampil meski mode privasi aktif — sesuai spec
+                tvProgressPersen.text      = getString(R.string.label_progress_persen, persen)
+
+                // BUG 3 FIX: tampilkan "Sisa Rp ***" jika privasi aktif
+                tvSisaPrioritas.text = if (isSaldoVisible)
+                    getString(R.string.label_sisa_nominal, CurrencyFormatter.format(sisa))
+                else
+                    "Sisa Rp ***"
+
                 btnBuatTarget.visibility     = View.GONE
                 btnGantiPrioritas.visibility = View.VISIBLE
             }
@@ -268,11 +284,23 @@ class DashboardFragment : Fragment() {
             tvPemasukan.text   = nilaiPemasukan
             tvPengeluaran.text = nilaiPengeluaran
             tvSelisih.text     = nilaiSelisih
+
+            // BUG 3 FIX: tampilkan kembali nilai sisa prioritas yang tersimpan
+            if (rawSisaPrioritas > 0.0) {
+                tvSisaPrioritas.text = getString(R.string.label_sisa_nominal,
+                    CurrencyFormatter.format(rawSisaPrioritas))
+            }
         } else {
             tvSaldo.text       = "Rp ***"
             tvPemasukan.text   = "***"
             tvPengeluaran.text = "***"
             tvSelisih.text     = "***"
+
+            // BUG 3 FIX: sembunyikan "Sisa Rp..." di card TARGET TABUNGAN PRIORITAS
+            // Progress persen TIDAK disembunyikan — sesuai spec pengecualian
+            if (tvSisaPrioritas.text.isNotEmpty()) {
+                tvSisaPrioritas.text = "Sisa Rp ***"
+            }
         }
         hitungDanTampilkanSelisih()
     }

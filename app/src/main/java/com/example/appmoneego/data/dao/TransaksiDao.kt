@@ -7,8 +7,11 @@ import com.example.appmoneego.data.entity.Transaksi
 @Dao
 interface TransaksiDao {
 
+    // FIX BUG 2: insert sekarang mengembalikan row id (Long) hasil insert —
+    // dibutuhkan agar CicilanEntity bisa menyimpan transaksiId yang terkait.
+    // Perubahan ini aman untuk pemanggil lama yang tidak memakai return value.
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(transaksi: Transaksi)
+    suspend fun insert(transaksi: Transaksi): Long
 
     @Update
     suspend fun update(transaksi: Transaksi)
@@ -18,6 +21,11 @@ interface TransaksiDao {
 
     @Query("DELETE FROM transaksi WHERE dompetId = :dompetId")
     suspend fun deleteByDompetId(dompetId: Int)
+
+    // FIX BUG 2: ambil transaksi berdasarkan id — dipakai saat cicilan dihapus
+    // dari Detail Hutang, untuk menghapus transaksi terkait di Riwayat Transaksi.
+    @Query("SELECT * FROM transaksi WHERE id = :id LIMIT 1")
+    suspend fun getTransaksiById(id: Int): Transaksi?
 
     @Query("SELECT * FROM transaksi ORDER BY tanggal DESC")
     fun getAllTransaksi(): LiveData<List<Transaksi>>
@@ -59,10 +67,6 @@ interface TransaksiDao {
 
     // ── Insight — query tambahan ───────────────────────────────────────────────
 
-    /**
-     * Ambil semua transaksi pengeluaran bulan ini (non-transfer) untuk
-     * keperluan hitung kategori terbesar di insight.
-     */
     @Query("""
         SELECT * FROM transaksi
         WHERE jenis = 'PENGELUARAN'
@@ -75,10 +79,6 @@ interface TransaksiDao {
         end: Long
     ): LiveData<List<Transaksi>>
 
-    /**
-     * Ambil semua transaksi pengeluaran bulan lalu (non-transfer) untuk
-     * perbandingan bulan ke bulan di insight prioritas 5.
-     */
     @Query("""
         SELECT * FROM transaksi
         WHERE jenis = 'PENGELUARAN'
@@ -91,23 +91,12 @@ interface TransaksiDao {
         end: Long
     ): LiveData<List<Transaksi>>
 
-    /**
-     * Hitung jumlah seluruh transaksi — dipakai untuk cek apakah belum ada
-     * transaksi sama sekali (prioritas 1).
-     */
     @Query("SELECT COUNT(*) FROM transaksi")
     fun getTotalJumlahTransaksi(): LiveData<Int>
 
-    /**
-     * Ambil tanggal transaksi terakhir — dipakai untuk cek apakah sudah
-     * lebih dari 7 hari tidak mencatat (prioritas 2).
-     */
     @Query("SELECT MAX(tanggal) FROM transaksi")
     fun getTanggalTransaksiTerakhir(): LiveData<Long?>
 
-    /**
-     * Hitung jumlah transaksi bulan ini — dipakai untuk insight prioritas 6.
-     */
     @Query("""
         SELECT COUNT(*) FROM transaksi
         WHERE tanggal BETWEEN :start AND :end

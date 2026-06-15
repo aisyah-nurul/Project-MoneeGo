@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#6B8FA3"
+    android:fillViewport="true">
+
+    <!--
+        fillViewport=true → NestedScrollView mengisi penuh layar
+        sehingga ConstraintLayout di dalamnya bisa pakai
+        constraintTop/Bottom ke parent untuk centering vertikal.
+    -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingStart="40dp"
+        android:paddingEnd="40dp">
+
+        <!--
+        ══════════════════════════════════════════════════════
+        GRUP KONTEN UTAMA — satu LinearLayout vertikal
+        yang di-center secara vertikal di layar.
+        Semua elemen di dalamnya berurutan tanpa chain rumit.
+        ══════════════════════════════════════════════════════
+        -->
+        <LinearLayout
+            android:id="@+id/ll_konten"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/btnMulai"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintVertical_bias="0.42">
+
+            <!-- Logo -->
+            <ImageView
+                android:id="@+id/imgLogoWelcome"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/logo_moneego"
+                android:contentDescription="Logo MoneeGo"
+                android:scaleType="fitCenter"/>
+
+            <!-- Judul: jarak 24dp dari logo -->
+            <TextView
+                android:id="@+id/tvWelcomeAppName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="MoneeGo!"
+                android:textColor="@android:color/white"
+                android:textSize="36sp"
+                android:textStyle="bold"
+                android:layout_marginTop="24dp"/>
+
+            <!-- Subtitle: jarak 8dp dari judul -->
+            <TextView
+                android:id="@+id/tvWelcomeTagline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kelola keuanganmu dengan mudah"
+                android:textColor="#CCFFFFFF"
+                android:textSize="14sp"
+                android:layout_marginTop="8dp"/>
+
+            <!-- Divider: jarak 24dp dari subtitle -->
+            <View
+                android:id="@+id/dividerWelcome"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#7aaabf"
+                android:layout_marginTop="24dp"/>
+
+            <!-- Heading selamat datang: jarak 16dp dari divider -->
+            <TextView
+                android:id="@+id/tvWelcomeHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Selamat Datang di MoneeGo 👋"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp"
+                android:gravity="center"/>
+
+            <!-- Deskripsi: jarak 12dp dari heading -->
+            <TextView
+                android:id="@+id/tvWelcomeDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Aplikasi manajemen keuangan pribadi yang membantu kamu mencatat transaksi, mengelola tabungan, dan memantau pengeluaran secara lebih teratur."
+                android:textColor="#CCFFFFFF"
+                android:textSize="13sp"
+                android:gravity="center"
+                android:lineSpacingMultiplier="1.5"
+                android:layout_marginTop="12dp"/>
+
+        </LinearLayout>
+
+        <!--
+        ══════════════════════════════════════════════════════
+        TOMBOL MULAI — dikunci dalam chain vertikal bersama
+        ll_konten, dengan jarak 32dp dari bawah ll_konten.
+        Tombol berada tepat di bawah konten, bukan di pojok
+        bawah layar — sehingga tidak ada ruang kosong besar.
+        ══════════════════════════════════════════════════════
+        -->
+        <Button
+            android:id="@+id/btnMulai"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:text="Mulai Sekarang"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="#6B8FA3"
+            android:backgroundTint="@android:color/white"
+            android:stateListAnimator="@null"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="48dp"
+            app:cornerRadius="26dp"
+            app:layout_constraintTop_toBottomOf="@id/ll_konten"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

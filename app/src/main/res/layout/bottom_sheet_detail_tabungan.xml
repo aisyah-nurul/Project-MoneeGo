@@ -151,7 +151,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!-- ── RIWAYAT CICILAN — di atas input nominal seperti referensi ── -->
+    <!-- ── RIWAYAT CICILAN ── -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -172,8 +172,38 @@
         android:nestedScrollingEnabled="false"
         android:clipToPadding="false"/>
 
-    <!-- ── Label input nominal ── -->
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <!-- FITUR BARU: Tombol "Saya Sudah Membeli Impian Ini"                   -->
+    <!--                                                                       -->
+    <!-- Hanya tampil saat:                                                    -->
+    <!--   - terkumpul >= targetNominal (target selesai 100%)                 -->
+    <!--   - sudahDigunakan = false (belum pernah dikonfirmasi)               -->
+    <!--                                                                       -->
+    <!-- Visibility diatur dari DetailTabunganBottomSheet.kt,                  -->
+    <!-- default GONE agar tidak muncul sebelum kondisi diperiksa.            -->
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <Button
+        android:id="@+id/btnSudahMembeli"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="16dp"
+        android:text="✓ Saya Sudah Membeli Impian Ini"
+        android:backgroundTint="#4CAF50"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:visibility="gone"/>
+
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+    <!-- Form input — disembunyikan saat target SELESAI                       -->
+    <!-- Setiap blok diberi id group container agar bisa toggle visibility    -->
+    <!-- ══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- Label input nominal -->
     <TextView
+        android:id="@+id/labelNominalTabungan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/label_nominal_cicilan"
@@ -185,6 +215,7 @@
 
     <!-- Input nominal -->
     <LinearLayout
+        android:id="@+id/containerNominalTabungan"
         android:layout_width="match_parent"
         android:layout_height="72dp"
         android:orientation="horizontal"
@@ -220,8 +251,9 @@
             android:gravity="center"/>
     </LinearLayout>
 
-    <!-- ── Tanggal bayar ── -->
+    <!-- Label tanggal -->
     <TextView
+        android:id="@+id/labelTanggalTabungan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/label_tanggal_bayar"
@@ -231,7 +263,9 @@
         android:layout_marginStart="20dp"
         android:layout_marginBottom="6dp"/>
 
+    <!-- Input tanggal -->
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/containerTanggalTabungan"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         app:boxBackgroundColor="#4F6B88"
         app:boxStrokeColor="#6E89A5"
@@ -252,8 +286,9 @@
             android:textColorHint="@color/text_hint"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- ── Sumber Dana dropdown ── -->
+    <!-- Label sumber dana -->
     <TextView
+        android:id="@+id/labelSumberDana"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/label_sumber_dana"
@@ -263,7 +298,9 @@
         android:layout_marginStart="20dp"
         android:layout_marginBottom="6dp"/>
 
+    <!-- Dropdown sumber dana -->
     <androidx.cardview.widget.CardView
+        android:id="@+id/containerSumberDana"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -336,7 +373,7 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- ── Tombol Konfirmasi ── -->
+    <!-- Tombol Konfirmasi (mode BERJALAN) -->
     <Button
         android:id="@+id/btnKonfirmasiTabung"
         android:layout_width="match_parent"
@@ -350,8 +387,9 @@
         android:textSize="14sp"
         android:textStyle="bold"/>
 
-    <!-- ── Switch prioritas ── -->
+    <!-- Switch prioritas (mode BERJALAN) -->
     <LinearLayout
+        android:id="@+id/containerPrioritas"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"

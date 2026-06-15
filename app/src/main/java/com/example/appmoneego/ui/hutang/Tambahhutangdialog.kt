@@ -47,7 +47,6 @@ class TambahHutangDialog(
     }
 
     private fun setupJenisHutang(view: View) {
-        // Pakai findViewById langsung karena XML pakai TextView bukan Button
         val buttons = mapOf(
             view.findViewById<TextView>(R.id.btnKartuKredit)     to "Kartu Kredit",
             view.findViewById<TextView>(R.id.btnPinjol)          to "Pinjaman Online",
@@ -57,7 +56,6 @@ class TambahHutangDialog(
             view.findViewById<TextView>(R.id.btnLainnya)         to "Lainnya"
         )
 
-        // Set semua unselected dulu
         buttons.keys.forEach { tv ->
             tv.setBackgroundResource(R.drawable.bg_jenis_unselected)
             tv.setTextColor(
@@ -89,6 +87,20 @@ class TambahHutangDialog(
         }
     }
 
+    // ══════════════════════════════════════════════════════════════════════════
+    // BUG 1 FIX: setupJumlahInput
+    //
+    // Sebelumnya: TextWatcher memformat angka lalu menyimpan ke etJumlah sebagai
+    //   teks biasa. Karena hint="Rp 0" di XML, Material TextInputLayout
+    //   menampilkan label "Rp 0" mengambang di atas field — terlihat seperti
+    //   ada nilai default padahal field masih kosong.
+    //
+    // Sesudahnya: prefixText="Rp " sudah di-set di XML (dialog_tambah_hutang.xml).
+    //   TextWatcher HANYA memformat angka dengan titik pemisah ribuan
+    //   (contoh: "6.000"), tanpa prefix "Rp" apapun di dalam teks EditText.
+    //   Hasilnya di layar: "Rp 6.000" (prefix dari XML + angka dari EditText),
+    //   identik dengan tampilan field Nominal Cicilan yang sudah benar.
+    // ══════════════════════════════════════════════════════════════════════════
     private fun setupJumlahInput() {
         binding.etJumlah.addTextChangedListener(object : TextWatcher {
             var isEditing = false
@@ -97,11 +109,17 @@ class TambahHutangDialog(
             override fun afterTextChanged(s: Editable?) {
                 if (isEditing) return
                 isEditing = true
+
+                // Ambil hanya digit
                 val raw = s.toString().replace(Regex("[^0-9]"), "")
                 jumlahAngka = raw.toLongOrNull() ?: 0L
+
+                // Format dengan titik ribuan saja — TANPA prefix "Rp"
+                // karena prefix sudah ditangani oleh TextInputLayout.prefixText
                 val formatted = if (jumlahAngka > 0)
-                    "Rp " + NumberFormat.getNumberInstance(Locale("id", "ID")).format(jumlahAngka)
+                    NumberFormat.getNumberInstance(Locale("id", "ID")).format(jumlahAngka)
                 else ""
+
                 binding.etJumlah.setText(formatted)
                 binding.etJumlah.setSelection(formatted.length)
                 isEditing = false
@@ -117,7 +135,8 @@ class TambahHutangDialog(
                 cal.set(y, m, d)
                 tanggalDipilih = sdf.format(cal.time)
                 binding.etJatuhTempo.setText(tanggalDipilih)
-            }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
+            }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),
+                cal.get(Calendar.DAY_OF_MONTH)).show()
         }
     }
 
@@ -141,7 +160,8 @@ class TambahHutangDialog(
             val hutangBaru = Hutang(
                 id                = UUID.randomUUID().toString(),
                 nama              = nama,
-                totalHutang       = if (jenisHutangDipilih == "Kartu Kredit" && limitKredit > 0) limitKredit else jumlahAngka,
+                totalHutang       = if (jenisHutangDipilih == "Kartu Kredit" && limitKredit > 0)
+                    limitKredit else jumlahAngka,
                 sudahDibayar      = 0L,
                 tanggalJatuhTempo = tanggalDipilih,
                 catatan           = jenisHutangDipilih,

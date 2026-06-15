@@ -2,6 +2,8 @@ package com.example.appmoneego.ui.hutang
 
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,10 +24,12 @@ import com.example.appmoneego.data.database.MoneeGoDatabase
 import com.example.appmoneego.data.entity.CicilanEntity
 import com.example.appmoneego.data.entity.Dompet
 import com.example.appmoneego.data.entity.Hutang
+import com.example.appmoneego.data.entity.Transaksi
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -61,41 +65,63 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
         savedInstanceState: Bundle?
     ): View? = inflater.inflate(R.layout.bottom_sheet_cicilan, container, false)
 
+    // ── FIX BUG 1: mapping icon berdasarkan jenis dompet — sama persis
+    // dengan DompetAdapter.getIconRes(), supaya konsisten di seluruh app ──
+    private fun getIconDompet(jenis: String): Int = when (jenis) {
+        "Rekening Bank"  -> R.drawable.ic_wallet_bank
+        "Dompet Digital" -> R.drawable.ic_wallet_digital
+        "Uang Tunai"     -> R.drawable.ic_wallet_cash
+        "Investasi"      -> R.drawable.ic_wallet_investasi
+        "Tabungan"       -> R.drawable.ic_wallet_tabungan
+        else             -> R.drawable.ic_wallet_lainnya
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val h = hutang ?: return
 
-        val tvNama              = view.findViewById<TextView>(R.id.tvSheetNama)
-        val tvSisa              = view.findViewById<TextView>(R.id.tvSheetSisa)
-        val tvSudahDibayar      = view.findViewById<TextView>(R.id.tvSheetSudahDibayar)
-        val tvPersen            = view.findViewById<TextView>(R.id.tvSheetPersen)
-        val progressBar         = view.findViewById<ProgressBar>(R.id.progressSheet)
-        val rvRiwayat           = view.findViewById<RecyclerView>(R.id.rvRiwayatCicilan)
-        val layoutForm          = view.findViewById<View>(R.id.layoutFormCicilan)
-        val layoutLunas         = view.findViewById<View>(R.id.layoutLunas)
-        val etNominal           = view.findViewById<EditText>(R.id.etNominalCicilan)
-        val etTanggal           = view.findViewById<EditText>(R.id.etTanggalCicilan)
-        val etCatatan           = view.findViewById<EditText>(R.id.etCatatanCicilan)
-        val btnSimpan           = view.findViewById<Button>(R.id.btnSimpanCicilan)
-        val btnBatal            = view.findViewById<Button>(R.id.btnBatalCicilan)
-        val btnHapus            = view.findViewById<Button>(R.id.btnHapusHutang)
-        val llSumberDanaHeader  = view.findViewById<LinearLayout>(R.id.llSumberDanaHeader)
-        val tvSumberDana        = view.findViewById<TextView>(R.id.tvSumberDanaCicilan)
-        val ivChevron           = view.findViewById<ImageView>(R.id.ivChevronSumberDana)
-        val llOpsiDompet        = view.findViewById<LinearLayout>(R.id.llOpsiDompet)
+        val tvNama             = view.findViewById<TextView>(R.id.tvSheetNama)
+        val tvSisa             = view.findViewById<TextView>(R.id.tvSheetSisa)
+        val tvSudahDibayar     = view.findViewById<TextView>(R.id.tvSheetSudahDibayar)
+        val tvPersen           = view.findViewById<TextView>(R.id.tvSheetPersen)
+        val progressBar        = view.findViewById<ProgressBar>(R.id.progressSheet)
+        val rvRiwayat          = view.findViewById<RecyclerView>(R.id.rvRiwayatCicilan)
+        val layoutForm         = view.findViewById<View>(R.id.layoutFormCicilan)
+        val layoutLunas        = view.findViewById<View>(R.id.layoutLunas)
+        val etNominal          = view.findViewById<EditText>(R.id.etNominalCicilan)
+        val etTanggal          = view.findViewById<EditText>(R.id.etTanggalCicilan)
+        val etCatatan          = view.findViewById<EditText>(R.id.etCatatanCicilan)
+        val btnSimpan          = view.findViewById<Button>(R.id.btnSimpanCicilan)
+        val btnBatal           = view.findViewById<Button>(R.id.btnBatalCicilan)
+        val btnHapus           = view.findViewById<Button>(R.id.btnHapusHutang)
+        val llSumberDanaHeader = view.findViewById<LinearLayout>(R.id.llSumberDanaHeader)
+        val tvSumberDana       = view.findViewById<TextView>(R.id.tvSumberDanaCicilan)
+        val ivSumberDanaIcon   = view.findViewById<ImageView>(R.id.ivSumberDanaIcon)
+        val ivChevron          = view.findViewById<ImageView>(R.id.ivChevronSumberDana)
+        val llOpsiDompet       = view.findViewById<LinearLayout>(R.id.llOpsiDompet)
 
-        val db         = MoneeGoDatabase.getDatabase(requireContext())
-        val cicilanDao = db.cicilanDao()
-        val hutangDao  = db.hutangDao()
-        val dompetDao  = db.dompetDao()
-        val sdf        = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val db           = MoneeGoDatabase.getDatabase(requireContext())
+        val cicilanDao   = db.cicilanDao()
+        val hutangDao    = db.hutangDao()
+        val dompetDao    = db.dompetDao()
+        val transaksiDao = db.transaksiDao()
+        val sdf          = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
+        // Konversi dp ke px — dipakai untuk ukuran icon dompet di dropdown
+        val density = resources.displayMetrics.density
+        fun dp(value: Int): Int = (value * density).toInt()
+
+        // Nilai numerik murni untuk nominal cicilan
+        var nominalAngka: Long = 0L
+
+        // ── Render opsi dompet — FIX BUG 1: tambah icon sesuai jenis dompet ────
         fun renderOpsiDompet() {
             llOpsiDompet.removeAllViews()
             if (daftarDompet.isEmpty()) {
                 llOpsiDompet.addView(TextView(requireContext()).apply {
-                    text = "Belum ada dompet"; textSize = 13f
-                    setTextColor(0xFFC7D4E2.toInt())
+                    text = "Belum ada dompet"
+                    textSize = 13f
+                    setTextColor(0xFF888888.toInt()) // MY CHANGE: warna abu-abu lebih netral
                     setPadding(48, 24, 48, 24)
                 })
                 return
@@ -107,42 +133,52 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
                         LinearLayout.LayoutParams.MATCH_PARENT, 120)
                     setPadding(48, 0, 48, 0)
                     gravity      = android.view.Gravity.CENTER_VERTICAL
-                    isClickable  = true; isFocusable = true
+                    isClickable  = true
+                    isFocusable  = true
                     setBackgroundResource(android.R.drawable.list_selector_background)
                     setOnClickListener {
                         selectedDompetId   = dompet.id
                         selectedDompetNama = dompet.nama
                         tvSumberDana.text  = dompet.nama
-                        tvSumberDana.setTextColor(0xFFF3F7FB.toInt())
-                        isSumberDanaOpen = false
+                        tvSumberDana.setTextColor(0xFF1A1A2E.toInt()) // MY CHANGE: warna teks gelap
+                        // FIX BUG 1: update icon header sesuai dompet yang dipilih
+                        ivSumberDanaIcon?.setImageResource(getIconDompet(dompet.jenis))
+                        isSumberDanaOpen        = false
                         llOpsiDompet.visibility = View.GONE
-                        ivChevron.rotation = 0f
+                        ivChevron.rotation      = 0f
                         renderOpsiDompet()
                     }
                 }
+                // FIX BUG 1: icon dompet di setiap baris pilihan
+                row.addView(ImageView(requireContext()).apply {
+                    layoutParams = LinearLayout.LayoutParams(dp(20), dp(20)).apply {
+                        marginEnd = dp(10)
+                    }
+                    setImageResource(getIconDompet(dompet.jenis))
+                })
                 row.addView(TextView(requireContext()).apply {
-                    text = dompet.nama; textSize = 14f
-                    setTextColor(0xFFF3F7FB.toInt())
+                    text = dompet.nama
+                    textSize = 14f
+                    setTextColor(0xFF1A1A2E.toInt()) // MY CHANGE: warna teks gelap
                     layoutParams = LinearLayout.LayoutParams(
                         0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
                 })
                 row.addView(RadioButton(requireContext()).apply {
-                    isChecked   = (dompet.id == selectedDompetId)
-                    isClickable = false; isFocusable = false
+                    isChecked      = (dompet.id == selectedDompetId)
+                    isClickable    = false
+                    isFocusable    = false
                     buttonTintList = android.content.res.ColorStateList.valueOf(
                         android.graphics.Color.parseColor("#7A9DB5"))
                 })
                 llOpsiDompet.addView(row)
                 if (dompet != daftarDompet.last()) {
                     llOpsiDompet.addView(View(requireContext()).apply {
-
                         layoutParams = LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.MATCH_PARENT,
                             3
                         ).apply {
                             setMargins(0, 0, 0, 0)
                         }
-
                         setBackgroundColor(
                             android.graphics.Color.parseColor("#B7D0E0")
                         )
@@ -151,26 +187,29 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
             }
         }
 
+        // ── Load dompet ───────────────────────────────────────────────────────
         lifecycleScope.launch {
-            daftarDompet = withContext(Dispatchers.IO) {
-                dompetDao.getAllDompetSync()
-            }
+            daftarDompet = withContext(Dispatchers.IO) { dompetDao.getAllDompetSync() }
             if (daftarDompet.isNotEmpty() && selectedDompetId == 0) {
                 selectedDompetId   = daftarDompet[0].id
                 selectedDompetNama = daftarDompet[0].nama
                 tvSumberDana?.text = selectedDompetNama
-                tvSumberDana?.setTextColor(0xFFF3F7FB.toInt())
+                tvSumberDana?.setTextColor(0xFF1A1A2E.toInt()) // MY CHANGE: warna teks gelap
+                // FIX BUG 1: set icon header sesuai dompet default pertama
+                ivSumberDanaIcon?.setImageResource(getIconDompet(daftarDompet[0].jenis))
             }
             renderOpsiDompet()
         }
 
         llSumberDanaHeader?.setOnClickListener {
-            isSumberDanaOpen = !isSumberDanaOpen
+            isSumberDanaOpen        = !isSumberDanaOpen
             llOpsiDompet.visibility = if (isSumberDanaOpen) View.VISIBLE else View.GONE
-            ivChevron.animate().rotation(if (isSumberDanaOpen) 180f else 0f)
+            ivChevron.animate()
+                .rotation(if (isSumberDanaOpen) 180f else 0f)
                 .setDuration(200).start()
         }
 
+        // ── Info hutang ───────────────────────────────────────────────────────
         fun refreshInfo(current: Hutang) {
             val sisa   = (current.totalHutang - current.sudahDibayar).coerceAtLeast(0L)
             val persen = if (current.totalHutang > 0)
@@ -192,21 +231,37 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
             layoutLunas?.visibility = View.GONE
         }
 
+        // ── Tanggal ───────────────────────────────────────────────────────────
         etTanggal?.setText(sdf.format(Date()))
         etTanggal?.setOnClickListener {
             val cal = Calendar.getInstance()
-            DatePickerDialog(
-                requireContext(),
-                { _, y, m, d ->
-                    cal.set(y, m, d)
-                    etTanggal.setText(sdf.format(cal.time))
-                },
-                cal.get(Calendar.YEAR),
-                cal.get(Calendar.MONTH),
-                cal.get(Calendar.DAY_OF_MONTH)
-            ).show()
+            DatePickerDialog(requireContext(), { _, y, m, d ->
+                cal.set(y, m, d)
+                etTanggal.setText(sdf.format(cal.time))
+            }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),
+                cal.get(Calendar.DAY_OF_MONTH)).show()
         }
 
+        // ── TextWatcher auto-format rupiah di field Nominal Cicilan ───────────
+        etNominal?.addTextChangedListener(object : TextWatcher {
+            var isEditing = false
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                if (isEditing) return
+                isEditing = true
+                val raw = s.toString().replace(Regex("[^0-9]"), "")
+                nominalAngka = raw.toLongOrNull() ?: 0L
+                val formatted = if (nominalAngka > 0)
+                    NumberFormat.getNumberInstance(Locale("id", "ID")).format(nominalAngka)
+                else ""
+                etNominal.setText(formatted)
+                etNominal.setSelection(formatted.length)
+                isEditing = false
+            }
+        })
+
+        // ── Riwayat cicilan ───────────────────────────────────────────────────
         fun loadRiwayat() {
             lifecycleScope.launch {
                 val riwayat = withContext(Dispatchers.IO) {
@@ -226,24 +281,41 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
                             .setPositiveButton("Hapus") { _, _ ->
                                 lifecycleScope.launch {
                                     val updatedHutang = withContext(Dispatchers.IO) {
-                                        cicilanDao.deleteCicilanById(cicilan.id)
-                                        val currentHutang = hutangDao.getHutangById(h.id)
-                                            ?: return@withContext null
-                                        val newSudahDibayar =
-                                            (currentHutang.sudahDibayar - cicilan.nominal)
-                                                .coerceAtLeast(0L)
-                                        val updated = currentHutang.copy(
-                                            sudahDibayar = newSudahDibayar,
-                                            selesai = newSudahDibayar >= currentHutang.totalHutang
-                                        )
+
+                                        // FIX BUG 2: hapus juga transaksi terkait
+                                        // di Riwayat Transaksi, kalau ada
+                                        if (cicilan.transaksiId != 0) {
+                                            val transaksiTerkait =
+                                                transaksiDao.getTransaksiById(cicilan.transaksiId)
+                                            transaksiTerkait?.let { transaksiDao.delete(it) }
+                                        }
+
+                                        // Kembalikan saldo dompet
                                         if (cicilan.dompetId != 0) {
                                             val dompet = dompetDao.getDompetById(cicilan.dompetId)
                                             dompet?.let {
                                                 dompetDao.update(
-                                                    it.copy(saldo = it.saldo + cicilan.nominal)
-                                                )
+                                                    it.copy(saldo = it.saldo + cicilan.nominal))
                                             }
                                         }
+
+                                        cicilanDao.deleteCicilanById(cicilan.id)
+
+                                        val currentHutang = hutangDao.getHutangById(h.id)
+                                            ?: return@withContext null
+
+                                        // FIX BUG 3: recalc sudahDibayar dari
+                                        // data cicilan yang MASIH TERSISA —
+                                        // bukan kurangi cache lama
+                                        val totalSudahDibayar = cicilanDao
+                                            .getCicilanByHutangId(h.id)
+                                            .sumOf { it.nominal }
+
+                                        val updated = currentHutang.copy(
+                                            sudahDibayar = totalSudahDibayar,
+                                            selesai = currentHutang.totalHutang > 0 &&
+                                                    totalSudahDibayar >= currentHutang.totalHutang
+                                        )
                                         hutangDao.updateHutang(updated)
                                         updated
                                     }
@@ -263,6 +335,7 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
 
         loadRiwayat()
 
+        // ── Hapus hutang ──────────────────────────────────────────────────────
         btnHapus?.setOnClickListener {
             AlertDialog.Builder(requireContext())
                 .setTitle("Hapus Hutang?")
@@ -288,10 +361,9 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
                 .show()
         }
 
+        // ── Simpan cicilan ────────────────────────────────────────────────────
         btnSimpan?.setOnClickListener {
-            val nominalStr = etNominal?.text.toString().replace("[^0-9]".toRegex(), "")
-            val nominal    = nominalStr.toLongOrNull() ?: 0L
-            if (nominal <= 0L) {
+            if (nominalAngka <= 0L) {
                 etNominal?.error = "Masukkan nominal cicilan"
                 return@setOnClickListener
             }
@@ -305,24 +377,52 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
 
             lifecycleScope.launch {
                 val updatedHutang = withContext(Dispatchers.IO) {
-                    val cicilanBaru = CicilanEntity(
-                        id           = UUID.randomUUID().toString(),
-                        hutangId     = h.id,
-                        nominal      = nominal,
-                        tanggalBayar = tanggal,
-                        catatan      = catatan,
-                        dompetId     = selectedDompetId
+                    val tanggalLong = try {
+                        SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                            .parse(tanggal)?.time ?: System.currentTimeMillis()
+                    } catch (e: Exception) {
+                        System.currentTimeMillis()
+                    }
+
+                    // FIX BUG 2: insert transaksi DULU agar dapat ID-nya,
+                    // baru simpan cicilan dengan transaksiId yang terhubung
+                    val transaksiId = transaksiDao.insert(
+                        Transaksi(
+                            nominal  = nominalAngka.toDouble(),
+                            jenis    = "PENGELUARAN",
+                            kategori = "Hutang",
+                            catatan  = "Cicilan ${h.nama}" +
+                                    if (catatan.isNotEmpty()) " - $catatan" else "",
+                            tanggal  = tanggalLong,
+                            dompetId = selectedDompetId
+                        )
+                    ).toInt()
+
+                    cicilanDao.insertCicilan(
+                        CicilanEntity(
+                            id           = UUID.randomUUID().toString(),
+                            hutangId     = h.id,
+                            nominal      = nominalAngka,
+                            tanggalBayar = tanggal,
+                            catatan      = catatan,
+                            dompetId     = selectedDompetId,
+                            transaksiId  = transaksiId
+                        )
                     )
-                    cicilanDao.insertCicilan(cicilanBaru)
+
                     val dompet = dompetDao.getDompetById(selectedDompetId)
                     dompet?.let {
-                        dompetDao.update(it.copy(saldo = it.saldo - nominal))
+                        dompetDao.update(it.copy(saldo = it.saldo - nominalAngka))
                     }
-                    val newSudahDibayar =
-                        (h.sudahDibayar + nominal).coerceAtMost(h.totalHutang)
+
+                    // FIX BUG 3: recalc sudahDibayar dari total cicilan aktual
+                    val totalSudahDibayar = cicilanDao
+                        .getCicilanByHutangId(h.id)
+                        .sumOf { it.nominal }
+
                     val updated = h.copy(
-                        sudahDibayar = newSudahDibayar,
-                        selesai      = newSudahDibayar >= h.totalHutang
+                        sudahDibayar = totalSudahDibayar,
+                        selesai      = h.totalHutang > 0 && totalSudahDibayar >= h.totalHutang
                     )
                     hutangDao.updateHutang(updated)
                     updated

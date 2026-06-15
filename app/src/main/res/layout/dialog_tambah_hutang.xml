@@ -72,8 +72,8 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:boxBackgroundColor="@color/card_saldo_bg"
-                android:layout_marginTop="6dp">
+                android:layout_marginTop="6dp"
+                app:boxBackgroundColor="@color/card_saldo_bg">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etNama"
@@ -210,18 +210,24 @@
                 android:textSize="13sp"
                 android:textStyle="bold"/>
 
+            <!--
+                MERGE: boxBackgroundColor dari teman (main) +
+                       prefixText="Rp " dari saya (HEAD) agar
+                       prefix selalu terlihat; hint cukup "0"
+            -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
                 app:boxBackgroundColor="@color/card_saldo_bg"
-                android:layout_marginTop="6dp">
+                app:prefixText="Rp ">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etJumlah"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Rp 0"
+                    android:hint="0"
                     android:inputType="number"
                     android:textColor="@color/text_primary"
                     android:textColorHint="@color/text_hint"
@@ -247,21 +253,28 @@
                     android:textSize="13sp"
                     android:textStyle="bold"/>
 
+                <!--
+                    MERGE: Sama seperti etJumlah.
+                           boxBackgroundColor dari teman (main) +
+                           prefixText="Rp " dari saya (HEAD);
+                           hint="0", textColor & textColorHint dari teman
+                -->
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    app:boxBackgroundColor="@color/card_saldo_bg">
+                    app:boxBackgroundColor="@color/card_saldo_bg"
+                    app:prefixText="Rp ">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etLimitKredit"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Rp 0"
+                        android:hint="0"
+                        android:inputType="number"
                         android:textColor="@color/text_primary"
                         android:textColorHint="@color/text_hint"
-                        android:inputType="number"
                         android:textSize="14sp"/>
 
                 </com.google.android.material.textfield.TextInputLayout>

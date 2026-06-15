@@ -198,17 +198,22 @@
                     android:textStyle="bold"
                     android:layout_marginBottom="6dp" />
 
+                <!-- FIX BUG 4: hintEnabled=false + prefixText "Rp " agar tidak
+                     ada label "Rp 0" melayang di atas field. Formatnya jadi
+                     sama seperti Target Nominal Tabungan -->
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp">
+                    android:layout_marginBottom="12dp"
+                    app:hintEnabled="false"
+                    app:prefixText="Rp ">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etNominalCicilan"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Rp 0"
+                        android:hint="0"
                         android:inputType="numberDecimal"
                         android:textSize="14sp" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -239,7 +244,7 @@
                         android:textSize="14sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <!-- Sumber Dana (ganti catatan) -->
+                <!-- Sumber Dana -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -262,7 +267,10 @@
                     android:clickable="true"
                     android:focusable="true">
 
+                    <!-- FIX BUG 1: tambah id agar icon bisa diubah dinamis
+                         sesuai jenis dompet yang dipilih -->
                     <ImageView
+                        android:id="@+id/ivSumberDanaIcon"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:src="@drawable/ic_wallet"

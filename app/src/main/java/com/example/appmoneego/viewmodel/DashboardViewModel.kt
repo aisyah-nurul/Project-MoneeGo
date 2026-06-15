@@ -7,6 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.appmoneego.data.database.MoneeGoDatabase
+import com.example.appmoneego.data.entity.Tabungan
 import com.example.appmoneego.data.entity.Transaksi
 import com.example.appmoneego.model.InsightItem
 import com.example.appmoneego.repository.DompetRepository
@@ -33,6 +34,12 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     val totalSaldo: LiveData<Double?>
     val allTransaksi: LiveData<List<Transaksi>>
     val saldoBersih = MediatorLiveData<Double>()
+
+    // ── Target Tabungan Prioritas ──────────────────────────────────────────────
+    // null jika user belum mengaktifkan toggle prioritas pada tabungan apa pun.
+    // Dashboard HARUS menampilkan state kosong saat nilainya null —
+    // tidak ada fallback otomatis ke tabungan pertama/terbaru/berjalan.
+    val tabunganPrioritas: LiveData<Tabungan?>
 
     // ── Pemasukan & Pengeluaran — berubah saat ganti bulan ────────────────────
     private val _totalPemasukan = MediatorLiveData<Double?>()
@@ -84,6 +91,11 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
 
         totalSaldo   = dompetRepo.totalSaldo
         allTransaksi = transaksiRepo.allTransaksi
+
+        // Sumber tunggal: hanya tabungan dengan isPriority = true yang diteruskan.
+        // Jika tidak ada, tabunganRepo.tabunganPrioritas akan mengirim null,
+        // dan Dashboard wajib menampilkan state kosong.
+        tabunganPrioritas = tabunganRepo.tabunganPrioritas
 
         saldoBersih.addSource(totalSaldo) { nilai ->
             saldoBersih.value = nilai ?: 0.0

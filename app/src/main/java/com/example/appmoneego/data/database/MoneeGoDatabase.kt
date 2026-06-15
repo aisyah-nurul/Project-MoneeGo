@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.appmoneego.data.dao.*
 import com.example.appmoneego.data.entity.*
 
@@ -15,7 +17,7 @@ import com.example.appmoneego.data.entity.*
         Hutang::class,
         CicilanEntity::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 abstract class MoneeGoDatabase : RoomDatabase() {
@@ -27,8 +29,24 @@ abstract class MoneeGoDatabase : RoomDatabase() {
     abstract fun cicilanDao(): CicilanDao
 
     companion object {
+
         @Volatile
         private var INSTANCE: MoneeGoDatabase? = null
+
+        /**
+         * Migration versi 4 -> 5
+         * Menambahkan kolom sudahDigunakan pada tabel tabungan
+         */
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                    ALTER TABLE tabungan 
+                    ADD COLUMN sudahDigunakan INTEGER NOT NULL DEFAULT 0
+                    """.trimIndent()
+                )
+            }
+        }
 
         fun getDatabase(context: Context): MoneeGoDatabase {
             return INSTANCE ?: synchronized(this) {
@@ -38,7 +56,7 @@ abstract class MoneeGoDatabase : RoomDatabase() {
                     MoneeGoDatabase::class.java,
                     "moneego_database"
                 )
-                    .fallbackToDestructiveMigration() // ✅ ini versi yang benar
+                    .addMigrations(MIGRATION_4_5)
                     .build()
 
                 INSTANCE = instance

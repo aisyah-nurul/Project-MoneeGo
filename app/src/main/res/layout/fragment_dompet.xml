@@ -111,14 +111,13 @@
                     android:layout_marginBottom="12dp"
                     android:background="@color/divider"/>
 
-                <!-- Stats Row: Terbesar | Dompet Aktif — konsisten dengan Tabungan & Hutang -->
+                <!-- Stats Row: Terbesar | Dompet Aktif -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:weightSum="2">
 
-                    <!-- Terbesar — tengah -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -143,7 +142,6 @@
                             android:textStyle="bold"/>
                     </LinearLayout>
 
-                    <!-- Dompet Aktif — tengah -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -272,7 +270,7 @@
             android:paddingEnd="16dp"/>
     </LinearLayout>
 
-    <!-- ===== AREA KONTEN: RV + EMPTY STATE dalam FrameLayout ===== -->
+    <!-- ===== AREA KONTEN: RV + EMPTY STATE ===== -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -288,6 +286,7 @@
             android:paddingTop="4dp"
             android:paddingBottom="88dp"/>
 
+        <!-- Empty State — icon & style SAMA PERSIS dengan Tabungan & Hutang -->
         <LinearLayout
             android:id="@+id/layout_empty_dompet"
             android:layout_width="match_parent"
@@ -299,7 +298,7 @@
             <ImageView
                 android:layout_width="64dp"
                 android:layout_height="64dp"
-                android:src="@drawable/ic_wallet"
+                android:src="@drawable/ic_hutang"
                 android:alpha="0.35"
                 android:contentDescription="Belum ada dompet"/>
 

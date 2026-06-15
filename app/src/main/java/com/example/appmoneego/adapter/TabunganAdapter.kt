@@ -16,9 +16,20 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class TabunganAdapter(
+    // MERGED: tambah parameter nominalVisible dengan default true (dari kode saya)
+    nominalVisible: Boolean = true,
     private val onTabungClick: (Tabungan) -> Unit,
     private val onItemClick: (Tabungan) -> Unit
 ) : ListAdapter<Tabungan, TabunganAdapter.TabunganViewHolder>(DIFF_CALLBACK) {
+
+    // MERGED: state privasi adapter (dari kode saya)
+    private var isNominalVisible: Boolean = nominalVisible
+
+    // MERGED: dipanggil dari TabunganFragment saat icon mata di-tap (dari kode saya)
+    fun setNominalVisible(visible: Boolean) {
+        isNominalVisible = visible
+        notifyDataSetChanged()
+    }
 
     // Mode diatur dari luar via setMode(), default BERJALAN
     private var mode: Mode = Mode.BERJALAN
@@ -41,17 +52,17 @@ class TabunganAdapter(
 
     inner class TabunganViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        private val tvNama: TextView         = itemView.findViewById(R.id.tv_nama_tabungan)
-        private val tvDeadline: TextView     = itemView.findViewById(R.id.tv_deadline)
-        private val tvTargetLabel: View      = itemView.findViewById(R.id.tv_target_label)
+        private val tvNama: TextView          = itemView.findViewById(R.id.tv_nama_tabungan)
+        private val tvDeadline: TextView      = itemView.findViewById(R.id.tv_deadline)
+        private val tvTargetLabel: View       = itemView.findViewById(R.id.tv_target_label)
         private val tvTargetNominal: TextView = itemView.findViewById(R.id.tv_target_nominal)
         private val tvLabelTerkumpul: TextView = itemView.findViewById(R.id.tv_label_terkumpul)
-        private val tvTerkumpul: TextView    = itemView.findViewById(R.id.tv_terkumpul)
-        private val tvPersentase: TextView   = itemView.findViewById(R.id.tv_persentase)
-        private val progressBar: ProgressBar = itemView.findViewById(R.id.progress_tabungan)
-        private val tvSisa: TextView         = itemView.findViewById(R.id.tv_sisa)
-        private val btnTabung: Button        = itemView.findViewById(R.id.btn_tabung)
-        private val divider: View            = itemView.findViewById(R.id.divider)
+        private val tvTerkumpul: TextView     = itemView.findViewById(R.id.tv_terkumpul)
+        private val tvPersentase: TextView    = itemView.findViewById(R.id.tv_persentase)
+        private val progressBar: ProgressBar  = itemView.findViewById(R.id.progress_tabungan)
+        private val tvSisa: TextView          = itemView.findViewById(R.id.tv_sisa)
+        private val btnTabung: Button         = itemView.findViewById(R.id.btn_tabung)
+        private val divider: View             = itemView.findViewById(R.id.divider)
 
         fun bind(item: Tabungan, mode: Mode) {
             val context = itemView.context
@@ -80,17 +91,28 @@ class TabunganAdapter(
                 btnTabung.visibility          = View.VISIBLE
                 divider.visibility            = View.VISIBLE
 
-                tvTargetNominal.text = CurrencyFormatter.format(item.targetNominal)
-                tvTerkumpul.text     = CurrencyFormatter.format(item.terkumpul)
+                // MERGED: sembunyikan nominal saat mode privasi aktif (dari kode saya)
+                // Yang disembunyikan: Target Nominal, Terkumpul, Sisa Target
+                // Yang TETAP tampil:  Persentase (progress %) — sesuai spec
+                if (isNominalVisible) {
+                    tvTargetNominal.text = CurrencyFormatter.format(item.targetNominal)
+                    tvTerkumpul.text     = CurrencyFormatter.format(item.terkumpul)
+                    val sisa = item.targetNominal - item.terkumpul
+                    // MERGED: pakai getString(R.string.label_kurang) dari kode teman
+                    tvSisa.text = "⏰ ${context.getString(R.string.label_kurang)} ${CurrencyFormatter.format(sisa)}"
+                } else {
+                    tvTargetNominal.text = "Rp ***"
+                    tvTerkumpul.text     = "Rp ***"
+                    tvSisa.text          = "⏰ Kurang Rp ***"
+                }
 
+                // Progress persen SELALU tampil — sesuai spec pengecualian Bug 3
                 val persen = if (item.targetNominal > 0)
                     ((item.terkumpul / item.targetNominal) * 100).toInt() else 0
                 tvPersentase.text    = "$persen%"
                 progressBar.progress = persen
 
-                val sisa = item.targetNominal - item.terkumpul
-                tvSisa.text = "⏰ ${context.getString(R.string.label_kurang)} ${CurrencyFormatter.format(sisa)}"
-
+                // MERGED: pakai getString(R.string.btn_tabung) dari kode teman
                 btnTabung.text = context.getString(R.string.btn_tabung)
                 btnTabung.setOnClickListener { onTabungClick(item) }
 

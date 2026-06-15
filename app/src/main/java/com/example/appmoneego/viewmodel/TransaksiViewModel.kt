@@ -6,6 +6,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.example.appmoneego.data.database.MoneeGoDatabase
+import com.example.appmoneego.data.dao.CicilanDao
+import com.example.appmoneego.data.dao.HutangDao
 import com.example.appmoneego.data.entity.Transaksi
 import com.example.appmoneego.repository.TransaksiRepository
 import com.example.appmoneego.repository.DompetRepository
@@ -16,12 +18,20 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
     private val transaksiRepo: TransaksiRepository
     private val dompetRepo: DompetRepository
 
+    // FIX BUG 2 & 3: akses langsung ke cicilan & hutang — dibutuhkan saat
+    // transaksi cicilan hutang dihapus dari Riwayat Transaksi, agar riwayat
+    // cicilan terkait ikut terhapus dan sudahDibayar/selesai dihitung ulang.
+    private val cicilanDao: CicilanDao
+    private val hutangDao: HutangDao
+
     val allTransaksi: LiveData<List<Transaksi>>
 
     init {
         val db = MoneeGoDatabase.getDatabase(application)
         transaksiRepo = TransaksiRepository(db.transaksiDao())
         dompetRepo    = DompetRepository(db.dompetDao())
+        cicilanDao    = db.cicilanDao()
+        hutangDao     = db.hutangDao()
         allTransaksi  = transaksiRepo.allTransaksi
     }
 
@@ -53,7 +63,6 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
 
         try {
             if (dompetIdLama != transaksi.dompetId) {
-                // ── Dompet BERUBAH ──────────────────────────────────────────
                 Log.d("EditTransaksi", "Dompet berubah: $dompetIdLama → ${transaksi.dompetId}")
 
                 val dompetLama = dompetRepo.getById(dompetIdLama)
@@ -79,7 +88,6 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
                 }
 
             } else {
-                // ── Dompet SAMA ─────────────────────────────────────────────
                 Log.d("EditTransaksi", "Dompet sama: $dompetIdLama")
                 val dompet = dompetRepo.getById(transaksi.dompetId)
                 Log.d("EditTransaksi", "dompet=$dompet")
@@ -98,14 +106,11 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
                 }
             }
 
-            // ── Update transaksi — SELALU dijalankan, bahkan kalau dompet null ──
             transaksiRepo.update(transaksi)
             Log.d("EditTransaksi", "transaksiRepo.update() SELESAI ✓ id=${transaksi.id}")
 
         } catch (e: Exception) {
-            // Tangkap exception yang sebelumnya tertelan diam-diam
             Log.e("EditTransaksi", "ERROR di update(): ${e.message}", e)
-            // Tetap coba update transaksi walau ada error saldo
             try {
                 transaksiRepo.update(transaksi)
                 Log.d("EditTransaksi", "transaksiRepo.update() FALLBACK SELESAI ✓")
@@ -116,6 +121,7 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun delete(transaksi: Transaksi) = viewModelScope.launch {
+        // Kembalikan saldo dompet seperti semula
         val dompet = dompetRepo.getById(transaksi.dompetId)
         dompet?.let {
             val saldoBaru = if (transaksi.jenis == "PEMASUKAN")
@@ -124,7 +130,49 @@ class TransaksiViewModel(application: Application) : AndroidViewModel(applicatio
                 it.saldo + transaksi.nominal
             dompetRepo.update(it.copy(saldo = saldoBaru))
         }
+
+        // ── FIX BUG 2 & 3 ────────────────────────────────────────────────────
+        // Jika transaksi ini adalah cicilan hutang (terhubung lewat
+        // transaksiId di CicilanEntity), hapus juga riwayat cicilannya
+        // di Detail Hutang dan hitung ulang sudahDibayar/selesai dari
+        // data cicilan yang masih tersisa — bukan pakai nilai cache lama.
+        val cicilanTerkait = cicilanDao.getCicilanByTransaksiId(transaksi.id)
+        if (cicilanTerkait != null) {
+            cicilanDao.deleteCicilanById(cicilanTerkait.id)
+
+            val hutang = hutangDao.getHutangById(cicilanTerkait.hutangId)
+            if (hutang != null) {
+                val totalSudahDibayar = cicilanDao
+                    .getCicilanByHutangId(hutang.id)
+                    .sumOf { it.nominal }
+
+                hutangDao.updateHutang(
+                    hutang.copy(
+                        sudahDibayar = totalSudahDibayar,
+                        selesai = hutang.totalHutang > 0 &&
+                                totalSudahDibayar >= hutang.totalHutang
+                    )
+                )
+                Log.d("HapusTransaksi", "Cicilan terkait dihapus, hutang ${hutang.nama} di-recalc: sudahDibayar=$totalSudahDibayar")
+            }
+        }
+
         transaksiRepo.delete(transaksi)
+    }
+
+    fun updateSaldoAwalDompet(
+        transaksi:    Transaksi,
+        nominalBaru:  Double,
+        kategoriBaru: String,
+        catatanBaru:  String
+    ) = viewModelScope.launch {
+        val transaksiDiupdate = transaksi.copy(
+            nominal  = nominalBaru,
+            kategori = kategoriBaru,
+            catatan  = catatanBaru
+        )
+        transaksiRepo.update(transaksiDiupdate)
+        Log.d("SinkronDompet", "updateSaldoAwalDompet ✓ id=${transaksi.id} nominal=$nominalBaru kategori=$kategoriBaru catatan=$catatanBaru")
     }
 
     fun getByDateRange(start: Long, end: Long) = transaksiRepo.getByDateRange(start, end)
