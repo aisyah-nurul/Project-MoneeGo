@@ -60,7 +60,9 @@ class TambahHutangDialog(
         // Set semua unselected dulu
         buttons.keys.forEach { tv ->
             tv.setBackgroundResource(R.drawable.bg_jenis_unselected)
-            tv.setTextColor(Color.parseColor("#555555"))
+            tv.setTextColor(
+                resources.getColor(R.color.text_primary, null)
+            )
         }
 
         buttons.forEach { (tv, jenis) ->
@@ -80,7 +82,9 @@ class TambahHutangDialog(
                 tv.setTextColor(Color.WHITE)
             } else {
                 tv.setBackgroundResource(R.drawable.bg_jenis_unselected)
-                tv.setTextColor(Color.parseColor("#555555"))
+                tv.setTextColor(
+                    resources.getColor(R.color.text_primary, null)
+                )
             }
         }
     }

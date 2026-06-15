@@ -113,4 +113,8 @@ interface TransaksiDao {
         WHERE tanggal BETWEEN :start AND :end
     """)
     fun getJumlahTransaksiBulanIni(start: Long, end: Long): LiveData<Int>
+
+    // ── Ekspor CSV ────────────────────────────────────────────────────────────
+    @Query("SELECT * FROM transaksi ORDER BY tanggal DESC")
+    suspend fun getAllTransaksiOnce(): List<Transaksi>
 }

@@ -69,7 +69,7 @@
                 android:text="26%"
                 android:textSize="13sp"
                 android:textStyle="bold"
-                android:textColor="@color/primary_dark_navy" />
+                android:textColor="@color/text_primary" />
         </LinearLayout>
 
         <!-- Progress bar sesuai persentase -->
@@ -80,7 +80,7 @@
             android:layout_height="5dp"
             android:max="100"
             android:progress="26"
-            android:progressTint="@color/primary_navy"
+            android:progressTint="#6C8FC8"
             android:progressBackgroundTint="@color/progress_track" />
 
     </LinearLayout>

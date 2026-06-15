@@ -45,7 +45,7 @@ class TambahTabunganDialog(
         var targetAngka   = 0.0
         var deadlineMs: Long? = null
         var kategoriDipilih = "Lainnya"
-        val sdf = SimpleDateFormat("dd MMMM yyyy", Locale("id", "ID"))
+        val sdf = SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
 
         // Mapping kategori
         val kategoriMap = mapOf(
@@ -58,9 +58,16 @@ class TambahTabunganDialog(
         )
 
         // Highlight kategori terpilih
+        // Highlight kategori terpilih
         fun highlight(selected: LinearLayout) {
             kategoriMap.keys.forEach { btn ->
-                btn.alpha = if (btn == selected) 1f else 0.5f
+
+                if (btn == selected) {
+                    btn.setBackgroundResource(R.drawable.bg_kategori_selected)
+                } else {
+                    btn.setBackgroundResource(R.drawable.bg_kategori_unselected)
+                }
+
             }
         }
 
@@ -106,11 +113,11 @@ class TambahTabunganDialog(
         btnSimpan.setOnClickListener {
             val nama = etNama.text.toString().trim()
             if (nama.isEmpty()) {
-                etNama.error = "Nama target wajib diisi"
+                etNama.error = getString(R.string.error_nama_target_kosong)
                 return@setOnClickListener
             }
             if (targetAngka <= 0) {
-                etTarget.error = "Target nominal wajib diisi"
+                etTarget.error = getString(R.string.error_nominal_kosong)
                 return@setOnClickListener
             }
             onSimpan(

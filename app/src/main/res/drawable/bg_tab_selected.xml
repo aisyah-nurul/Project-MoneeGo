@@ -13,8 +13,8 @@
     <!-- Terpilih: background biru navy muda dengan stroke -->
     <item android:state_selected="true">
         <shape android:shape="rectangle">
-            <solid android:color="#E8EDF7" />
-            <stroke android:width="2dp" android:color="#2C3E6B" />
+            <solid android:color="@color/tab_selected_bg" />
+            <stroke android:width="2dp" android:color="@color/primary_navy" />
             <corners android:radius="12dp" />
         </shape>
     </item>
@@ -22,8 +22,8 @@
     <!-- Normal -->
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="#F5F5F5" />
-            <stroke android:width="1dp" android:color="#E0E0E0" />
+            <solid android:color="@color/tab_normal_bg" />
+            <stroke android:width="1dp" android:color="@color/tab_stroke" />
             <corners android:radius="12dp" />
         </shape>
     </item>

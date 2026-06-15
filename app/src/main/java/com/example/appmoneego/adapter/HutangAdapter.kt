@@ -38,10 +38,11 @@ class HutangAdapter(
         b.tvNamaHutang.text = hutang.nama
 
         // Badge: tampilkan tanggal jatuh tempo jika ada, fallback "Berjalan" / "Lunas"
+        val ctx = holder.itemView.context
         b.tvBadgeTempo.text = when {
-            hutang.selesai -> "Lunas"
+            hutang.selesai -> ctx.getString(com.example.appmoneego.R.string.label_selesai)
             hutang.tanggalJatuhTempo.isNotEmpty() -> hutang.tanggalJatuhTempo
-            else -> "Berjalan"
+            else -> ctx.getString(com.example.appmoneego.R.string.label_berjalan)
         }
 
         // Nominal
@@ -57,12 +58,13 @@ class HutangAdapter(
         b.tvPersenLunas.text = "$persen%"
 
         // Footer meta
-        val jenis = hutang.catatan.ifEmpty { "Hutang" }
-        b.tvFooterMeta.text = "$jenis • $persen% lunas"
+        val ctx2 = holder.itemView.context
+        val jenis = hutang.catatan.ifEmpty { ctx2.getString(com.example.appmoneego.R.string.title_hutang) }
+        b.tvFooterMeta.text = "$jenis • $persen% ${ctx2.getString(com.example.appmoneego.R.string.label_selesai).lowercase()}"
 
         // Tap hint
-        b.tvTapHint.text = if (hutang.selesai) "Selesai" else "input cicilan"
-        b.ivChevron.visibility = if (hutang.selesai) View.GONE else View.VISIBLE
+        val ctx3 = holder.itemView.context
+        b.tvTapHint.text = if (hutang.selesai) ctx3.getString(com.example.appmoneego.R.string.label_selesai) else ctx3.getString(com.example.appmoneego.R.string.label_input_cicilan)
 
         // Reset cicilan terakhir dulu (penting untuk RecyclerView recycling)
         b.layoutCicilanTerakhir.visibility = View.GONE

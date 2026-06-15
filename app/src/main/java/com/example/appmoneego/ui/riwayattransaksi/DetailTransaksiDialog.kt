@@ -89,14 +89,13 @@ class DetailTransaksiDialog(
         binding.ivDialogIcon.setImageResource(iconRes)
 
         // Nama kategori
-        binding.tvDialogKategori.text = transaksi.kategori
+        binding.tvDialogKategori.text = getKategoriText(transaksi.kategori)
 
         // Nominal + warna
         when {
-            isTransfer  -> {
-                // Transfer: warna hitam, tanpa prefix +/-
-                binding.tvDialogNominal.text      = CurrencyFormatter.format(transaksi.nominal)
-                binding.tvDialogNominal.setTextColor(0xFF1A2B34.toInt()) // text_primary
+            isTransfer -> {
+                binding.tvDialogNominal.text = CurrencyFormatter.format(transaksi.nominal)
+                binding.tvDialogNominal.setTextColor(requireContext().getColor(R.color.text_primary))
             }
             isPemasukan -> {
                 // Pemasukan: warna hijau, prefix +
@@ -146,6 +145,27 @@ class DetailTransaksiDialog(
 
             // Catatan
             binding.tvDialogCatatan.text = transaksi.catatan.ifEmpty { "-" }
+        }
+    }
+    private fun getKategoriText(kategori: String): String {
+        return when (kategori) {
+            "Makanan" -> getString(R.string.kat_makanan)
+            "Fashion" -> getString(R.string.kat_fashion)
+            "Transportasi" -> getString(R.string.kat_transportasi)
+            "Pendidikan" -> getString(R.string.kat_pendidikan)
+            "Sosial" -> getString(R.string.kat_sosial)
+            "Kesehatan" -> getString(R.string.kat_kesehatan)
+            "Rumah Tangga" -> getString(R.string.kat_rumah_tangga)
+            "Kebutuhan Pribadi" -> getString(R.string.kat_kebutuhan_pribadi)
+
+            "Gaji" -> getString(R.string.kat_gaji)
+            "Bonus" -> getString(R.string.kat_bonus)
+            "Freelance" -> getString(R.string.kat_freelance)
+            "Investasi" -> getString(R.string.kat_investasi)
+            "Hadiah" -> getString(R.string.kat_hadiah)
+            "Penjualan" -> getString(R.string.kat_penjualan)
+
+            else -> kategori
         }
     }
 

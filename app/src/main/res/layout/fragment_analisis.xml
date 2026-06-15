@@ -20,7 +20,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Analisis"
+            android:text="@string/title_analisis"
             android:textColor="@color/text_white"
             android:textSize="17sp"
             android:textStyle="bold"
@@ -38,7 +38,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="PENGELUARAN"
+                android:text="@string/tab_analisis_pengeluaran"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 android:gravity="center"
@@ -50,7 +50,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="PEMASUKAN"
+                android:text="@string/tab_analisis_pemasukan"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 android:gravity="center"
@@ -114,7 +114,7 @@
                                 android:id="@+id/tvFilterTipe"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Oleh Kategori"
+                                android:text="@string/label_oleh_kategori"
                                 android:textSize="11sp"
                                 android:textColor="@color/text_primary"
                                 android:textStyle="bold" />
@@ -155,7 +155,7 @@
                             android:text="Mei 2026"
                             android:textSize="12sp"
                             android:textStyle="bold"
-                            android:textColor="@color/primary_dark_navy" />
+                            android:textColor="@color/text_primary"/>
 
                         <TextView
                             android:id="@+id/btnNextBulan"
@@ -194,7 +194,7 @@
                                 android:id="@+id/tvLabelTotal"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Total Pengeluaran"
+                                android:text="@string/label_total_pengeluaran_analisis"
                                 android:textSize="11sp"
                                 android:textColor="@color/text_secondary" />
 
@@ -226,7 +226,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Terbesar"
+                                android:text="@string/label_terbesar_analisis"
                                 android:textSize="11sp"
                                 android:textColor="@color/text_secondary" />
 

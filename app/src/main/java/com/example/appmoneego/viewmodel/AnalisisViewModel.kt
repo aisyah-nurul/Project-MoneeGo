@@ -85,7 +85,7 @@ class AnalisisViewModel(application: Application) : AndroidViewModel(application
 
     fun getLabelBulan(): String {
         val cal = _currentCal.value ?: Calendar.getInstance()
-        return SimpleDateFormat("MMMM yyyy", Locale("id", "ID")).format(cal.time)
+        return SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(cal.time)
     }
 
     // ── Data Room ─────────────────────────────────────────────────────────────
@@ -116,12 +116,13 @@ class AnalisisViewModel(application: Application) : AndroidViewModel(application
     // ── Summary Kategori ──────────────────────────────────────────────────────
 
     val kategoriSummaryPengeluaran = MediatorLiveData<List<KategoriSummary>>().apply {
-        addSource(transaksiPengeluaran) { value = buildKategoriSummary(it) }
+        addSource(transaksiPengeluaran) { value = buildKategoriSummary(it, kategoriResolver) }
     }
 
     val kategoriSummaryPemasukan = MediatorLiveData<List<KategoriSummary>>().apply {
-        addSource(transaksiPemasukan) { value = buildKategoriSummary(it) }
+        addSource(transaksiPemasukan) { value = buildKategoriSummary(it, kategoriResolver) }
     }
+
 
     // ── Summary Dompet (dengan nama asli dari lookup) ─────────────────────────
 
@@ -151,18 +152,33 @@ class AnalisisViewModel(application: Application) : AndroidViewModel(application
 
     // ── Builders ──────────────────────────────────────────────────────────────
 
-    private fun buildKategoriSummary(list: List<Transaksi>): List<KategoriSummary> {
+    private fun buildKategoriSummary(
+        list: List<Transaksi>,
+        namaResolver: ((String) -> String)? = null
+    ): List<KategoriSummary> {
         val total = list.sumOf { it.nominal }
         return list.groupBy { it.kategori }
             .map { (nama, items) ->
                 val jumlah = items.sumOf { it.nominal }
-                // Persentase dibulatkan ke integer
                 val persen = if (total > 0) Math.round(jumlah / total * 100).toFloat() else 0f
-                KategoriSummary(nama, jumlah, persen)
+                val namaDisplay = namaResolver?.invoke(nama) ?: nama
+                KategoriSummary(namaDisplay, jumlah, persen)
             }
             .sortedByDescending { it.jumlah }
     }
 
+    private var kategoriResolver: ((String) -> String)? = null
+
+    fun setKategoriResolver(resolver: (String) -> String) {
+        kategoriResolver = resolver
+        // Rebuild ulang dengan resolver baru
+        transaksiPengeluaran.value?.let {
+            kategoriSummaryPengeluaran.value = buildKategoriSummary(it, kategoriResolver)
+        }
+        transaksiPemasukan.value?.let {
+            kategoriSummaryPemasukan.value = buildKategoriSummary(it, kategoriResolver)
+        }
+    }
     private fun buildDompetSummary(
         list: List<Transaksi>,
         dompetMap: Map<Int, String>

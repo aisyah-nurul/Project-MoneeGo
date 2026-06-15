@@ -203,9 +203,9 @@ class RiwayatTransaksiFragment : Fragment() {
             else         -> CurrencyFormatter.format(0.0)
         }
         val warnaSelisih = when {
-            selisih > 0  -> 0xFF4CAF50.toInt()
-            selisih < 0  -> 0xFFF44336.toInt()
-            else         -> 0xFF1A1A2E.toInt()
+            selisih > 0 -> requireContext().getColor(R.color.income_green)
+            selisih < 0 -> requireContext().getColor(R.color.expense_red)
+            else -> requireContext().getColor(R.color.text_secondary)
         }
         binding.tvSelisihHarian.text = if (nominalVisible)
             teksSelisih else getString(R.string.mask_saldo)

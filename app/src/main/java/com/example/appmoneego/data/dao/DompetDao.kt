@@ -39,4 +39,7 @@ interface DompetDao {
 
     @Query("UPDATE dompet SET saldo = saldo - :jumlah WHERE id = :id")
     suspend fun kurangiSaldo(id: Int, jumlah: Double)
+
+    @Query("SELECT * FROM dompet")
+    suspend fun getAllDompetOnce(): List<Dompet>
 }

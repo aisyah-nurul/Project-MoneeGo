@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Background (Dark) -->
+    <color name="bg_main">#2C3E50</color>
+    <color name="bg_card">#31465A</color>
+    <color name="bg_header">#2A3A4A</color>
+    <color name="bg_header_dark">#2A3A4A</color>
+    <color name="bg_numpad">#2C3E50</color>
+    <color name="bg_form_card">#38506A</color>
+    <color name="bg_bottom_nav">#2A3A4A</color>
+
+    <!-- Text (Dark) -->
+    <color name="text_primary">#F3F7FB</color>
+    <color name="text_secondary">#C7D4E2</color>
+    <color name="text_hint">#B0C4D4</color>
+    <color name="text_label">#D7E3EE</color>
+
+    <!-- Card colors (Dark) -->
+    <color name="card_saldo_bg">#1D334B</color>
+    <color name="card_shortcut_bg">#1D334B</color>
+    <color name="card_form_inner">#2C3A48</color>
+
+    <!-- Progress bar (Dark) -->
+    <color name="progress_track">#2A3A4A</color>
+
+    <!-- Divider (Dark) -->
+    <color name="divider">#42566B</color>
+
+    <!-- Tab (Dark) -->
+    <color name="tab_inactive_bg">#2A3A4A</color>
+    <color name="tab_inactive_text">#9CB4C5</color>
+
+    <!-- Hutang chip (Dark) -->
+    <color name="teks_utama">#E8EEF5</color>
+    <color name="teks_muted">#9CB4C5</color>
+    <color name="bg_halaman">#1A1F2E</color>
+    <color name="bg_progress">#2A3A4A</color>
+
+    <!-- Semantic tetap sama (tidak berubah di dark mode) -->
+    <color name="income_green">#7EE787</color>
+    <color name="expense_red">#EF5350</color>
+
+    <!-- Insight Card Dark Mode -->
+    <color name="insight_red_bg">#43556A</color>
+    <color name="insight_yellow_bg">#4B6072</color>
+    <color name="tab_selected_bg">#31465A</color>
+    <color name="tab_normal_bg">#2A3A4A</color>
+    <color name="tab_stroke">#42566B</color>
+    <color name="income_green_light">#31465A</color>
+
+</resources>
