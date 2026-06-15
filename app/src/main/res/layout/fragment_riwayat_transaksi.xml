@@ -229,7 +229,7 @@
                     android:text="Rp0"
                     android:textSize="13sp"
                     android:textStyle="bold"
-                    android:textColor="@color/text_hint"/>
+                    android:textColor="@color/income_green"/>
             </LinearLayout>
 
         </LinearLayout>

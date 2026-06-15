@@ -163,7 +163,7 @@
                             android:text="0"
                             android:textSize="14sp"
                             android:textStyle="bold"
-                            android:textColor="@color/text_primary"/>
+                            android:textColor="@color/income_green"/>
                     </LinearLayout>
 
                 </LinearLayout>
