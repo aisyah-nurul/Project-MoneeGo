@@ -59,23 +59,27 @@ class TabunganFragment : Fragment() {
         nominalVisible = VisibilityPrefs.isNominalVisible(requireContext())
         syncIkonMata()
         renderNominal()
+        adapter.setNominalVisible(nominalVisible)
     }
 
     // ── Adapter ───────────────────────────────────────────────────────────────
     private fun setupAdapter() {
         adapter = TabunganAdapter(
+            nominalVisible = nominalVisible,
             onTabungClick = { tabungan ->
                 DetailTabunganBottomSheet(
                     tabungan  = tabungan,
                     onUpdated = { viewModel.update(it) },
-                    onDeleted = { viewModel.delete(it) }
+                    onDeleted = { viewModel.delete(it) },
+                    onSudahDigunakan = { id -> viewModel.tandaiSudahDigunakan(id) }
                 ).show(parentFragmentManager, "DetailTabungan")
             },
             onItemClick = { tabungan ->
                 DetailTabunganBottomSheet(
                     tabungan  = tabungan,
                     onUpdated = { viewModel.update(it) },
-                    onDeleted = { viewModel.delete(it) }
+                    onDeleted = { viewModel.delete(it) },
+                    onSudahDigunakan = { id -> viewModel.tandaiSudahDigunakan(id) }
                 ).show(parentFragmentManager, "DetailTabungan")
             }
         )
@@ -112,7 +116,17 @@ class TabunganFragment : Fragment() {
     // ── Observers ─────────────────────────────────────────────────────────────
     private fun setupObservers() {
         viewModel.tabunganList.observe(viewLifecycleOwner) { list ->
-            totalTerkumpul = list.sumOf { it.terkumpul }
+
+            // ══════════════════════════════════════════════════════════════════
+            // FITUR BARU: totalTerkumpul HANYA menghitung tabungan yang:
+            //   1. Belum sudahDigunakan (user belum konfirmasi "Sudah Membeli")
+            //
+            // Tabungan yang sudah ditandai sudahDigunakan = true TIDAK dihitung,
+            // meski masih tampil di tab SELESAI.
+            // ══════════════════════════════════════════════════════════════════
+            totalTerkumpul = list
+                .filter { !it.sudahDigunakan }
+                .sumOf { it.terkumpul }
 
             val tercapai = list.count { it.terkumpul >= it.targetNominal }
             val berjalan = list.count { it.terkumpul < it.targetNominal }
@@ -159,6 +173,7 @@ class TabunganFragment : Fragment() {
             VisibilityPrefs.setNominalVisible(requireContext(), nominalVisible)
             syncIkonMata()
             renderNominal()
+            adapter.setNominalVisible(nominalVisible)
         }
     }
 
@@ -185,8 +200,6 @@ class TabunganFragment : Fragment() {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
-        // ── PERUBAHAN: FAB diganti tombol biasa (btnTambahTabungan) ──────────
-        // Fungsi sama persis — membuka TambahTabunganDialog
         binding.btnTambahTabungan.setOnClickListener {
             TambahTabunganDialog { tabungan ->
                 viewModel.insert(tabungan)

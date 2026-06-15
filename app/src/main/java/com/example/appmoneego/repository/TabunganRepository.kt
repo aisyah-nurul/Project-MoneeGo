@@ -15,24 +15,16 @@ class TabunganRepository(private val dao: TabunganDao) {
 
     // ── Target Tabungan Prioritas ─────────────────────────────────────────────
 
-    /**
-     * LiveData tabungan prioritas — null jika belum ada yang diaktifkan user.
-     * Dashboard mengamati ini secara langsung, tanpa fallback otomatis.
-     */
     val tabunganPrioritas: LiveData<Tabungan?> = dao.getTabunganPrioritas()
 
-    /**
-     * Mengaktifkan atau mematikan status prioritas pada satu tabungan.
-     *
-     * - Jika isPriority = true  → matikan dulu prioritas pada SEMUA tabungan
-     *                              (memastikan hanya 1 yang aktif), lalu
-     *                              aktifkan untuk tabungan ini.
-     * - Jika isPriority = false → cukup matikan untuk tabungan ini saja.
-     */
     suspend fun setPrioritas(id: Int, isPriority: Boolean) {
         if (isPriority) {
             dao.clearAllPriority()
         }
         dao.setPriority(id, isPriority)
     }
+
+    // ── Tandai sudah digunakan ────────────────────────────────────────────────
+    // Setelah ini, tabungan tetap di tab SELESAI tapi tidak dihitung ke Total Terkumpul.
+    suspend fun tandaiSudahDigunakan(id: Int) = dao.tandaiSudahDigunakan(id)
 }

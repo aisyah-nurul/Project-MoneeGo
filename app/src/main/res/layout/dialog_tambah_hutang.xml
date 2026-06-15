@@ -197,7 +197,15 @@
 
             </LinearLayout>
 
-            <!-- Jumlah -->
+            <!-- ═══════════════════════════════════════════════════════════ -->
+            <!-- BUG 1 FIX: Jumlah Hutang                                   -->
+            <!-- Sebelumnya: hint="Rp 0" di dalam EditText                  -->
+            <!--   → menyebabkan teks "Rp 0" muncul sebagai label mengambang-->
+            <!-- Sesudah: prefixText="Rp " di TextInputLayout               -->
+            <!--   → prefix "Rp" selalu terlihat di kiri field (sama persis  -->
+            <!--     dengan field Nominal Cicilan), hint hanya tampil saat   -->
+            <!--     field kosong dan tidak ada angka "0" yang menggantung.  -->
+            <!-- ═══════════════════════════════════════════════════════════ -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -211,19 +219,21 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp">
+                android:layout_marginTop="6dp"
+                app:prefixText="Rp ">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etJumlah"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Rp 0"
+                    android:hint="0"
                     android:inputType="number"
                     android:textSize="14sp"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Limit Kredit (hanya muncul saat kartu kredit) -->
+            <!-- BUG 1 FIX juga diterapkan di sini agar konsisten -->
             <LinearLayout
                 android:id="@+id/layoutLimitKredit"
                 android:layout_width="match_parent"
@@ -244,13 +254,14 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp">
+                    android:layout_marginTop="6dp"
+                    app:prefixText="Rp ">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etLimitKredit"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Rp 0"
+                        android:hint="0"
                         android:inputType="number"
                         android:textSize="14sp"/>
 

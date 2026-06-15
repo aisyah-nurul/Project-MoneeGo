@@ -34,12 +34,16 @@ class TabunganViewModel(application: Application) : AndroidViewModel(application
 
     // ── Target Tabungan Prioritas ─────────────────────────────────────────────
 
-    /**
-     * Mengaktifkan/mematikan status prioritas pada satu tabungan.
-     * Dipanggil dari switch "Jadikan Sebagai Target Tabungan Prioritas?"
-     * di DetailTabunganBottomSheet.
-     */
     fun setPrioritas(id: Int, isPriority: Boolean) = viewModelScope.launch {
         repository.setPrioritas(id, isPriority)
+    }
+
+    // ── Tandai sudah digunakan ────────────────────────────────────────────────
+    // Dipanggil dari DetailTabunganBottomSheet saat user menekan
+    // "Saya Sudah Membeli Impian Ini" → konfirmasi → "Sudah".
+    // Setelah ini Room trigger LiveData → TabunganFragment otomatis
+    // recalculate totalTerkumpul tanpa item ini.
+    fun tandaiSudahDigunakan(id: Int) = viewModelScope.launch {
+        repository.tandaiSudahDigunakan(id)
     }
 }

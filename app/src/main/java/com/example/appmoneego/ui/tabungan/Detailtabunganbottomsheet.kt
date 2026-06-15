@@ -8,6 +8,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -36,7 +37,9 @@ import java.util.*
 class DetailTabunganBottomSheet(
     private val tabungan: Tabungan,
     private val onUpdated: (Tabungan) -> Unit,
-    private val onDeleted: (Tabungan) -> Unit
+    private val onDeleted: (Tabungan) -> Unit,
+    // ── FITUR BARU: callback dipanggil saat user konfirmasi "Sudah Membeli" ──
+    private val onSudahDigunakan: (Int) -> Unit = {}
 ) : BottomSheetDialogFragment() {
 
     private var jumlahAngka: Long = 0L
@@ -47,6 +50,11 @@ class DetailTabunganBottomSheet(
 
     private val tabunganViewModel: TabunganViewModel by activityViewModels()
 
+    // ── Apakah target sudah selesai (100%) ────────────────────────────────────
+    // Dipakai untuk menentukan mode tampilan: form input vs tombol "Sudah Membeli"
+    private val isSelesai: Boolean
+        get() = tabungan.terkumpul >= tabungan.targetNominal
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -55,16 +63,26 @@ class DetailTabunganBottomSheet(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val tvNama          = view.findViewById<TextView>(R.id.tvDetailNama)
-        val tvHariIni       = view.findViewById<TextView>(R.id.tvDetailHariIni)
-        val tvTerkumpul     = view.findViewById<TextView>(R.id.tvDetailTerkumpul)
-        val tvSisa          = view.findViewById<TextView>(R.id.tvDetailSisa)
-        val etNominal       = view.findViewById<EditText>(R.id.etNominalTabung)
-        val etTanggal       = view.findViewById<EditText>(R.id.etTanggalTabung)
-        val btnKonfirmasi   = view.findViewById<View>(R.id.btnKonfirmasiTabung)
-        val btnHapus        = view.findViewById<android.widget.Button>(R.id.btnHapusTabungan)
-        val switchPrioritas = view.findViewById<Switch>(R.id.switchPrioritas)
-        val rvRiwayat       = view.findViewById<RecyclerView>(R.id.rvRiwayatTabungan)
+        val tvNama           = view.findViewById<TextView>(R.id.tvDetailNama)
+        val tvHariIni        = view.findViewById<TextView>(R.id.tvDetailHariIni)
+        val tvTerkumpul      = view.findViewById<TextView>(R.id.tvDetailTerkumpul)
+        val tvSisa           = view.findViewById<TextView>(R.id.tvDetailSisa)
+        val etNominal        = view.findViewById<EditText>(R.id.etNominalTabung)
+        val etTanggal        = view.findViewById<EditText>(R.id.etTanggalTabung)
+        val btnKonfirmasi    = view.findViewById<Button>(R.id.btnKonfirmasiTabung)
+        val btnSudahMembeli  = view.findViewById<Button>(R.id.btnSudahMembeli)
+        val btnHapus         = view.findViewById<Button>(R.id.btnHapusTabungan)
+        val switchPrioritas  = view.findViewById<Switch>(R.id.switchPrioritas)
+        val rvRiwayat        = view.findViewById<RecyclerView>(R.id.rvRiwayatTabungan)
+
+        // Grup view yang disembunyikan saat mode SELESAI
+        val labelNominal     = view.findViewById<TextView>(R.id.labelNominalTabungan)
+        val containerNominal = view.findViewById<LinearLayout>(R.id.containerNominalTabungan)
+        val labelTanggal     = view.findViewById<TextView>(R.id.labelTanggalTabungan)
+        val containerTanggal = view.findViewById<View>(R.id.containerTanggalTabungan)
+        val labelSumber      = view.findViewById<TextView>(R.id.labelSumberDana)
+        val containerSumber  = view.findViewById<View>(R.id.containerSumberDana)
+        val containerPrioritas = view.findViewById<LinearLayout>(R.id.containerPrioritas)
 
         val llDropdownHeader = view.findViewById<LinearLayout>(R.id.llSumberDanaHeader)
         val ivIkonDompet     = view.findViewById<ImageView>(R.id.ivIkonDompetDipilih)
@@ -87,6 +105,58 @@ class DetailTabunganBottomSheet(
         tvHariIni.text = "Hari ini: ${
             SimpleDateFormat("dd MMM yyyy", Locale("id")).format(Date())
         }"
+
+        // ══════════════════════════════════════════════════════════════════════
+        // FITUR BARU: Mode tampilan berdasarkan status target
+        //
+        // Mode BERJALAN (terkumpul < target):
+        //   - Tampilkan form input nominal, tanggal, sumber dana
+        //   - Tampilkan tombol KONFIRMASI
+        //   - Tampilkan switch prioritas
+        //   - Sembunyikan btnSudahMembeli
+        //
+        // Mode SELESAI (terkumpul >= target):
+        //   - Sembunyikan form input nominal, tanggal, sumber dana
+        //   - Sembunyikan tombol KONFIRMASI
+        //   - Sembunyikan switch prioritas
+        //   - Tampilkan tombol "✓ Saya Sudah Membeli Impian Ini"
+        //   - Jika sudahDigunakan = true → sembunyikan juga btnSudahMembeli
+        //     (user sudah konfirmasi sebelumnya, tidak perlu menekan lagi)
+        // ══════════════════════════════════════════════════════════════════════
+        if (isSelesai) {
+            // Sembunyikan semua elemen form input
+            labelNominal.visibility     = View.GONE
+            containerNominal.visibility = View.GONE
+            labelTanggal.visibility     = View.GONE
+            containerTanggal.visibility = View.GONE
+            labelSumber.visibility      = View.GONE
+            containerSumber.visibility  = View.GONE
+            containerPrioritas.visibility = View.GONE
+            btnKonfirmasi.visibility    = View.GONE
+
+            // Tampilkan atau sembunyikan btnSudahMembeli
+            if (tabungan.sudahDigunakan) {
+                // Sudah pernah dikonfirmasi → sembunyikan tombol
+                btnSudahMembeli.visibility = View.GONE
+            } else {
+                // Belum dikonfirmasi → tampilkan tombol
+                btnSudahMembeli.visibility = View.VISIBLE
+                btnSudahMembeli.setOnClickListener {
+                    tampilkanDialogKonfirmasiMembeli()
+                }
+            }
+        } else {
+            // Mode BERJALAN — tampilan normal
+            labelNominal.visibility     = View.VISIBLE
+            containerNominal.visibility = View.VISIBLE
+            labelTanggal.visibility     = View.VISIBLE
+            containerTanggal.visibility = View.VISIBLE
+            labelSumber.visibility      = View.VISIBLE
+            containerSumber.visibility  = View.VISIBLE
+            containerPrioritas.visibility = View.VISIBLE
+            btnKonfirmasi.visibility    = View.VISIBLE
+            btnSudahMembeli.visibility  = View.GONE
+        }
 
         // ── Tanggal bayar ─────────────────────────────────────────────────────
         etTanggal.setText(sdf.format(Date()))
@@ -180,7 +250,6 @@ class DetailTabunganBottomSheet(
             }
         }
 
-        // ── Toggle dropdown ───────────────────────────────────────────────────
         fun toggleDropdown() {
             isDropdownOpen          = !isDropdownOpen
             llOpsiDompet.visibility = if (isDropdownOpen) View.VISIBLE else View.GONE
@@ -193,18 +262,26 @@ class DetailTabunganBottomSheet(
         llDropdownHeader.setOnClickListener { toggleDropdown() }
 
         // ── Riwayat cicilan ───────────────────────────────────────────────────
-        // Didefinisikan di sini agar bisa dipanggil ulang setelah hapus cicilan
         fun loadRiwayat() {
             lifecycleScope.launch {
                 val riwayat: List<CicilanEntity> = withContext(Dispatchers.IO) {
                     cicilanDao.getCicilanByHutangId(tabungan.id.toString())
                 }
                 rvRiwayat.layoutManager = LinearLayoutManager(requireContext())
-                // ✅ Bug 1 fix: daftarDompet sudah pasti terisi saat loadRiwayat() dipanggil
                 rvRiwayat.adapter = RiwayatCicilanAdapter(
                     list         = riwayat,
                     daftarDompet = daftarDompet,
                     onHapus      = { cicilan: CicilanEntity ->
+                        // Sembunyikan tombol hapus cicilan jika target sudah selesai
+                        // (tidak bisa hapus cicilan dari target yang sudah 100%)
+                        if (isSelesai) {
+                            Toast.makeText(
+                                requireContext(),
+                                "Target sudah selesai, cicilan tidak bisa dihapus",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            return@RiwayatCicilanAdapter
+                        }
                         AlertDialog.Builder(requireContext())
                             .setTitle("Hapus Cicilan?")
                             .setMessage(
@@ -258,7 +335,6 @@ class DetailTabunganBottomSheet(
                 ivIkonDompet.visibility = View.VISIBLE
             }
             renderDropdown()
-            // ✅ loadRiwayat() dipanggil DI SINI, setelah daftarDompet pasti sudah terisi
             loadRiwayat()
         }
 
@@ -281,7 +357,7 @@ class DetailTabunganBottomSheet(
             }
         })
 
-        // ── Konfirmasi tabungan ───────────────────────────────────────────────
+        // ── Konfirmasi tabungan (hanya mode BERJALAN) ─────────────────────────
         btnKonfirmasi.setOnClickListener {
             if (jumlahAngka <= 0) {
                 etNominal.error = "Masukkan jumlah tabungan"
@@ -336,7 +412,7 @@ class DetailTabunganBottomSheet(
                 .show()
         }
 
-        // ── Switch prioritas ──────────────────────────────────────────────────
+        // ── Switch prioritas (hanya mode BERJALAN) ────────────────────────────
         switchPrioritas.isChecked = tabungan.isPriority
         switchPrioritas.setOnCheckedChangeListener { _, isChecked ->
             tabunganViewModel.setPrioritas(tabungan.id, isChecked)
@@ -348,5 +424,39 @@ class DetailTabunganBottomSheet(
         }
 
         view.findViewById<View>(R.id.btnTutupDetail).setOnClickListener { dismiss() }
+    }
+
+    // ══════════════════════════════════════════════════════════════════════════
+    // FITUR BARU: Dialog konfirmasi "Saya Sudah Membeli Impian Ini"
+    //
+    // Flow:
+    //   1. User tap tombol "✓ Saya Sudah Membeli Impian Ini"
+    //   2. Muncul dialog: "Apakah dana tabungan ini sudah digunakan..."
+    //   3a. User pilih "Belum" → dialog tutup, tidak ada perubahan
+    //   3b. User pilih "Sudah" → panggil onSudahDigunakan(tabungan.id)
+    //       → TabunganViewModel.tandaiSudahDigunakan()
+    //       → Room update sudahDigunakan = true
+    //       → LiveData trigger → TabunganFragment recalculate totalTerkumpul
+    //       → Tabungan tetap di tab SELESAI, tapi tidak dihitung ke total
+    //       → BottomSheet ditutup
+    // ══════════════════════════════════════════════════════════════════════════
+    private fun tampilkanDialogKonfirmasiMembeli() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Konfirmasi Pembelian")
+            .setMessage(
+                "Apakah dana tabungan \"${tabungan.nama}\" sudah digunakan untuk membeli impian yang dituju?\n\n" +
+                        "Dana ini tidak akan lagi dihitung ke Total Terkumpul setelah dikonfirmasi."
+            )
+            .setPositiveButton("Sudah") { _, _ ->
+                onSudahDigunakan(tabungan.id)
+                Toast.makeText(
+                    requireContext(),
+                    "\"${tabungan.nama}\" telah ditandai sebagai selesai digunakan 🎉",
+                    Toast.LENGTH_SHORT
+                ).show()
+                dismiss()
+            }
+            .setNegativeButton("Belum", null)
+            .show()
     }
 }

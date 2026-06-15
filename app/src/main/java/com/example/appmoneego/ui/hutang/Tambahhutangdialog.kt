@@ -83,6 +83,20 @@ class TambahHutangDialog(
         }
     }
 
+    // ══════════════════════════════════════════════════════════════════════════
+    // BUG 1 FIX: setupJumlahInput
+    //
+    // Sebelumnya: TextWatcher memformat angka lalu menyimpan ke etJumlah sebagai
+    //   teks biasa. Karena hint="Rp 0" di XML, Material TextInputLayout
+    //   menampilkan label "Rp 0" mengambang di atas field — terlihat seperti
+    //   ada nilai default padahal field masih kosong.
+    //
+    // Sesudahnya: prefixText="Rp " sudah di-set di XML (dialog_tambah_hutang.xml).
+    //   TextWatcher HANYA memformat angka dengan titik pemisah ribuan
+    //   (contoh: "6.000"), tanpa prefix "Rp" apapun di dalam teks EditText.
+    //   Hasilnya di layar: "Rp 6.000" (prefix dari XML + angka dari EditText),
+    //   identik dengan tampilan field Nominal Cicilan yang sudah benar.
+    // ══════════════════════════════════════════════════════════════════════════
     private fun setupJumlahInput() {
         binding.etJumlah.addTextChangedListener(object : TextWatcher {
             var isEditing = false
@@ -91,13 +105,17 @@ class TambahHutangDialog(
             override fun afterTextChanged(s: Editable?) {
                 if (isEditing) return
                 isEditing = true
+
+                // Ambil hanya digit
                 val raw = s.toString().replace(Regex("[^0-9]"), "")
                 jumlahAngka = raw.toLongOrNull() ?: 0L
-                // ✅ MASALAH 2 FIX: hanya format angka dengan titik, tanpa prefix "Rp "
-                // Prefix "Rp" sudah ada di XML sebagai prefixText pada TextInputLayout
+
+                // Format dengan titik ribuan saja — TANPA prefix "Rp"
+                // karena prefix sudah ditangani oleh TextInputLayout.prefixText
                 val formatted = if (jumlahAngka > 0)
                     NumberFormat.getNumberInstance(Locale("id", "ID")).format(jumlahAngka)
                 else ""
+
                 binding.etJumlah.setText(formatted)
                 binding.etJumlah.setSelection(formatted.length)
                 isEditing = false

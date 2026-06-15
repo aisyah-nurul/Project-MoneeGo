@@ -57,6 +57,10 @@ class DashboardFragment : Fragment() {
     private var rawPemasukan   = 0.0
     private var rawPengeluaran = 0.0
 
+    // BUG 3 FIX: simpan nilai sisa prioritas mentah agar bisa di-mask / unmask
+    // saat toggle privasi tanpa perlu fetch ulang dari ViewModel
+    private var rawSisaPrioritas = 0.0
+
     private val calBulanAktif: Calendar = Calendar.getInstance()
 
     private val NAMA_BULAN = listOf(
@@ -153,39 +157,36 @@ class DashboardFragment : Fragment() {
         }
     }
 
-    // ── Target Tabungan Prioritas ─────────────────────────────────────────────
-    //
-    // PERBAIKAN: Dashboard sekarang BENAR-BENAR user-driven.
-    //
-    // - dashboardViewModel.tabunganPrioritas mengamati tabunganPrioritas dari
-    //   repository, yang query-nya: SELECT * FROM tabungan WHERE isPriority = 1.
-    // - Jika belum ada satupun tabungan dengan isPriority = true,
-    //   LiveData ini mengirim null.
-    // - TIDAK ADA fallback ke tabungan pertama / terbaru / yang sedang berjalan.
-    // - Saat user menyalakan/mematikan switch "Jadikan Sebagai Target Tabungan
-    //   Prioritas?" di DetailTabunganBottomSheet, Room akan otomatis memicu
-    //   LiveData ini ulang (karena observe), sehingga Dashboard ikut update
-    //   secara realtime tanpa perlu refresh manual.
     private fun setupTabunganPrioritas() {
         dashboardViewModel.tabunganPrioritas.observe(viewLifecycleOwner) { prioritas ->
             if (prioritas == null) {
-                // ── KONDISI 1 & 3: belum ada / baru dimatikan → state kosong ──
                 tvNamaPrioritas.text         = "Belum ada target tabungan prioritas"
                 progressPrioritas.progress   = 0
                 tvProgressPersen.text        = "Progress: 0%"
+                // BUG 3 FIX: reset raw value & kosongkan tvSisaPrioritas
+                rawSisaPrioritas             = 0.0
                 tvSisaPrioritas.text         = ""
                 btnBuatTarget.visibility     = View.VISIBLE
                 btnGantiPrioritas.visibility = View.GONE
             } else {
-                // ── KONDISI 2: ada tabungan dengan isPriority = true ──────────
                 val persen = if (prioritas.targetNominal > 0)
                     ((prioritas.terkumpul / prioritas.targetNominal) * 100).toInt() else 0
                 val sisa = (prioritas.targetNominal - prioritas.terkumpul).coerceAtLeast(0.0)
 
-                tvNamaPrioritas.text        = prioritas.nama
-                progressPrioritas.progress  = persen
-                tvProgressPersen.text       = "Progress: $persen%"
-                tvSisaPrioritas.text        = "Sisa ${CurrencyFormatter.format(sisa)}"
+                // BUG 3 FIX: simpan nilai sisa mentah
+                rawSisaPrioritas = sisa
+
+                tvNamaPrioritas.text       = prioritas.nama
+                progressPrioritas.progress = persen
+                // Progress persen TETAP tampil meski mode privasi aktif — sesuai spec
+                tvProgressPersen.text      = "Progress: $persen%"
+
+                // BUG 3 FIX: tampilkan "Sisa Rp ***" jika privasi aktif
+                tvSisaPrioritas.text = if (isSaldoVisible)
+                    "Sisa ${CurrencyFormatter.format(sisa)}"
+                else
+                    "Sisa Rp ***"
+
                 btnBuatTarget.visibility     = View.GONE
                 btnGantiPrioritas.visibility = View.VISIBLE
             }
@@ -255,11 +256,22 @@ class DashboardFragment : Fragment() {
             tvPemasukan.text   = nilaiPemasukan
             tvPengeluaran.text = nilaiPengeluaran
             tvSelisih.text     = nilaiSelisih
+
+            // BUG 3 FIX: tampilkan kembali nilai sisa prioritas yang tersimpan
+            if (rawSisaPrioritas > 0.0) {
+                tvSisaPrioritas.text = "Sisa ${CurrencyFormatter.format(rawSisaPrioritas)}"
+            }
         } else {
             tvSaldo.text       = "Rp ***"
             tvPemasukan.text   = "***"
             tvPengeluaran.text = "***"
             tvSelisih.text     = "***"
+
+            // BUG 3 FIX: sembunyikan "Sisa Rp..." di card TARGET TABUNGAN PRIORITAS
+            // Progress persen TIDAK disembunyikan — sesuai spec pengecualian
+            if (tvSisaPrioritas.text.isNotEmpty()) {
+                tvSisaPrioritas.text = "Sisa Rp ***"
+            }
         }
         hitungDanTampilkanSelisih()
     }

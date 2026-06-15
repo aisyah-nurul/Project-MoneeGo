@@ -64,8 +64,7 @@ class TransaksiAdapter(
             "Transfer"          to R.drawable.ic_wallet
         )
 
-        // ── Jenis dompet → icon (dipakai untuk transaksi saldo awal) ─────────
-        // catatan field menyimpan jenis dompet saat insert saldo awal otomatis
+        // ── Jenis dompet → icon ───────────────────────────────────────────────
         private val JENIS_DOMPET_ICON = mapOf(
             "Rekening Bank"  to R.drawable.ic_wallet_bank,
             "Dompet Digital" to R.drawable.ic_wallet_digital,
@@ -75,10 +74,31 @@ class TransaksiAdapter(
             "Lainnya"        to R.drawable.ic_wallet_lainnya
         )
 
-        // Set nama kategori "standar" yang diketahui sistem.
-        // Jika kategori TIDAK ada di sini, berarti itu adalah nama dompet
-        // dari transaksi saldo awal otomatis — gunakan icon dari jenis dompet.
         private val KATEGORI_STANDAR = KATEGORI_ICON.keys.toSet()
+
+        // ══════════════════════════════════════════════════════════════════════
+        // BUG 2 FIX: Daftar kategori yang iconnya harus menggunakan icon
+        // DOMPET SUMBER DANA, bukan icon kategori.
+        //
+        // Kenapa "Hutang" masuk sini?
+        //   Saat user membayar hutang, transaksi disimpan dengan:
+        //     jenis     = "PENGELUARAN"
+        //     kategori  = "Hutang"
+        //     dompetId  = id dompet yang dipakai membayar (Gopay, BCA, dll)
+        //
+        //   Sebelum fix: TransaksiAdapter memakai ic_hutang untuk semua
+        //   transaksi berkategori "Hutang" — icon tidak mencerminkan dompet
+        //   mana yang dipakai.
+        //
+        //   Setelah fix: Jika kategori == "Hutang", resolveIcon() akan mencari
+        //   dompet berdasarkan transaksi.dompetId, lalu mengembalikan icon
+        //   sesuai jenis dompet tersebut (Gopay → ic_wallet_digital,
+        //   BCA → ic_wallet_bank, dst).
+        //
+        //   Ini berlaku di CARD transaksi (ItemViewHolder) maupun
+        //   POPUP detail (DetailTransaksiDialog juga sudah dikerjakan terpisah).
+        // ══════════════════════════════════════════════════════════════════════
+        private val KATEGORI_PAKAI_ICON_DOMPET = setOf("Hutang")
     }
 
     private var semuaData:    List<Transaksi>            = emptyList()
@@ -90,17 +110,28 @@ class TransaksiAdapter(
     fun getDaftarDompet(): List<Dompet>   = daftarDompet
 
     // ── Resolve icon untuk satu transaksi ────────────────────────────────────
-    // Logic:
-    //   1. Jika kategori ada di KATEGORI_STANDAR → pakai icon kategori seperti biasa
-    //   2. Jika kategori TIDAK ada di KATEGORI_STANDAR (= nama dompet dari saldo awal)
-    //      → baca field catatan yang berisi jenis dompet → pakai JENIS_DOMPET_ICON
-    //   3. Fallback ke ic_wallet jika tidak ditemukan
+    //
+    // Priority logic:
+    //   1. Jika kategori ada di KATEGORI_PAKAI_ICON_DOMPET (mis. "Hutang")
+    //      → cari dompet by dompetId → kembalikan icon sesuai jenis dompet
+    //   2. Jika kategori ada di KATEGORI_STANDAR → pakai icon kategori biasa
+    //   3. Jika kategori TIDAK ada di KATEGORI_STANDAR (= nama dompet dari
+    //      saldo awal otomatis) → baca field catatan yang berisi jenis dompet
+    //      → pakai JENIS_DOMPET_ICON
+    //   4. Fallback ke ic_wallet jika tidak ditemukan
     private fun resolveIcon(transaksi: Transaksi): Int {
+        // Kasus 1: kategori yang harus pakai icon dompet sumber dana (mis. "Hutang")
+        if (transaksi.kategori in KATEGORI_PAKAI_ICON_DOMPET) {
+            val dompet = daftarDompet.find { it.id == transaksi.dompetId }
+            return JENIS_DOMPET_ICON[dompet?.jenis] ?: R.drawable.ic_wallet
+        }
+
+        // Kasus 2: kategori standar dengan icon kategori
         if (transaksi.kategori in KATEGORI_STANDAR) {
-            // Kategori standar — gunakan map biasa
             return KATEGORI_ICON[transaksi.kategori] ?: R.drawable.ic_wallet
         }
-        // Bukan kategori standar = nama dompet dari saldo awal otomatis
+
+        // Kasus 3: bukan kategori standar = nama dompet dari saldo awal otomatis
         // catatan berisi jenis dompet (diset oleh DompetFragment)
         return JENIS_DOMPET_ICON[transaksi.catatan] ?: R.drawable.ic_wallet
     }
@@ -213,23 +244,13 @@ class TransaksiAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(transaksi: Transaksi) {
-            // ── PERUBAHAN: gunakan resolveIcon() untuk handle saldo awal ──────
+            // Gunakan resolveIcon() — sudah menangani hutang, saldo awal, dan kategori biasa
             binding.ivKategoriIcon.setImageResource(resolveIcon(transaksi))
-
-            // ── PERUBAHAN: tampilkan nama dompet sebagai judul transaksi ──────
-            // Jika kategori bukan kategori standar = nama dompet dari saldo awal
             binding.tvKategori.text = transaksi.kategori
 
-            // ── PERUBAHAN: untuk saldo awal, catatan berisi jenis dompet ──────
-            // Tampilkan nama dompet (dari field nama dompet di entity Dompet)
-            // sebagai catatan baris bawah, agar info tetap informatif
-            val isSaldoAwal = transaksi.kategori !in KATEGORI_STANDAR
-            binding.tvCatatan.text = if (isSaldoAwal) {
-                // catatan = jenis dompet; tampilkan sebagai deskripsi
-                transaksi.catatan.ifEmpty { "-" }
-            } else {
-                transaksi.catatan.ifEmpty { "-" }
-            }
+            val isSaldoAwal = transaksi.kategori !in KATEGORI_STANDAR &&
+                    transaksi.kategori !in KATEGORI_PAKAI_ICON_DOMPET
+            binding.tvCatatan.text = transaksi.catatan.ifEmpty { "-" }
 
             val isIncome = transaksi.jenis == "PEMASUKAN"
             val warna    = if (isIncome) 0xFF276F29.toInt() else 0xFFF44336.toInt()

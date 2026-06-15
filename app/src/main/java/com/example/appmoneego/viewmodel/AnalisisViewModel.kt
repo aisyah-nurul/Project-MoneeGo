@@ -38,7 +38,6 @@ class AnalisisViewModel(application: Application) : AndroidViewModel(application
     private val _rangeStart = MutableLiveData<Long>()
     private val _rangeEnd   = MutableLiveData<Long>()
 
-    // Dompet list untuk lookup nama
     val allDompet: LiveData<List<Dompet>>
 
     init {
@@ -98,7 +97,6 @@ class AnalisisViewModel(application: Application) : AndroidViewModel(application
         _rangeEnd.switchMap { end -> repo.getByJenisAndBulan("PEMASUKAN", start, end) }
     }
 
-    // Untuk bottom sheet detail per kategori
     private val _selectedKategori = MutableLiveData<String?>()
     val selectedKategori: LiveData<String?> = _selectedKategori
 
@@ -113,6 +111,24 @@ class AnalisisViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    // ══════════════════════════════════════════════════════════════════════════
+    // FIX: Kategori yang dikecualikan dari analisis
+    //
+    // "Transfer" dikecualikan karena:
+    //   - Transfer adalah perpindahan dana antar dompet sendiri
+    //   - Bukan pengeluaran nyata maupun pemasukan nyata
+    //   - Jika ikut dihitung, totalnya akan membengkak (double count)
+    //
+    // "Hutang" dikecualikan dari PENGELUARAN karena:
+    //   - Transaksi bayar hutang (kategori "Hutang") adalah pembayaran kewajiban
+    //   - Bukan pengeluaran konsumtif yang relevan untuk analisis
+    //   - Sudah tercatat di fitur Hutang secara terpisah
+    //
+    // Jika di masa depan ingin menampilkan Transfer/Hutang sebagai kategori
+    // tersendiri di analisis, hapus dari set ini.
+    // ══════════════════════════════════════════════════════════════════════════
+    private val KATEGORI_EXCLUDE = setOf("Transfer", "Hutang")
+
     // ── Summary Kategori ──────────────────────────────────────────────────────
 
     val kategoriSummaryPengeluaran = MediatorLiveData<List<KategoriSummary>>().apply {
@@ -123,12 +139,11 @@ class AnalisisViewModel(application: Application) : AndroidViewModel(application
         addSource(transaksiPemasukan) { value = buildKategoriSummary(it) }
     }
 
-    // ── Summary Dompet (dengan nama asli dari lookup) ─────────────────────────
+    // ── Summary Dompet ────────────────────────────────────────────────────────
 
     val dompetSummaryPengeluaran = MediatorLiveData<List<KategoriSummary>>()
     val dompetSummaryPemasukan   = MediatorLiveData<List<KategoriSummary>>()
 
-    // Dipanggil dari Fragment setelah allDompet tersedia
     fun rebuildDompetSummary(dompetList: List<Dompet>) {
         val mapDompet = dompetList.associate { it.id to it.nama }
         transaksiPengeluaran.value?.let {
@@ -139,24 +154,34 @@ class AnalisisViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    // ── Total ─────────────────────────────────────────────────────────────────
+    // ── Total — juga exclude Transfer & Hutang ────────────────────────────────
 
     val totalPengeluaran = MediatorLiveData<Double>().apply {
-        addSource(transaksiPengeluaran) { value = it.sumOf { t -> t.nominal } }
+        addSource(transaksiPengeluaran) { list ->
+            value = list
+                .filter { it.kategori !in KATEGORI_EXCLUDE }
+                .sumOf { it.nominal }
+        }
     }
 
     val totalPemasukan = MediatorLiveData<Double>().apply {
-        addSource(transaksiPemasukan) { value = it.sumOf { t -> t.nominal } }
+        addSource(transaksiPemasukan) { list ->
+            value = list
+                .filter { it.kategori !in KATEGORI_EXCLUDE }
+                .sumOf { it.nominal }
+        }
     }
 
     // ── Builders ──────────────────────────────────────────────────────────────
 
     private fun buildKategoriSummary(list: List<Transaksi>): List<KategoriSummary> {
-        val total = list.sumOf { it.nominal }
-        return list.groupBy { it.kategori }
+        // FIX: filter dulu sebelum groupBy
+        val filtered = list.filter { it.kategori !in KATEGORI_EXCLUDE }
+        val total = filtered.sumOf { it.nominal }
+        return filtered
+            .groupBy { it.kategori }
             .map { (nama, items) ->
                 val jumlah = items.sumOf { it.nominal }
-                // Persentase dibulatkan ke integer
                 val persen = if (total > 0) Math.round(jumlah / total * 100).toFloat() else 0f
                 KategoriSummary(nama, jumlah, persen)
             }
@@ -167,12 +192,14 @@ class AnalisisViewModel(application: Application) : AndroidViewModel(application
         list: List<Transaksi>,
         dompetMap: Map<Int, String>
     ): List<KategoriSummary> {
-        val total = list.sumOf { it.nominal }
-        return list.groupBy { it.dompetId }
+        // FIX: filter Transfer & Hutang juga dari summary dompet
+        val filtered = list.filter { it.kategori !in KATEGORI_EXCLUDE }
+        val total = filtered.sumOf { it.nominal }
+        return filtered
+            .groupBy { it.dompetId }
             .map { (dompetId, items) ->
                 val jumlah = items.sumOf { it.nominal }
                 val persen = if (total > 0) Math.round(jumlah / total * 100).toFloat() else 0f
-                // Pakai nama dompet asli dari input pengguna
                 val nama = dompetMap[dompetId] ?: "Dompet $dompetId"
                 KategoriSummary(nama, jumlah, persen)
             }

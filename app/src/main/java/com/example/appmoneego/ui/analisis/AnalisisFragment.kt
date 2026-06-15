@@ -44,7 +44,6 @@ class AnalisisFragment : Fragment() {
 
     private var filterMode = "kategori"
 
-    // Warna pie chart palette navy Moneego
     private val pieColors = listOf(
         "#2C3E6B", "#4A6E8A", "#6B8FA3", "#8FAEC0",
         "#9ABFD0", "#AECFDB", "#5B8DB8", "#7BA7BC",
@@ -66,8 +65,6 @@ class AnalisisFragment : Fragment() {
         observeViewModel()
     }
 
-    // ── Bind ─────────────────────────────────────────────────────────────────
-
     private fun bindViews(view: View) {
         tabPengeluaran   = view.findViewById(R.id.tabPengeluaran)
         tabPemasukan     = view.findViewById(R.id.tabPemasukan)
@@ -85,8 +82,6 @@ class AnalisisFragment : Fragment() {
         layoutFilterTipe = view.findViewById(R.id.layoutFilterTipe)
     }
 
-    // ── Pie Chart ─────────────────────────────────────────────────────────────
-
     private fun setupPieChart() {
         pieChart.apply {
             description.isEnabled   = false
@@ -102,8 +97,6 @@ class AnalisisFragment : Fragment() {
             setEntryLabelColor(Color.WHITE)
             setEntryLabelTextSize(10f)
             setTouchEnabled(true)
-
-            // Ganti teks default "No chart data available" ke bahasa Indonesia
             setNoDataText("Belum ada data untuk ditampilkan")
             setNoDataTextColor(Color.parseColor("#90A4AE"))
 
@@ -117,8 +110,6 @@ class AnalisisFragment : Fragment() {
         }
     }
 
-    // ── Adapter ───────────────────────────────────────────────────────────────
-
     private fun setupAdapter() {
         kategoriAdapter = KategoriAnalisisAdapter { item ->
             showBottomSheetDetail(item.nama)
@@ -126,8 +117,6 @@ class AnalisisFragment : Fragment() {
         rvKategori.layoutManager = LinearLayoutManager(requireContext())
         rvKategori.adapter = kategoriAdapter
     }
-
-    // ── Click ─────────────────────────────────────────────────────────────────
 
     private fun setupClick() {
         setActiveTab(true)
@@ -162,82 +151,84 @@ class AnalisisFragment : Fragment() {
         btnNextBulan.setOnClickListener { viewModel.nextBulan() }
     }
 
-    // ── Observe ───────────────────────────────────────────────────────────────
-
     private fun observeViewModel() {
 
-        // Label bulan update
         viewModel.currentCal.observe(viewLifecycleOwner) {
             val label = viewModel.getLabelBulan()
             tvBulanTahun.text = label
             tvBulanLabel.text = label
         }
 
-        // Kategori pengeluaran
+        // ══════════════════════════════════════════════════════════════════════
+        // FIX: Setiap observer HANYA update UI jika tab DAN filterMode cocok.
+        //
+        // Sebelumnya: observer dompetSummaryPemasukan langsung panggil updateUI()
+        // tanpa cek filterMode — akibatnya data dompet selalu menimpa data
+        // kategori meski user sedang di mode "Oleh Kategori".
+        //
+        // Sesudahnya: setiap observer punya guard:
+        //   if (activeTab == X && filterMode == Y) updateUI(...)
+        // Sehingga hanya observer yang relevan yang mengupdate tampilan.
+        // ══════════════════════════════════════════════════════════════════════
+
+        // Kategori pengeluaran — hanya aktif saat tab PENGELUARAN & filter kategori
         viewModel.kategoriSummaryPengeluaran.observe(viewLifecycleOwner) { list ->
             if (viewModel.activeTab.value == "PENGELUARAN" && filterMode == "kategori") {
                 updateUI(list, viewModel.totalPengeluaran.value ?: 0.0)
             }
         }
 
-        // Kategori pemasukan
+        // Kategori pemasukan — hanya aktif saat tab PEMASUKAN & filter kategori
         viewModel.kategoriSummaryPemasukan.observe(viewLifecycleOwner) { list ->
             if (viewModel.activeTab.value == "PEMASUKAN" && filterMode == "kategori") {
                 updateUI(list, viewModel.totalPemasukan.value ?: 0.0)
             }
         }
 
-        // Total
+        // Total pengeluaran
         viewModel.totalPengeluaran.observe(viewLifecycleOwner) { total ->
             if (viewModel.activeTab.value == "PENGELUARAN") {
                 tvTotalNominal.text = formatRupiah(total)
             }
         }
+
+        // Total pemasukan
         viewModel.totalPemasukan.observe(viewLifecycleOwner) { total ->
             if (viewModel.activeTab.value == "PEMASUKAN") {
                 tvTotalNominal.text = formatRupiah(total)
             }
         }
 
-        // Dompet summary (diupdate setiap allDompet atau transaksi berubah)
+        // Rebuild dompet summary saat daftar dompet berubah
         viewModel.allDompet.observe(viewLifecycleOwner) { dompetList ->
             viewModel.rebuildDompetSummary(dompetList)
         }
 
+        // FIX: transaksiPengeluaran observer hanya rebuild dompet summary,
+        // TIDAK langsung updateUI — biarkan observer kategori/dompet yang handle
         viewModel.transaksiPengeluaran.observe(viewLifecycleOwner) {
             viewModel.allDompet.value?.let { d -> viewModel.rebuildDompetSummary(d) }
-            if (viewModel.activeTab.value == "PENGELUARAN" && filterMode == "kategori") {
-                viewModel.kategoriSummaryPengeluaran.value?.let { list ->
-                    updateUI(list, viewModel.totalPengeluaran.value ?: 0.0)
-                }
-            }
         }
 
+        // FIX: sama untuk transaksiPemasukan
         viewModel.transaksiPemasukan.observe(viewLifecycleOwner) {
             viewModel.allDompet.value?.let { d -> viewModel.rebuildDompetSummary(d) }
-            if (viewModel.activeTab.value == "PEMASUKAN" && filterMode == "kategori") {
-                viewModel.kategoriSummaryPemasukan.value?.let { list ->
-                    updateUI(list, viewModel.totalPemasukan.value ?: 0.0)
-                }
-            }
         }
 
-        // Dompet summary pengeluaran
+        // Dompet summary pengeluaran — hanya aktif saat tab PENGELUARAN & filter dompet
         viewModel.dompetSummaryPengeluaran.observe(viewLifecycleOwner) { list ->
             if (viewModel.activeTab.value == "PENGELUARAN" && filterMode == "dompet") {
                 updateUI(list, viewModel.totalPengeluaran.value ?: 0.0)
             }
         }
 
-        // Dompet summary pemasukan
+        // Dompet summary pemasukan — hanya aktif saat tab PEMASUKAN & filter dompet
         viewModel.dompetSummaryPemasukan.observe(viewLifecycleOwner) { list ->
             if (viewModel.activeTab.value == "PEMASUKAN" && filterMode == "dompet") {
                 updateUI(list, viewModel.totalPemasukan.value ?: 0.0)
             }
         }
     }
-
-    // ── Update UI ─────────────────────────────────────────────────────────────
 
     private fun updateUI(list: List<KategoriSummary>, total: Double) {
         kategoriAdapter.submitList(list)
@@ -253,6 +244,9 @@ class AnalisisFragment : Fragment() {
         tvTerbesarPersen.text = top?.let { "${it.persentase.toInt()}% dari total" } ?: "-"
     }
 
+    // FIX: refreshCurrentData sekarang selalu membaca filterMode TERKINI
+    // dan mengambil data dari LiveData yang tepat.
+    // Ini dipanggil saat: ganti tab, ganti filter, atau ganti bulan.
     private fun refreshCurrentData() {
         val tab   = viewModel.activeTab.value ?: "PENGELUARAN"
         val total = if (tab == "PENGELUARAN")
@@ -260,22 +254,19 @@ class AnalisisFragment : Fragment() {
         else
             viewModel.totalPemasukan.value ?: 0.0
 
-        if (filterMode == "kategori") {
-            val list = if (tab == "PENGELUARAN")
+        val list: List<KategoriSummary> = when {
+            filterMode == "kategori" && tab == "PENGELUARAN" ->
                 viewModel.kategoriSummaryPengeluaran.value ?: emptyList()
-            else
+            filterMode == "kategori" && tab == "PEMASUKAN" ->
                 viewModel.kategoriSummaryPemasukan.value ?: emptyList()
-            updateUI(list, total)
-        } else {
-            val list = if (tab == "PENGELUARAN")
+            filterMode == "dompet" && tab == "PENGELUARAN" ->
                 viewModel.dompetSummaryPengeluaran.value ?: emptyList()
-            else
+            else ->
                 viewModel.dompetSummaryPemasukan.value ?: emptyList()
-            updateUI(list, total)
         }
-    }
 
-    // ── Chart ─────────────────────────────────────────────────────────────────
+        updateUI(list, total)
+    }
 
     private fun updateChart(list: List<KategoriSummary>) {
         if (list.isEmpty()) {
@@ -287,17 +278,14 @@ class AnalisisFragment : Fragment() {
             return
         }
 
-        // Pakai jumlah asli sebagai value, tapi formatter tampilkan persen bulat
         val entries = list.map { PieEntry(it.jumlah.toFloat(), it.nama) }
         val colors  = list.mapIndexed { i, _ ->
             Color.parseColor(pieColors[i % pieColors.size])
         }
-
         val total = list.sumOf { it.jumlah }.toFloat()
 
         val dataSet = PieDataSet(entries, "").apply {
             this.colors    = colors
-            // Formatter custom: tampilkan persen bulat tanpa desimal
             valueFormatter = object : ValueFormatter() {
                 override fun getPieLabel(value: Float, pieEntry: PieEntry?): String {
                     val persen = if (total > 0) Math.round(value / total * 100) else 0
@@ -317,8 +305,6 @@ class AnalisisFragment : Fragment() {
             invalidate()
         }
     }
-
-    // ── Bottom Sheet Detail ───────────────────────────────────────────────────
 
     private fun showBottomSheetDetail(nama: String) {
         val dialog = BottomSheetDialog(requireContext())
@@ -352,8 +338,6 @@ class AnalisisFragment : Fragment() {
         dialog.setOnDismissListener { viewModel.selectKategori(null) }
         dialog.show()
     }
-
-    // ── Tab Styling ───────────────────────────────────────────────────────────
 
     private fun setActiveTab(isPengeluaran: Boolean) {
         val activeColor   = ContextCompat.getColor(requireContext(), R.color.tab_active_bg)

@@ -37,7 +37,6 @@ class HutangFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Sembunyikan bottom nav
         requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
             ?.visibility = View.GONE
 
@@ -55,19 +54,23 @@ class HutangFragment : Fragment() {
         isNominalVisible = VisibilityPrefs.isNominalVisible(requireContext())
         syncIkonMata()
         refreshTampilan()
+        // BUG 3 FIX: adapter juga perlu di-refresh agar card-card hutang
+        // langsung mengikuti state privasi terbaru saat kembali ke halaman ini
+        adapter.setNominalVisible(isNominalVisible)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // Tampilkan kembali bottom nav saat keluar
         requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigationView)
             ?.visibility = View.VISIBLE
         _binding = null
     }
 
     private fun setupRecyclerView() {
+        // BUG 3 FIX: teruskan isNominalVisible ke adapter saat inisialisasi
         adapter = HutangAdapter(
-            lifecycleScope = viewLifecycleOwner.lifecycleScope
+            lifecycleScope    = viewLifecycleOwner.lifecycleScope,
+            nominalVisible    = isNominalVisible
         ) { hutang ->
             val sheet = CicilanBottomSheetFragment.newInstance(hutang)
             sheet.setOnCicilanSavedListener { updated ->
@@ -99,6 +102,7 @@ class HutangFragment : Fragment() {
             val lunas = list.filter { it.selesai }
             val total = aktif.sumOf { it.sisaHutang }
 
+            // BUG 3 FIX: total hutang di header card juga disembunyikan
             binding.tvTotalHutang.text = if (isNominalVisible)
                 CurrencyFormatter.format(total.toDouble())
             else
@@ -133,6 +137,9 @@ class HutangFragment : Fragment() {
             VisibilityPrefs.setNominalVisible(requireContext(), isNominalVisible)
             syncIkonMata()
             refreshTampilan()
+            // BUG 3 FIX: propagate ke adapter agar card hutang di RecyclerView
+            // langsung ikut menyembunyikan / menampilkan nominal
+            adapter.setNominalVisible(isNominalVisible)
         }
     }
 
@@ -143,6 +150,7 @@ class HutangFragment : Fragment() {
     }
 
     private fun refreshTampilan() {
+        // BUG 3 FIX: sembunyikan total hutang di header card
         if (isNominalVisible) {
             val total = viewModel.hutangList.value
                 ?.filter { !it.selesai }
