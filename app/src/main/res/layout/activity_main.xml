@@ -21,8 +21,8 @@
         android:layout_gravity="bottom"
         android:background="@color/bg_bottom_nav"
         app:menu="@menu/bottom_nav_menu"
-        app:itemIconTint="@color/primary_slate"
-        app:itemTextColor="@color/primary_slate"
+        app:itemIconTint="@xml/nav_item_color"
+        app:itemTextColor="@xml/nav_item_color"
         app:itemIconSize="32dp"
         app:elevation="8dp"
         app:labelVisibilityMode="unlabeled"/>

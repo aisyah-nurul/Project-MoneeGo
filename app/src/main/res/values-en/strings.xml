@@ -85,7 +85,7 @@
     <string name="insight_tabungan">Keep saving!</string>
 
     <!-- Debt -->
-    <string name="title_hutang">Debt</string>
+    <string name="title_hutang">MY DEBT</string>
     <string name="label_hutang_belum_bayar">Unpaid debts!</string>
     <string name="label_selesai">Completed</string>
     <string name="label_total_hutang">Total debt</string>
@@ -299,7 +299,7 @@
     <string name="label_tabungan_berjalan">Active Savings</string>
     <string name="empty_tabungan">No savings yet</string>
 
-    <string name="title_analisis">Analysis</string>
+    <string name="title_analisis">ANALYSIS</string>
     <string name="tab_analisis_pengeluaran">EXPENSES</string>
     <string name="tab_analisis_pemasukan">INCOME</string>
 
@@ -329,4 +329,5 @@
     <string name="label_input_cicilan">Input payment</string>
     <string name="label_hutang_lunas_stat">Paid Off</string>
     <string name="label_dari_total">of total</string>
+    <string name="hint_tidak_ada_catatan">No notes</string>
 </resources>

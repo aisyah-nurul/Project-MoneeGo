@@ -58,7 +58,7 @@
             app:boxStrokeColor="#0D1B2A"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="2dp"
-            app:boxBackgroundColor="#1D334B"
+            app:boxBackgroundColor="@color/card_saldo_bg"
             app:hintEnabled="false">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -280,7 +280,7 @@
             app:boxStrokeColor="#0D1B2A"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="2dp"
-            app:boxBackgroundColor="#1D334B"
+            app:boxBackgroundColor="@color/card_saldo_bg"
             app:prefixText="Rp "
             app:hintEnabled="false">
 

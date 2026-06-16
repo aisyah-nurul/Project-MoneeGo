@@ -85,7 +85,7 @@
     <string name="insight_tabungan">Semangat menabung!</string>
 
     <!-- Hutang -->
-    <string name="title_hutang">Hutang</string>
+    <string name="title_hutang">HUTANGKU</string>
     <string name="label_hutang_belum_bayar">Hutang yang belum dibayar!</string>
     <string name="label_selesai">Selesai</string>
     <string name="label_total_hutang">Total hutang</string>
@@ -249,7 +249,7 @@
     <string name="label_tabungan_tercapai">Tabungan Tercapai</string>
     <string name="label_tabungan_berjalan">Tabungan Berjalan</string>
     <string name="empty_tabungan">Belum ada tabungan</string>
-    <string name="title_analisis">Analisis</string>
+    <string name="title_analisis">ANALISIS</string>
     <string name="tab_analisis_pengeluaran">PENGELUARAN</string>
     <string name="tab_analisis_pemasukan">PEMASUKAN</string>
     <string name="label_total_pengeluaran_analisis">Total Pengeluaran</string>
@@ -320,4 +320,5 @@
 
     <string name="label_hutang_lunas_stat">Hutang Lunas</string>
     <string name="label_dari_total">dari total</string>
+    <string name="hint_tidak_ada_catatan">Tidak ada catatan</string>
 </resources>

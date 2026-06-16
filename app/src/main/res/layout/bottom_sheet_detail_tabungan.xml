@@ -220,7 +220,7 @@
         android:layout_height="72dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:background="#4F6B88"
+        android:background="@color/bg_form_card"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
         android:layout_marginStart="20dp"
@@ -267,8 +267,8 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/containerTanggalTabungan"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        app:boxBackgroundColor="#4F6B88"
-        app:boxStrokeColor="#6E89A5"
+        app:boxBackgroundColor="@color/bg_form_card"
+        app:boxStrokeColor="@color/divider"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -308,8 +308,8 @@
         android:layout_marginBottom="20dp"
         app:cardCornerRadius="8dp"
         app:cardElevation="0dp"
-        app:cardBackgroundColor="#4F6B88"
-        app:strokeColor="#6E89A5"
+        app:cardBackgroundColor="@color/bg_form_card"
+        app:strokeColor="@color/divider"
         app:strokeWidth="1dp">
 
         <LinearLayout
@@ -360,7 +360,7 @@
                 android:id="@+id/dividerSumberDanaTabungan"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#6E89A5"
+                android:background="@color/divider"
                 android:visibility="gone"/>
 
             <LinearLayout
@@ -382,7 +382,7 @@
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="16dp"
         android:text="@string/btn_selesai"
-        android:backgroundTint="#56789A"
+        android:backgroundTint="@color/bg_header"
         android:textColor="@android:color/white"
         android:textSize="14sp"
         android:textStyle="bold"/>

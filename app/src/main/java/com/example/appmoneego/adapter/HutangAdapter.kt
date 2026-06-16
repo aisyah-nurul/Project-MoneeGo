@@ -89,8 +89,9 @@ class HutangAdapter(
 
         // Footer meta
         val ctx2 = holder.itemView.context
-        val jenis = hutang.catatan.ifEmpty { ctx2.getString(com.example.appmoneego.R.string.title_hutang) }
-        b.tvFooterMeta.text = "$jenis • $persen% ${ctx2.getString(com.example.appmoneego.R.string.label_selesai).lowercase()}"
+        val jenisDb = hutang.catatan.ifEmpty { "Hutang" }
+        val jenisDisplay = resolveJenisHutang(ctx2, jenisDb)
+        b.tvFooterMeta.text = "$jenisDisplay • $persen% ${ctx2.getString(com.example.appmoneego.R.string.label_selesai).lowercase()}"
 
         // Tap hint
         val ctx3 = holder.itemView.context
@@ -141,7 +142,18 @@ class HutangAdapter(
 
         holder.itemView.setOnClickListener { onItemClick(hutang) }
     }
-
+    private fun resolveJenisHutang(ctx: android.content.Context, namaDb: String): String {
+        val peta = mapOf(
+            "Kartu Kredit"    to com.example.appmoneego.R.string.jenis_kartu_kredit,
+            "Pinjaman Online" to com.example.appmoneego.R.string.jenis_pinjol,
+            "Cicilan"         to com.example.appmoneego.R.string.jenis_cicilan,
+            "Pinjaman Bank"   to com.example.appmoneego.R.string.jenis_pinjaman_bank,
+            "Pinjam ke Kerabat" to com.example.appmoneego.R.string.jenis_pinjam_kerabat,
+            "Lainnya"         to com.example.appmoneego.R.string.jenis_lainnya
+        )
+        val resId = peta[namaDb]
+        return if (resId != null) ctx.getString(resId) else namaDb
+    }
     class DiffCallback : DiffUtil.ItemCallback<Hutang>() {
         override fun areItemsTheSame(old: Hutang, new: Hutang) = old.id == new.id
         override fun areContentsTheSame(old: Hutang, new: Hutang) = old == new
