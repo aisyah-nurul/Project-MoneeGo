@@ -37,7 +37,7 @@
     <color name="bg_progress">#2A3A4A</color>
 
     <!-- Semantic tetap sama (tidak berubah di dark mode) -->
-    <color name="income_green">#7EE787</color>
+    <color name="income_green">#4CAF50</color>
     <color name="expense_red">#EF5350</color>
 
     <!-- Insight Card Dark Mode -->
@@ -47,5 +47,8 @@
     <color name="tab_normal_bg">#2A3A4A</color>
     <color name="tab_stroke">#42566B</color>
     <color name="income_green_light">#31465A</color>
+
+    <color name="analysis_header_bg">#203246</color>
+    <color name="settings_card_bg">#203246</color>
 
 </resources>

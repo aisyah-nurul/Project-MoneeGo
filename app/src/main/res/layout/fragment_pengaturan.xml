@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@color/text_secondary"
+            android:background="@color/bg_header"
             android:paddingTop="28dp"
             android:paddingBottom="32dp"
             android:paddingHorizontal="24dp"
@@ -333,6 +333,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/notif_label_waktu"
+                            android:textStyle="bold"
                             android:textSize="11sp"
                             android:textColor="?attr/colorOnSurfaceVariant"/>
                         <TextView
@@ -342,7 +343,7 @@
                             android:text="08:00"
                             android:textSize="14sp"
                             android:textStyle="bold"
-                            android:textColor="@color/primary_navy"/>
+                            android:textColor="@color/text_primary"/>
                     </LinearLayout>
 
                     <TextView

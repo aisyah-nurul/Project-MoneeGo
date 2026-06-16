@@ -118,7 +118,7 @@ class AnalisisFragment : Fragment() {
             setEntryLabelTextSize(10f)
             setTouchEnabled(true)
             setNoDataText("Belum ada data untuk ditampilkan")
-            setNoDataTextColor(Color.parseColor("#90A4AE"))
+            setNoDataTextColor(ContextCompat.getColor(requireContext(), R.color.text_secondary))
 
             setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
                 override fun onValueSelected(e: Entry?, h: Highlight?) {
@@ -298,8 +298,7 @@ class AnalisisFragment : Fragment() {
             pieChart.clear()
             pieChart.centerText = "Tidak ada data"
             pieChart.setCenterTextSize(11f)
-            pieChart.setCenterTextColor(Color.parseColor("#90A4AE"))
-            pieChart.invalidate()
+            pieChart.setCenterTextColor(ContextCompat.getColor(requireContext(), R.color.text_secondary))
             return
         }
 

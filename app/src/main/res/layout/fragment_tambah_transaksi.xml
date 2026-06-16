@@ -655,7 +655,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center"
-            android:background="#EEF4F8"
+                android:background="@color/bg_form_card"
             android:visibility="gone"
             android:padding="20dp">
 
@@ -685,7 +685,7 @@
                 android:text="PENGELUARAN TERCATAT"
                 android:textSize="13sp"
                 android:textStyle="bold"
-                android:textColor="#2C3E6B"
+                android:textColor="@color/text_secondary"
                 android:letterSpacing="0.08"
                 android:layout_marginBottom="14dp"/>
 
@@ -697,7 +697,7 @@
                 android:paddingTop="50dp"
                 android:layout_marginBottom="10dp"
                 app:cardCornerRadius="20dp"
-                app:cardBackgroundColor="#D6E8F5"
+                app:cardBackgroundColor="@color/card_form_inner"
                 app:cardElevation="0dp">
 
                 <LinearLayout
@@ -714,7 +714,7 @@
                         android:text="TOTAL"
                         android:textSize="10sp"
                         android:textStyle="bold"
-                        android:textColor="#6B8FA3"
+                        android:textColor="@color/text_secondary"
                         android:letterSpacing="0.12"
                         android:layout_marginBottom="4dp"/>
 
@@ -725,7 +725,7 @@
                         android:text="Rp 0"
                         android:textSize="34sp"
                         android:textStyle="bold"
-                        android:textColor="#1E2D4E"/>
+                        android:textColor="@color/text_primary"/>
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -768,7 +768,7 @@
                             android:layout_height="wrap_content"
                             android:text="Kategori"
                             android:textSize="11sp"
-                            android:textColor="#6B8FA3"/>
+                            android:textColor="#5F7285"/>
 
                         <TextView
                             android:id="@+id/tv_kategori_tercatat"
@@ -777,7 +777,7 @@
                             android:text="-"
                             android:textSize="14sp"
                             android:textStyle="bold"
-                            android:textColor="#1E2D4E"/>
+                            android:textColor="#243447"/>
 
                     </LinearLayout>
 
@@ -807,7 +807,7 @@
                             android:layout_height="wrap_content"
                             android:text="Tanggal"
                             android:textSize="11sp"
-                            android:textColor="#6B8FA3"/>
+                            android:textColor="#5F7285"/>
 
 
                         <TextView
@@ -817,7 +817,7 @@
                             android:text="-"
                             android:textSize="14sp"
                             android:textStyle="bold"
-                            android:textColor="#1E2D4E"/>
+                            android:textColor="#243447"/>
 
                     </LinearLayout>
 
@@ -847,7 +847,7 @@
                             android:layout_height="wrap_content"
                             android:text="Dompet"
                             android:textSize="11sp"
-                            android:textColor="#6B8FA3"/>
+                            android:textColor="#5F7285"/>
 
                         <TextView
                             android:id="@+id/tv_dompet_tercatat"
@@ -856,7 +856,7 @@
                             android:text="-"
                             android:textSize="14sp"
                             android:textStyle="bold"
-                            android:textColor="#1E2D4E"/>
+                            android:textColor="#243447"/>
 
                     </LinearLayout>
 
@@ -892,10 +892,10 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:text=""
-                        android:hint="Tidak ada catatan"
+                        android:hint="@string/hint_tidak_ada_catatan"
                         android:textSize="15sp"
-                        android:textColor="#1E2D4E"
-                        android:textColorHint="#6B8FA3"/>
+                        android:textColor="#5F7285"
+                        android:textColorHint="@color/text_secondary"/>
 
                 </LinearLayout>
 

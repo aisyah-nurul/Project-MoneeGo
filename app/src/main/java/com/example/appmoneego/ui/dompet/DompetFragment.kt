@@ -136,8 +136,7 @@ class DompetFragment : Fragment() {
                 cardInfoHutang.visibility = View.GONE
             } else {
                 val totalHutang = aktif.sumOf { it.sisaHutang.toDouble() }
-                tvInfoHutang.text =
-                    "${aktif.size} hutang · Total ${CurrencyFormatter.format(totalHutang)}"
+                tvInfoHutang.text = getString(R.string.label_info_hutang, aktif.size, CurrencyFormatter.format(totalHutang))
                 cardInfoHutang.visibility = View.VISIBLE
             }
         }

@@ -299,14 +299,15 @@
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:src="@drawable/ic_hutang"
-                android:alpha="0.35"
+                app:tint="@color/text_secondary"
+                android:alpha="1"
                 android:contentDescription="Belum ada dompet"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Belum ada dompet"
-                android:textColor="@color/teks_muted"
+                android:textColor="@color/text_secondary"
                 android:textSize="13sp"
                 android:layout_marginTop="8dp"/>
         </LinearLayout>
