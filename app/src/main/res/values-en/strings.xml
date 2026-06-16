@@ -330,4 +330,23 @@
     <string name="label_hutang_lunas_stat">Paid Off</string>
     <string name="label_dari_total">of total</string>
     <string name="hint_tidak_ada_catatan">No notes</string>
+    <string name="cicilan_ke">Installment #%1$d • %2$s</string>
+
+    <string name="no_wallet_yet">No wallet available</string>
+
+    <string name="delete_installment_title">Delete Installment?</string>
+    <string name="delete_installment_message">An installment of %1$s will be deleted and the remaining debt will be adjusted.</string>
+
+    <string name="delete_debt_title">Delete Debt?</string>
+    <string name="delete_debt_message">Debt "%1$s" and all installment history will be permanently deleted.</string>
+
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="enter_installment_amount">Enter installment amount</string>
+    <string name="select_fund_source">Select fund source</string>
+
+    <string name="debt_deleted">Debt %1$s deleted</string>
+
+    <string name="debt_paid_off">🎉 Debt %1$s has been fully paid!</string>
 </resources>

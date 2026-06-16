@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.appmoneego.R
 import com.example.appmoneego.data.entity.CicilanEntity
 import com.example.appmoneego.data.entity.Dompet
+import androidx.core.content.ContextCompat
 
 class RiwayatCicilanAdapter(
     private val list: List<CicilanEntity>,
@@ -43,7 +44,7 @@ class RiwayatCicilanAdapter(
         holder.ivIcon.setImageResource(getIconDompet(dompet?.jenis ?: "Lainnya"))
 
         holder.tvNominal.text = "+Rp${String.format("%,d", c.nominal).replace(",", ".")}"
-        holder.tvTanggal.text = "Cicilan ke-$nomorCicilan • ${c.tanggalBayar}"
+        holder.tvTanggal.text = holder.itemView.context.getString(R.string.cicilan_ke, nomorCicilan, c.tanggalBayar)
 
         holder.tvCatatan.text = when {
             namaDompet.isNotEmpty() && c.catatan.isNotEmpty() -> "$namaDompet • ${c.catatan}"
