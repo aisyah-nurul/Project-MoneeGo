@@ -16,7 +16,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.appmoneego.R
-import com.example.appmoneego.ui.tabungan.TabunganViewModel
 import com.example.appmoneego.utils.CurrencyFormatter
 import com.example.appmoneego.utils.VisibilityPrefs
 import com.example.appmoneego.viewmodel.DashboardViewModel
@@ -24,10 +23,9 @@ import java.util.Calendar
 
 class DashboardFragment : Fragment() {
 
+    // Hanya DashboardViewModel — tabunganPrioritas sudah ada di dalamnya
     private lateinit var dashboardViewModel: DashboardViewModel
-    private lateinit var tabunganViewModel: TabunganViewModel
 
-    // ── View saldo & bulan ────────────────────────────────────────────────────
     private lateinit var tvSaldo:       TextView
     private lateinit var tvPemasukan:   TextView
     private lateinit var tvPengeluaran: TextView
@@ -37,13 +35,11 @@ class DashboardFragment : Fragment() {
     private lateinit var btnPrevBulan:  TextView
     private lateinit var btnNextBulan:  TextView
 
-    // ── View insight ──────────────────────────────────────────────────────────
     private lateinit var tvInsightRingkasan:     TextView
     private lateinit var tvInsightTips:          TextView
     private lateinit var cardRingkasan:          CardView
     private lateinit var viewIndikatorRingkasan: View
 
-    // ── View prioritas tabungan ───────────────────────────────────────────────
     private lateinit var tvNamaPrioritas:   TextView
     private lateinit var progressPrioritas: ProgressBar
     private lateinit var tvProgressPersen:  TextView
@@ -51,17 +47,13 @@ class DashboardFragment : Fragment() {
     private lateinit var btnBuatTarget:     Button
     private lateinit var btnGantiPrioritas: TextView
 
-    // ── State ─────────────────────────────────────────────────────────────────
-    private var isSaldoVisible = true
+    private var isSaldoVisible   = true
     private var nilaiSaldo       = "Rp 0"
     private var nilaiPemasukan   = "Rp 0"
     private var nilaiPengeluaran = "Rp 0"
     private var nilaiSelisih     = "Rp 0"
-    private var rawPemasukan   = 0.0
-    private var rawPengeluaran = 0.0
-
-    // BUG 3 FIX: simpan nilai sisa prioritas mentah agar bisa di-mask / unmask
-    // saat toggle privasi tanpa perlu fetch ulang dari ViewModel
+    private var rawPemasukan     = 0.0
+    private var rawPengeluaran   = 0.0
     private var rawSisaPrioritas = 0.0
 
     private val calBulanAktif: Calendar = Calendar.getInstance()
@@ -78,19 +70,20 @@ class DashboardFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        return inflater.inflate(R.layout.fragment_dashboard, container, false)
-    }
+    ): View = inflater.inflate(R.layout.fragment_dashboard, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         isSaldoVisible = VisibilityPrefs.isNominalVisible(requireContext())
 
+        // Inisialisasi ViewModel SEKALI di sini — tidak di onResume
+        dashboardViewModel = ViewModelProvider(this)[DashboardViewModel::class.java]
+        dashboardViewModel.updateContext(requireContext())
+
         initViews(view)
         setupViewModel()
-        dashboardViewModel.updateContext(requireContext())
-        setupTabunganPrioritas()
+        setupTabunganPrioritas()  // observer dipasang sekali di sini
         setupToggleSaldo()
         setupNavigasiBulan()
         setupClickListeners(view)
@@ -98,37 +91,37 @@ class DashboardFragment : Fragment() {
         updateLabelBulan()
     }
 
+    // onResume hanya refresh visibility & context — TIDAK pasang observer baru
     override fun onResume() {
         super.onResume()
+        isSaldoVisible = VisibilityPrefs.isNominalVisible(requireContext())
+        syncIkonMata()
+        refreshTampilan()
         dashboardViewModel.updateContext(requireContext())
-        setupTabunganPrioritas()
     }
 
     private fun initViews(view: View) {
-        tvSaldo               = view.findViewById(R.id.tv_saldo)
-        tvPemasukan           = view.findViewById(R.id.tv_pemasukan)
-        tvPengeluaran         = view.findViewById(R.id.tv_pengeluaran)
-        tvSelisih             = view.findViewById(R.id.tv_selisih)
-        ivToggleSaldo         = view.findViewById(R.id.iv_toggle_saldo)
-        tvBulan               = view.findViewById(R.id.tv_bulan)
-        btnPrevBulan          = view.findViewById(R.id.btn_prev_bulan)
-        btnNextBulan          = view.findViewById(R.id.btn_next_bulan)
-        tvInsightRingkasan    = view.findViewById(R.id.tv_insight_ringkasan)
-        tvInsightTips         = view.findViewById(R.id.tv_insight_tips)
-        cardRingkasan         = view.findViewById(R.id.card_ringkasan)
+        tvSaldo                = view.findViewById(R.id.tv_saldo)
+        tvPemasukan            = view.findViewById(R.id.tv_pemasukan)
+        tvPengeluaran          = view.findViewById(R.id.tv_pengeluaran)
+        tvSelisih              = view.findViewById(R.id.tv_selisih)
+        ivToggleSaldo          = view.findViewById(R.id.iv_toggle_saldo)
+        tvBulan                = view.findViewById(R.id.tv_bulan)
+        btnPrevBulan           = view.findViewById(R.id.btn_prev_bulan)
+        btnNextBulan           = view.findViewById(R.id.btn_next_bulan)
+        tvInsightRingkasan     = view.findViewById(R.id.tv_insight_ringkasan)
+        tvInsightTips          = view.findViewById(R.id.tv_insight_tips)
+        cardRingkasan          = view.findViewById(R.id.card_ringkasan)
         viewIndikatorRingkasan = view.findViewById(R.id.view_indikator_ringkasan)
-
-        tvNamaPrioritas   = view.findViewById(R.id.tv_nama_prioritas)
-        progressPrioritas = view.findViewById(R.id.progress_prioritas)
-        tvProgressPersen  = view.findViewById(R.id.tv_progress_persen)
-        tvSisaPrioritas   = view.findViewById(R.id.tv_sisa_prioritas)
-        btnBuatTarget     = view.findViewById(R.id.btn_buat_target)
-        btnGantiPrioritas = view.findViewById(R.id.btn_ganti_prioritas)
+        tvNamaPrioritas        = view.findViewById(R.id.tv_nama_prioritas)
+        progressPrioritas      = view.findViewById(R.id.progress_prioritas)
+        tvProgressPersen       = view.findViewById(R.id.tv_progress_persen)
+        tvSisaPrioritas        = view.findViewById(R.id.tv_sisa_prioritas)
+        btnBuatTarget          = view.findViewById(R.id.btn_buat_target)
+        btnGantiPrioritas      = view.findViewById(R.id.btn_ganti_prioritas)
     }
 
     private fun setupViewModel() {
-        dashboardViewModel = ViewModelProvider(this)[DashboardViewModel::class.java]
-
         dashboardViewModel.totalSaldo.observe(viewLifecycleOwner) { total ->
             nilaiSaldo   = CurrencyFormatter.format(total ?: 0.0)
             tvSaldo.text = if (isSaldoVisible) nilaiSaldo else "Rp ***"
@@ -150,24 +143,11 @@ class DashboardFragment : Fragment() {
 
         dashboardViewModel.insightRingkasan.observe(viewLifecycleOwner) { insight ->
             tvInsightRingkasan.text = insight.pesan
-            when (insight.tipe) {
-                "WARNING" -> {
-                    cardRingkasan.setCardBackgroundColor(ContextCompat.getColor(requireContext(),
-                        R.color.insight_red_bg))
-                }
-                "SUCCESS" -> {
-                    cardRingkasan.setCardBackgroundColor(ContextCompat.getColor(requireContext(),
-                        R.color.insight_yellow_bg))
-                }
-                else -> {
-                    cardRingkasan.setCardBackgroundColor(ContextCompat.getColor(requireContext(),
-                        R.color.insight_red_bg)
-                    )
-                    setIndikatorWarna(viewIndikatorRingkasan, ContextCompat.getColor(requireContext(),
-                        R.color.expense_red)
-                    )
-                }
+            val bgColor = when (insight.tipe) {
+                "SUCCESS" -> ContextCompat.getColor(requireContext(), R.color.insight_yellow_bg)
+                else      -> ContextCompat.getColor(requireContext(), R.color.insight_red_bg)
             }
+            cardRingkasan.setCardBackgroundColor(bgColor)
         }
 
         dashboardViewModel.insightTips.observe(viewLifecycleOwner) { tips ->
@@ -175,22 +155,16 @@ class DashboardFragment : Fragment() {
         }
     }
 
+    // Observer dipasang SEKALI — LiveData<Tabungan?> dari DashboardViewModel
+    // yang sudah terkoneksi ke tabunganRepo.tabunganPrioritas (isPriority = 1)
     private fun setupTabunganPrioritas() {
-        tabunganViewModel = ViewModelProvider(this)[TabunganViewModel::class.java]
-
-        tabunganViewModel.tabunganList.removeObservers(viewLifecycleOwner)
-        tabunganViewModel.tabunganList.observe(viewLifecycleOwner) { list ->
-            val prioritas = list
-                .filter { it.terkumpul < it.targetNominal }
-                .minByOrNull { it.targetNominal - it.terkumpul }
-
+        dashboardViewModel.tabunganPrioritas.observe(viewLifecycleOwner) { prioritas ->
             if (prioritas == null) {
-                tvNamaPrioritas.text       = getString(R.string.label_belum_ada_target)
-                progressPrioritas.progress = 0
-                tvProgressPersen.text      = getString(R.string.label_progress_persen, 0)
-                // BUG 3 FIX: reset raw value & kosongkan tvSisaPrioritas
-                rawSisaPrioritas           = 0.0
-                tvSisaPrioritas.text       = ""
+                tvNamaPrioritas.text         = getString(R.string.label_belum_ada_target)
+                progressPrioritas.progress   = 0
+                tvProgressPersen.text        = getString(R.string.label_progress_persen, 0)
+                rawSisaPrioritas             = 0.0
+                tvSisaPrioritas.text         = ""
                 btnBuatTarget.visibility     = View.VISIBLE
                 btnGantiPrioritas.visibility = View.GONE
             } else {
@@ -198,16 +172,12 @@ class DashboardFragment : Fragment() {
                     ((prioritas.terkumpul / prioritas.targetNominal) * 100).toInt() else 0
                 val sisa = (prioritas.targetNominal - prioritas.terkumpul).coerceAtLeast(0.0)
 
-                // BUG 3 FIX: simpan nilai sisa mentah
                 rawSisaPrioritas = sisa
 
                 tvNamaPrioritas.text       = prioritas.nama
                 progressPrioritas.progress = persen
-                // Progress persen TETAP tampil meski mode privasi aktif — sesuai spec
                 tvProgressPersen.text      = getString(R.string.label_progress_persen, persen)
-
-                // BUG 3 FIX: tampilkan "Sisa Rp ***" jika privasi aktif
-                tvSisaPrioritas.text = if (isSaldoVisible)
+                tvSisaPrioritas.text       = if (isSaldoVisible)
                     getString(R.string.label_sisa_nominal, CurrencyFormatter.format(sisa))
                 else
                     "Sisa Rp ***"
@@ -218,27 +188,17 @@ class DashboardFragment : Fragment() {
         }
     }
 
-    private fun setIndikatorWarna(v: View, warna: Int) {
-        val drawable = GradientDrawable()
-        drawable.shape = GradientDrawable.OVAL
-        drawable.setColor(warna)
-        v.background = drawable
-    }
-
     private fun hitungDanTampilkanSelisih() {
         val selisih = rawPemasukan - rawPengeluaran
         nilaiSelisih = when {
-            selisih > 0  -> CurrencyFormatter.format(selisih)
-            selisih < 0  -> "-${CurrencyFormatter.format(-selisih)}"
-            else         -> CurrencyFormatter.format(0.0)
+            selisih > 0 -> CurrencyFormatter.format(selisih)
+            selisih < 0 -> "-${CurrencyFormatter.format(-selisih)}"
+            else        -> CurrencyFormatter.format(0.0)
         }
         val warnaSelisih = when {
-            selisih > 0  -> 0xFF4CAF50.toInt()
-            selisih < 0  -> 0xFFF44336.toInt()
-            else -> ContextCompat.getColor(
-                requireContext(),
-                R.color.expense_red
-            )
+            selisih > 0 -> ContextCompat.getColor(requireContext(), R.color.income_green)
+            selisih < 0 -> ContextCompat.getColor(requireContext(), R.color.expense_red)
+            else        -> ContextCompat.getColor(requireContext(), R.color.text_primary)
         }
         tvSelisih.text = if (isSaldoVisible) nilaiSelisih else "***"
         tvSelisih.setTextColor(warnaSelisih)
@@ -283,21 +243,16 @@ class DashboardFragment : Fragment() {
             tvSaldo.text       = nilaiSaldo
             tvPemasukan.text   = nilaiPemasukan
             tvPengeluaran.text = nilaiPengeluaran
-            tvSelisih.text     = nilaiSelisih
-
-            // BUG 3 FIX: tampilkan kembali nilai sisa prioritas yang tersimpan
             if (rawSisaPrioritas > 0.0) {
-                tvSisaPrioritas.text = getString(R.string.label_sisa_nominal,
-                    CurrencyFormatter.format(rawSisaPrioritas))
+                tvSisaPrioritas.text = getString(
+                    R.string.label_sisa_nominal,
+                    CurrencyFormatter.format(rawSisaPrioritas)
+                )
             }
         } else {
             tvSaldo.text       = "Rp ***"
             tvPemasukan.text   = "***"
             tvPengeluaran.text = "***"
-            tvSelisih.text     = "***"
-
-            // BUG 3 FIX: sembunyikan "Sisa Rp..." di card TARGET TABUNGAN PRIORITAS
-            // Progress persen TIDAK disembunyikan — sesuai spec pengecualian
             if (tvSisaPrioritas.text.isNotEmpty()) {
                 tvSisaPrioritas.text = "Sisa Rp ***"
             }
