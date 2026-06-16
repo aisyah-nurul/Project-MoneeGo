@@ -52,7 +52,7 @@
             android:id="@+id/card_total_tabungan"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/card_saldo_bg"
+            app:cardBackgroundColor="@color/bg_card"
             app:cardCornerRadius="16dp"
             app:cardElevation="6dp">
 
@@ -83,7 +83,7 @@
                         android:layout_width="20dp"
                         android:layout_height="20dp"
                         android:src="@drawable/ic_eye"
-                        app:tint="@android:color/white"
+                        app:tint="@color/text_primary"
                         android:clickable="true"
                         android:focusable="true"
                         android:background="?attr/selectableItemBackgroundBorderless"
@@ -311,7 +311,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/btn_tambah_tabungan"
         android:textColor="@android:color/white"
-        android:backgroundTint="@color/card_saldo_bg"
+        android:backgroundTint="@color/bg_header"
         android:textSize="13sp"
         app:cornerRadius="10dp"/>
 
