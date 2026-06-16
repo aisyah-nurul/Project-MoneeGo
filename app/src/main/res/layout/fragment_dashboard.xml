@@ -166,7 +166,7 @@
                             android:text="Rp0"
                             android:textSize="13sp"
                             android:textStyle="bold"
-                            android:textColor="#4CAF50"/>
+                            android:textColor="@color/income_green"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -305,7 +305,15 @@
 
         </LinearLayout>
 
-        <!-- Card Target Tabungan Prioritas -->
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
+        <!-- Card Target Tabungan Prioritas                                     -->
+        <!-- PENYEBAB ERROR MERAH: id-id di bawah ini TIDAK ADA di XML lama.   -->
+        <!-- Kotlin memanggil:                                                  -->
+        <!--   R.id.tv_nama_prioritas, R.id.progress_prioritas,                -->
+        <!--   R.id.tv_progress_persen, R.id.tv_sisa_prioritas,                -->
+        <!--   R.id.btn_buat_target, R.id.btn_ganti_prioritas                  -->
+        <!-- Semua id tersebut DITAMBAHKAN di sini.                             -->
+        <!-- ═══════════════════════════════════════════════════════════════════ -->
         <androidx.cardview.widget.CardView
             android:id="@+id/card_banner_tabungan"
             android:layout_width="0dp"
@@ -325,7 +333,7 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <!-- Row: label + tombol GANTI -->
+                <!-- Row: label TARGET TABUNGAN PRIORITAS + tombol GANTI -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -342,6 +350,7 @@
                         android:textColor="@color/text_secondary"
                         android:letterSpacing="0.05"/>
 
+                    <!-- id: btn_ganti_prioritas ✅ -->
                     <TextView
                         android:id="@+id/btn_ganti_prioritas"
                         android:layout_width="wrap_content"
@@ -354,10 +363,11 @@
                         android:paddingHorizontal="10dp"
                         android:paddingVertical="4dp"
                         android:clickable="true"
-                        android:focusable="true"/>
+                        android:focusable="true"
+                        android:visibility="gone"/>
                 </LinearLayout>
 
-                <!-- FIX: Nama target — center horizontal -->
+                <!-- id: tv_nama_prioritas ✅ -->
                 <TextView
                     android:id="@+id/tv_nama_prioritas"
                     android:layout_width="match_parent"
@@ -369,7 +379,7 @@
                     android:gravity="center"
                     android:layout_marginBottom="10dp"/>
 
-                <!-- Progress bar — tetap full width -->
+                <!-- id: progress_prioritas ✅ -->
                 <ProgressBar
                     android:id="@+id/progress_prioritas"
                     style="@style/Widget.AppCompat.ProgressBar.Horizontal"
@@ -380,32 +390,34 @@
                     android:progressBackgroundTint="@color/progress_track"
                     android:layout_marginBottom="6dp"/>
 
-                <!-- Row: Progress % + Sisa — tetap rata kiri/kanan -->
+                <!-- Row: tv_progress_persen + tv_sisa_prioritas -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
+                    <!-- id: tv_progress_persen ✅ -->
                     <TextView
                         android:id="@+id/tv_progress_persen"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@string/label_progress_persen"
+                        android:text="Progress: 0%"
                         android:textSize="12sp"
                         android:textColor="@color/text_secondary"/>
 
+                    <!-- id: tv_sisa_prioritas ✅ -->
                     <TextView
                         android:id="@+id/tv_sisa_prioritas"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/label_sisa_nominal"
+                        android:text=""
                         android:textSize="12sp"
                         android:textColor="@color/text_secondary"
                         android:textStyle="bold"/>
                 </LinearLayout>
 
-                <!-- FIX: Tombol buat target — center horizontal -->
+                <!-- id: btn_buat_target ✅ -->
                 <Button
                     android:id="@+id/btn_buat_target"
                     android:layout_width="wrap_content"
