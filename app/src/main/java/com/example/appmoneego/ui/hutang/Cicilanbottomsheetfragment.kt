@@ -119,7 +119,7 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
             llOpsiDompet.removeAllViews()
             if (daftarDompet.isEmpty()) {
                 llOpsiDompet.addView(TextView(requireContext()).apply {
-                    text = "Belum ada dompet"
+                    text = context.getString(R.string.no_wallet_yet)
                     textSize = 13f
                     setTextColor(0xFF888888.toInt()) // MY CHANGE: warna abu-abu lebih netral
                     setPadding(48, 24, 48, 24)
@@ -273,12 +273,9 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
                     daftarDompet = daftarDompet,
                     onHapus      = { cicilan ->
                         AlertDialog.Builder(requireContext())
-                            .setTitle("Hapus Cicilan?")
-                            .setMessage(
-                                "Cicilan sebesar ${formatRupiah(cicilan.nominal)} " +
-                                        "akan dihapus dan sisa hutang akan disesuaikan."
-                            )
-                            .setPositiveButton("Hapus") { _, _ ->
+                            .setTitle(getString(R.string.delete_installment_title))
+                            .setMessage(getString(R.string.delete_installment_message, formatRupiah(cicilan.nominal)))
+                            .setPositiveButton(getString(R.string.delete)){ _, _ ->
                                 lifecycleScope.launch {
                                     val updatedHutang = withContext(Dispatchers.IO) {
 
@@ -326,7 +323,7 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
                                     }
                                 }
                             }
-                            .setNegativeButton("Batal", null)
+                            .setNegativeButton(getString(R.string.cancel), null)
                             .show()
                     }
                 )
@@ -338,37 +335,32 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
         // ── Hapus hutang ──────────────────────────────────────────────────────
         btnHapus?.setOnClickListener {
             AlertDialog.Builder(requireContext())
-                .setTitle("Hapus Hutang?")
-                .setMessage(
-                    "Hutang \"${h.nama}\" dan semua riwayat cicilannya akan dihapus permanen."
-                )
-                .setPositiveButton("Hapus") { _, _ ->
+                .setTitle(getString(R.string.delete_debt_title))
+                .setMessage(getString(R.string.delete_debt_message, h.nama))
+                .setPositiveButton(getString(R.string.delete)) { _, _ ->
                     lifecycleScope.launch {
                         withContext(Dispatchers.IO) {
                             cicilanDao.deleteCicilanByHutangId(h.id)
                             hutangDao.deleteHutang(h)
                         }
                         onDeleted?.invoke(h)
-                        Toast.makeText(
-                            requireContext(),
-                            "Hutang ${h.nama} dihapus",
-                            Toast.LENGTH_SHORT
+                        Toast.makeText(requireContext(), getString(R.string.debt_deleted, h.nama), Toast.LENGTH_SHORT
                         ).show()
                         dismiss()
                     }
                 }
-                .setNegativeButton("Batal", null)
+                .setNegativeButton(getString(R.string.cancel), null)
                 .show()
         }
 
         // ── Simpan cicilan ────────────────────────────────────────────────────
         btnSimpan?.setOnClickListener {
             if (nominalAngka <= 0L) {
-                etNominal?.error = "Masukkan nominal cicilan"
+                etNominal?.error = getString(R.string.enter_installment_amount)
                 return@setOnClickListener
             }
             if (selectedDompetId == 0) {
-                Toast.makeText(requireContext(), "Pilih sumber dana", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.select_fund_source), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -429,11 +421,7 @@ class CicilanBottomSheetFragment : BottomSheetDialogFragment() {
                 }
                 onSaved?.invoke(updatedHutang)
                 if (updatedHutang.selesai) {
-                    Toast.makeText(
-                        requireContext(),
-                        "🎉 Hutang ${h.nama} lunas!",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(requireContext(), getString(R.string.debt_paid_off, h.nama), Toast.LENGTH_SHORT).show()
                 }
                 dismiss()
             }
