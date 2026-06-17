@@ -253,7 +253,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sumber Dana"
+                    android:text="@string/label_sumber_dana"
                     android:textColor="@color/text_primary"
                     android:textSize="13sp"
                     android:textStyle="bold"
@@ -286,7 +286,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Pilih dompet"
+                        android:text="@string/select_wallet"
                         android:textColor="@color/text_primary"
                         android:textSize="14sp" />
 

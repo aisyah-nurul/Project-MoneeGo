@@ -301,12 +301,12 @@
                 android:src="@drawable/ic_hutang"
                 app:tint="@color/text_secondary"
                 android:alpha="1"
-                android:contentDescription="Belum ada dompet"/>
+                android:contentDescription="@string/no_wallet_yet"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Belum ada dompet"
+                android:text="@string/no_wallet_yet"
                 android:textColor="@color/text_secondary"
                 android:textSize="13sp"
                 android:layout_marginTop="8dp"/>

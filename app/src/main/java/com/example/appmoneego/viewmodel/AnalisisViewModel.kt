@@ -129,7 +129,11 @@ class AnalisisViewModel(application: Application) : AndroidViewModel(application
     // Jika di masa depan ingin menampilkan Transfer/Hutang sebagai kategori
     // tersendiri di analisis, hapus dari set ini.
     // ══════════════════════════════════════════════════════════════════════════
-    private val KATEGORI_EXCLUDE = setOf("Transfer", "Hutang")
+    private val KATEGORI_EXCLUDE = setOf(
+        "Transfer",
+        "Hutang",
+        "Saldo Awal"
+    )
 
     // ── Summary Kategori ──────────────────────────────────────────────────────
 

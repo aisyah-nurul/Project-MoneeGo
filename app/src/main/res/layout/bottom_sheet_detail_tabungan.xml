@@ -34,7 +34,7 @@
             android:src="@drawable/ic_close"
             app:tint="@color/text_secondary"
             android:layout_gravity="end|center_vertical"
-            android:contentDescription="Tutup"/>
+            android:contentDescription="@string/tutup"/>
     </FrameLayout>
 
     <!-- Info tabungan: nama + tombol hapus -->
@@ -66,7 +66,7 @@
                 android:id="@+id/tvDetailNama"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nama Target"
+                android:text="@string/label_nama_target"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary"/>
@@ -75,7 +75,7 @@
                 android:id="@+id/tvDetailHariIni"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hari ini: -"
+                android:text="@string/label_hari_ini"
                 android:textSize="12sp"
                 android:textColor="@color/text_secondary"/>
         </LinearLayout>
@@ -189,7 +189,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="16dp"
-        android:text="✓ Saya Sudah Membeli Impian Ini"
+        android:text="@string/btn_sudah_membeli_impian"
         android:backgroundTint="#4CAF50"
         android:textColor="@android:color/white"
         android:textSize="14sp"
@@ -342,7 +342,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Pilih dompet..."
+                    android:text="@string/label_pilih_dompet"
                     android:textSize="14sp"
                     android:textColor="@color/text_primary"/>
 
@@ -404,7 +404,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/toast_prioritas_diset"
+            android:text="@string/prioritas"
             android:textSize="12sp"
             android:textColor="@color/text_primary"/>
 

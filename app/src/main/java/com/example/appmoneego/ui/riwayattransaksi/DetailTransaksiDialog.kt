@@ -158,7 +158,15 @@ class DetailTransaksiDialog(
             binding.rowKeDompet.visibility   = View.GONE
 
             val namaDompet = daftarDompet.find { it.id == transaksi.dompetId }?.nama ?: "-"
-            binding.tvDialogDompet.text = namaDompet
+
+            binding.tvDialogDompet.text = when (namaDompet) {
+                "Uang Tunai" -> getString(R.string.jenis_uang_tunai)
+                "Rekening Bank" -> getString(R.string.jenis_rekening_bank)
+                "Dompet Digital" -> getString(R.string.jenis_dompet_digital)
+                "Investasi" -> getString(R.string.jenis_investasi)
+                "Tabungan" -> getString(R.string.jenis_tabungan)
+                else -> namaDompet
+            }
 
             binding.tvDialogCatatan.text = transaksi.catatan.ifEmpty { "-" }
         }
@@ -216,16 +224,18 @@ class DetailTransaksiDialog(
         // (dari kode saya) agar pengguna tidak tidak sengaja menghapus transaksi.
         binding.btnDelete.setOnClickListener {
             androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                .setTitle("Hapus Transaksi")
+                .setTitle(getString(R.string.delete_transaction))
                 .setMessage(
-                    "Yakin ingin menghapus " +
-                            "\"${transaksi.catatan.ifEmpty { transaksi.kategori }}\"?"
+                    getString(
+                        R.string.delete_transaction_message,
+                        transaksi.catatan.ifEmpty { transaksi.kategori }
+                    )
                 )
-                .setPositiveButton("Hapus") { _, _ ->
+                .setPositiveButton(getString(R.string.delete)) { _, _ ->
                     onDeleteClick(transaksi)
                     dismiss()
                 }
-                .setNegativeButton("Batal", null)
+                .setNegativeButton(getString(R.string.btn_batal), null)
                 .show()
         }
     }
