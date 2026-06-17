@@ -322,4 +322,19 @@
     <string name="label_hutang_lunas_stat">Hutang Lunas</string>
     <string name="label_dari_total">dari total</string>
     <string name="hint_tidak_ada_catatan">Tidak ada catatan</string>
+    <string name="cicilan_ke">Cicilan ke-%1$d • %2$s</string>
+
+    <string name="no_wallet_yet">Belum ada dompet</string>
+
+    <string name="delete_installment_title">Hapus Cicilan?</string>
+    <string name="delete_installment_message">Cicilan sebesar %1$s akan dihapus dan sisa hutang akan disesuaikan.</string>
+
+    <string name="delete_debt_title">Hapus Hutang?</string>
+    <string name="delete_debt_message">Hutang "%1$s" dan semua riwayat cicilannya akan dihapus permanen.</string>
+    <string name="delete">Hapus</string>
+    <string name="cancel">Batal</string>
+    <string name="enter_installment_amount">Masukkan nominal cicilan</string>
+    <string name="select_fund_source">Pilih sumber dana</string>
+    <string name="debt_deleted">Hutang %1$s dihapus</string>
+    <string name="debt_paid_off">🎉 Hutang %1$s lunas!</string>
 </resources>
