@@ -306,7 +306,7 @@ class DetailTabunganBottomSheet(
                         if (isSelesai) {
                             Toast.makeText(
                                 requireContext(),
-                                "Target sudah selesai, cicilan tidak bisa dihapus",
+                                getString(R.string.target_selesai_tidak_bisa_hapus),
                                 Toast.LENGTH_SHORT
                             ).show()
                             return@RiwayatCicilanAdapter
@@ -437,7 +437,7 @@ class DetailTabunganBottomSheet(
                         dismiss()
                     }
                 }
-                .setNegativeButton("Batal", null)
+                .setNegativeButton(getString(R.string.btn_batal), null)
                 .show()
         }
 
@@ -473,21 +473,32 @@ class DetailTabunganBottomSheet(
     // ══════════════════════════════════════════════════════════════════════════
     private fun tampilkanDialogKonfirmasiMembeli() {
         AlertDialog.Builder(requireContext())
-            .setTitle("Konfirmasi Pembelian")
+            .setTitle(getString(R.string.dialog_konfirmasi_pembelian))
             .setMessage(
-                "Apakah dana tabungan \"${tabungan.nama}\" sudah digunakan untuk membeli impian yang dituju?\n\n" +
-                        "Dana ini tidak akan lagi dihitung ke Total Terkumpul setelah dikonfirmasi."
+                getString(
+                    R.string.dialog_konfirmasi_pembelian_pesan,
+                    tabungan.nama
+                )
             )
-            .setPositiveButton("Sudah") { _, _ ->
+            .setPositiveButton(getString(R.string.sudah)) { _, _ ->
+
                 onSudahDigunakan(tabungan.id)
+
                 Toast.makeText(
                     requireContext(),
-                    "\"${tabungan.nama}\" telah ditandai sebagai selesai digunakan 🎉",
+                    getString(
+                        R.string.toast_impian_selesai,
+                        tabungan.nama
+                    ),
                     Toast.LENGTH_SHORT
                 ).show()
+
                 dismiss()
             }
-            .setNegativeButton("Belum", null)
+            .setNegativeButton(
+                getString(R.string.belum),
+                null
+            )
             .show()
     }
 }

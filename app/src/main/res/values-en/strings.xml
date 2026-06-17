@@ -350,4 +350,22 @@
     <string name="debt_deleted">Debt %1$s deleted</string>
 
     <string name="debt_paid_off">🎉 Debt %1$s has been fully paid!</string>
+    <string name="btn_sudah_membeli_impian">I Have Purchased This Goal</string>
+    <string name="target_selesai_tidak_bisa_hapus">Target is completed, payments cannot be deleted</string>
+    <string name="dialog_konfirmasi_pembelian">Purchase Confirmation</string>
+    <string name="dialog_konfirmasi_pembelian_pesan">Has the savings fund "%1$s" been used to purchase this goal?This fund will no longer be included in Total Saved after confirmation.</string>
+    <string name="sudah">Yes</string>
+    <string name="belum">Not Yet</string>
+    <string name="toast_impian_selesai">"%1$s" has been marked as completed 🎉</string>
+    <string name="select_wallet">Select wallet</string>
+    <string name="no_data_available">
+    No data available
+</string>
+    <string name="no_data">
+    No Data
+</string>
+    <string name="delete_transaction">Delete Transaction</string>
+    <string name="delete_transaction_message">
+    Are you sure you want to delete "%1$s"?
+</string>
 </resources>

@@ -337,4 +337,24 @@
     <string name="select_fund_source">Pilih sumber dana</string>
     <string name="debt_deleted">Hutang %1$s dihapus</string>
     <string name="debt_paid_off">🎉 Hutang %1$s lunas!</string>
+
+    <string name="btn_sudah_membeli_impian">✓ Saya Sudah Membeli Impian Ini</string>
+    <string name="target_selesai_tidak_bisa_hapus">Target sudah selesai, cicilan tidak bisa dihapus</string>
+    <string name="dialog_konfirmasi_pembelian">Konfirmasi Pembelian</string>
+
+    <string name="dialog_konfirmasi_pembelian_pesan">Apakah dana tabungan "%1$s" sudah digunakan untuk membeli impian yang dituju?Dana ini tidak akan lagi dihitung ke Total Terkumpul setelah dikonfirmasi.</string>
+    <string name="sudah">Sudah</string>
+    <string name="belum">Belum</string>
+    <string name="toast_impian_selesai">"%1$s" telah ditandai sebagai selesai digunakan 🎉</string>
+    <string name="select_wallet">Pilih dompet</string>
+    <string name="no_data_available">
+    Belum ada data untuk ditampilkan
+</string>
+    <string name="no_data">
+    Tidak ada data
+</string>
+    <string name="delete_transaction">Hapus Transaksi</string>
+    <string name="delete_transaction_message">
+    Yakin ingin menghapus "%1$s"?
+</string>
 </resources>
