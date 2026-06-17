@@ -299,7 +299,7 @@ class DompetFragment : Fragment() {
                                     Transaksi(
                                         nominal  = saldo,
                                         jenis    = "PEMASUKAN",
-                                        kategori = dompetBaik.nama,
+                                        kategori = "Saldo Awal",
                                         catatan  = dompetBaik.jenis,
                                         tanggal  = tanggalDipilih,
                                         dompetId = dompetBaik.id
@@ -349,7 +349,7 @@ class DompetFragment : Fragment() {
                                 transaksiViewModel.updateSaldoAwalDompet(
                                     transaksi    = t,
                                     nominalBaru  = saldo,
-                                    kategoriBaru = namaBaru,
+                                    kategoriBaru = "Saldo Awal",
                                     catatanBaru  = jenisBaru
                                 )
                             }
@@ -359,7 +359,7 @@ class DompetFragment : Fragment() {
                                     Transaksi(
                                         nominal  = saldo,
                                         jenis    = "PEMASUKAN",
-                                        kategori = namaBaru,
+                                        kategori = "Saldo Awal",
                                         catatan  = jenisBaru,
                                         tanggal  = tanggalDipilih,
                                         dompetId = dompetLama.id

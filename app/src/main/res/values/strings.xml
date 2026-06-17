@@ -83,6 +83,7 @@
     <string name="tab_berjalan">BERJALAN</string>
     <string name="tab_selesai">SELESAI</string>
     <string name="insight_tabungan">Semangat menabung!</string>
+    <string name="prioritas">Jadikan Sebagai Target Tabungan Prioritas?</string>
 
     <!-- Hutang -->
     <string name="title_hutang">HUTANGKU</string>

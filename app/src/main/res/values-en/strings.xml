@@ -135,6 +135,7 @@
     <string name="hint_nama_target">Example: Buy Laptop</string>
     <string name="label_target_nominal">Target Amount</string>
     <string name="btn_simpan_tabungan">Save</string>
+    <string name="prioritas">Make it a priority savings target?</string>
 
     <!-- Bottom Sheet Installment -->
     <string name="title_detail_hutang">Debt Detail</string>
