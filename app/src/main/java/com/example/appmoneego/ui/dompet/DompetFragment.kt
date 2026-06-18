@@ -136,7 +136,11 @@ class DompetFragment : Fragment() {
                 cardInfoHutang.visibility = View.GONE
             } else {
                 val totalHutang = aktif.sumOf { it.sisaHutang.toDouble() }
-                tvInfoHutang.text = getString(R.string.label_info_hutang, aktif.size, CurrencyFormatter.format(totalHutang))
+                tvInfoHutang.text = getString(
+                    R.string.label_info_hutang,
+                    aktif.size,
+                    CurrencyFormatter.format(totalHutang)
+                )
                 cardInfoHutang.visibility = View.VISIBLE
             }
         }
@@ -200,7 +204,6 @@ class DompetFragment : Fragment() {
         val btnSimpan = v.findViewById<Button>(R.id.btnSimpanDompet)
 
         var tanggalDipilih: Long = System.currentTimeMillis()
-        // Simpan nilai numerik murni — dipakai saat simpan
         var saldoAngka: Long = 0L
 
         // ── MODE EDIT: isi field dengan data lama ─────────────────────────────
@@ -215,7 +218,7 @@ class DompetFragment : Fragment() {
             tanggalDipilih = it.tanggalDibuat
         }
 
-        // ✅ MASALAH 1 FIX: TextWatcher auto-format rupiah di field Saldo Awal
+        // TextWatcher auto-format rupiah
         etSaldo.addTextChangedListener(object : TextWatcher {
             var isEditing = false
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -246,13 +249,11 @@ class DompetFragment : Fragment() {
 
         fun highlight(selected: LinearLayout) {
             jenisMap.keys.forEach { btn ->
-
                 if (btn == selected) {
                     btn.setBackgroundResource(R.drawable.bg_jenis_selected)
                 } else {
                     btn.setBackgroundResource(R.drawable.bg_jenis_unselected)
                 }
-
             }
         }
 
@@ -271,7 +272,6 @@ class DompetFragment : Fragment() {
                 return@setOnClickListener
             }
             tilNama.error = null
-            // ✅ Pakai saldoAngka (numerik murni) bukan parse dari teks berformat
             val saldo = saldoAngka.toDouble()
 
             if (dompetEdit == null) {
@@ -321,13 +321,11 @@ class DompetFragment : Fragment() {
             } else {
                 // ── MODE EDIT ─────────────────────────────────────────────────
                 val dompetLama = dompetEdit
-                val namaLama   = dompetLama.nama
-                val namaBaru   = nama
                 val jenisBaru  = jenisTerpilih
 
                 dompetViewModel.update(
                     dompetLama.copy(
-                        nama          = namaBaru,
+                        nama          = nama,
                         jenis         = jenisBaru,
                         saldo         = saldo,
                         ikon          = getIkonByJenis(jenisBaru),
@@ -335,16 +333,20 @@ class DompetFragment : Fragment() {
                     )
                 )
 
+                // FIX: cari transaksi Saldo Awal berdasarkan kategori "Saldo Awal"
+                // dan dompetId — BUKAN berdasarkan nama dompet sebagai kategori
                 val observerSinkron = object : Observer<List<Transaksi>> {
                     override fun onChanged(semuaTransaksi: List<Transaksi>) {
                         transaksiViewModel.allTransaksi.removeObserver(this)
 
                         val transaksiSaldoAwal = semuaTransaksi.filter { t ->
-                            t.dompetId == dompetLama.id && t.jenis == "PEMASUKAN" &&
-                                    (t.kategori == namaLama || t.kategori == namaBaru)
+                            t.dompetId == dompetLama.id &&
+                                    t.jenis    == "PEMASUKAN"   &&
+                                    t.kategori == "Saldo Awal"
                         }
 
                         if (transaksiSaldoAwal.isNotEmpty()) {
+                            // UPDATE transaksi lama — jangan buat baru
                             transaksiSaldoAwal.forEach { t ->
                                 transaksiViewModel.updateSaldoAwalDompet(
                                     transaksi    = t,
@@ -354,6 +356,7 @@ class DompetFragment : Fragment() {
                                 )
                             }
                         } else {
+                            // Hanya buat baru jika belum ada transaksi Saldo Awal sama sekali
                             if (saldo > 0) {
                                 transaksiViewModel.insertTanpaUpdateSaldo(
                                     Transaksi(

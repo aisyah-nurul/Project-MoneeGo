@@ -20,7 +20,7 @@
     <string name="versi_value">v1 (2026)</string>
     <string name="pengembang_label">Pengembang</string>
     <string name="pengembang_value">Kelompok 6</string>
-    <string name="footer_text">MoneeGo · Kelompok 6 · 2026</string>
+    <string name="footer_text">MoneeGo! · Kelompok 6 · 2026</string>
 
     <!-- Dashboard -->
     <string name="label_saldo">Saldo saat ini</string>
